@@ -1,0 +1,70 @@
+---
+tests:
+  testbed_itav:
+    bandwith:
+      id: bandwith
+      name: bandwith
+      description: Tests the bandwith between to VNFs. The results are in bits/sec
+      ftp_base_location: bandwith/
+      test_filename: testBandwith.robot
+      test_type: Robot
+      test_variables:
+      - variable_name: host1_ip
+        deacription: IP of Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_username
+        description: login username for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_password
+        description: login password for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_ip
+        description: IP of Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_username
+        description: login username for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_password
+        description: login password for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+    transmission_speed:
+      id: transmission_speed
+      name: transmission speed
+      description: Tests the transmission speed between to VNFs. The results are in ms
+      ftp_base_location: transmission_speed/
+      test_filename: testTransmissionSpeed.robot
+      test_type: Robot
+      test_variables:
+      - variable_name: host1_ip
+        deacription: IP of Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_username
+        description: login username for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_password
+        description: login password for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_ip
+        description: IP of Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+

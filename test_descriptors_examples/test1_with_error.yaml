@@ -1,0 +1,19 @@
+---
+tests:
+  bandwith:
+    test_id: bandwith
+    test_variables:
+      host1_ip: 10.0.13.116
+      host1_username: ubuntu
+      host1_password: password
+      host2_ip: 10.0.13.89
+      host2_username: ubuntu
+      host2_passwordas: password
+  transmission_speed:
+    test_id: transmission_speed
+    test_variables:
+      host1_ip: 10.0.13.116
+      host1_username: ubuntu
+      host1_password: password
+      host2_ip: 10.0.13.89
+
