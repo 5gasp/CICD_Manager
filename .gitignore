@@ -148,4 +148,4 @@ Thumbs.db
 .prof
 
 # envs
-*/export_envs.sh
+export_envs.sh
