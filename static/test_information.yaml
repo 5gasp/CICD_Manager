@@ -10,7 +10,7 @@ tests:
       test_type: Robot
       test_variables:
       - variable_name: host1_ip
-        deacription: IP of Host/VNF 1
+        description: IP of Host/VNF 1
         mandatory: true
         possible_options: []
         type: str
@@ -48,7 +48,7 @@ tests:
       test_type: Robot
       test_variables:
       - variable_name: host1_ip
-        deacription: IP of Host/VNF 1
+        description: IP of Host/VNF 1
         mandatory: true
         possible_options: []
         type: str
