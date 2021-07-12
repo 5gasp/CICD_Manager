@@ -26,13 +26,7 @@ from typing import List
 
 
 # custom imports
-from test_descriptor_validator import Test_Descriptor_Validator
-from jenkins_wrapper import Jenkins_Wrapper
-import constants as Constants
-from models import CI_CD_Node
 
-# Simulate DB
-nodes = {}
 
 # start Fast API
 models.Base.metadata.create_all(bind=engine)
