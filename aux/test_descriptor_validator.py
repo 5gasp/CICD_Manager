@@ -20,7 +20,7 @@ class Test_Descriptor_Validator:
 
         # 2. check if the testbed provides that test
         if test_id not in available_tests:
-            return False, f"The test \"{test_name}\" is not supported in this tesbed"
+            return False, f"The test \"{test_name}\" is not supported in this testbed"
 
         # 3. check if the test variables are all correctly defined
         mandatory_variables = [variable['variable_name'] for variable in available_tests[test_id]['test_variables'] if variable['mandatory']]
@@ -35,3 +35,14 @@ class Test_Descriptor_Validator:
             return False, f"The test {test_name} is missing the following mandatory variables: {missing}"
 
         return True, "" 
+
+    @staticmethod
+    def base_validation(test_descriptor_data): 
+        errors = []
+        if "test_info" not in test_descriptor_data or list(sorted(test_descriptor_data["test_info"].keys())) != ["netapp_id", "network_service_id", "testbed_id" ] :
+            errors.append(f"The test descriptor should have a section \"test_info\" containing the following fields: \"netapp_id\", \"network_service_id\", and \"testbed_id\"")
+        
+        if "tests" not in test_descriptor_data:
+            errors.append("The testing descriptor must have a \"tests\" section, that lists all the tests to be performed")
+
+        return (True, "") if len(errors) == 0 else  (False, errors)

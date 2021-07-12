@@ -1,8 +1,3 @@
-'''
-5GASP - NetApp Surrogates - Transmission Speed KPI Test
-@author: Daniel Ruiz Villa <daniel.ruiz7@um.es>
-'''
-
 import paramiko, re
 import statistics as stats
 import json
@@ -43,10 +38,10 @@ def bandwith():
         # Calculating the packet loss mean between Sender and Receiver
         mean_bw_bits_per_second = stats.mean(bits_per_second_results)
         if mean_bw_bits_per_second > 800000: 
-            return "The bandwith is bigger than 0.1 MB/sec"
+            return "The bandwidth is bigger than 0.1 MB/sec"
         else:
-            return "The bandwith is lower than 0.1 MB/sec"
-        #return f"The mean bandwith is {mean_bw_bits_per_second} bits/sec"
+            return "The bandwidth is lower than 0.1 MB/sec"
+        #return f"The mean banddwith is {mean_bw_bits_per_second} bits/sec"
     else:
         return "Not found"
 

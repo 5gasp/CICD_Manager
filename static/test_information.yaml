@@ -1,12 +1,12 @@
 ---
 tests:
   testbed_itav:
-    bandwith:
-      id: bandwith
-      name: bandwith
-      description: Tests the bandwith between to VNFs. The results are in bits/sec
-      ftp_base_location: bandwith/
-      test_filename: testBandwith.robot
+    bandwidth:
+      id: bandwidth
+      name: bandwidth
+      description: Tests the bandwidth between to VNFs. The results are in bits/sec
+      ftp_base_location: tests/bandwidth/
+      test_filename: testBandwidth.robot
       test_type: Robot
       test_variables:
       - variable_name: host1_ip
@@ -43,7 +43,7 @@ tests:
       id: transmission_speed
       name: transmission speed
       description: Tests the transmission speed between to VNFs. The results are in ms
-      ftp_base_location: transmission_speed/
+      ftp_base_location: tests/transmission_speed/
       test_filename: testTransmissionSpeed.robot
       test_type: Robot
       test_variables:
@@ -67,4 +67,3 @@ tests:
         mandatory: true
         possible_options: []
         type: str
-
