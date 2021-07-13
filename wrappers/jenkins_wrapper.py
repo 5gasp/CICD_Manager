@@ -117,15 +117,15 @@ class Jenkins_Wrapper:
             obtain_tests_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository -nH ftp://$ftp_user:$ftp_password@$ftp_url/{test_dir}'")
             # save test location. needed to run the test
             tests_to_perform.append(os.path.join("~/test_repository", test_dir, test_filename))
-            print(tests_to_perform)
             # save env to export
             for key, value in test_info["test_variables"].items():
                 key = f"{test_id}_{key}"
                 variables_to_export.append(f"{key} = '{value}'")
 
+        print(tests_to_perform)
         run_tests_commands = [
             "sh 'python3 -m pip install  robotframework-python3 paramiko'",
-            "sh 'python3 -m robot.run -d ~/test_results/" + " ".join(tests_to_perform)+"'"
+            "sh 'python3 -m robot.run -d ~/test_results/ " + " ".join(tests_to_perform)+"'"
             ]
 
         jenkins_script_str = copy.copy(Constants.JENKINS_BASE_PIPELINE_SCRIPT)
