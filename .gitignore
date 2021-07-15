@@ -147,6 +147,4 @@ Thumbs.db
 # profiling data
 .prof
 
-# envs
-export_envs.sh
-config.ini
+*.ini
