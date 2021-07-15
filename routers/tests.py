@@ -182,7 +182,7 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     ret, message = jenkins_wrapper.create_new_job(job_name, pipeline_config)
     if not ret:
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], False)
-        return Constants.create_response(status_code=400, success=False, errors=[message])
+        return Utils.create_response(status_code=400, success=False, errors=[message])
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], True)
     jenkins_job_name = message
 

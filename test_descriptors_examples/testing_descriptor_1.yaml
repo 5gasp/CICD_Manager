@@ -1,5 +1,5 @@
 ---
-# Openslice is supposed to fill some of the testing info
+# Openslice will fill some of the testing info
 test_info:
   netapp_id: 'my_netapp' # id of the entire netapp
   network_service_id: 'network_service_itav' # id of the portion of the netapp that is being tested (inter-domain scenario)

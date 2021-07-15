@@ -86,23 +86,30 @@ class Jenkins_Wrapper:
     def create_jenkins_pipeline_script(self, test_description, available_tests, test_instance_id):
         # base commands
         setup_environment_commands = [
-            "sh 'rm -rf ~/test_repository'",
-            "sh 'mkdir ~/test_repository'",
-            "sh 'rm -rf ~/test_results'",
-            "sh 'mkdir ~/test_results'",
-            "sh 'mkdir -p ~/test_logs'"
+            "sh 'mkdir -p ~/test_repository/\"$JOB_NAME\"'",
+            "sh 'mkdir -p ~/test_results/\"$JOB_NAME\"'",
+            "sh 'mkdir -p ~/test_logs/\"$JOB_NAME\"'"
         ]
 
         logs_commands = [
-            "sh \"echo \\\"JobName: $JOB_NAME\\\" > ~/test_logs/\\\"\\\"$JOB_NAME\\\"_${currentBuild.number}.log\\\"\"",
-            "sh \"echo \\\"Current Build Number: ${currentBuild.number}\\\" >> ~/test_logs/\\\"\\\"$JOB_NAME\\\"_${currentBuild.number}.log\\\"\"",
-            "sh \"echo \\\"Log creation date: \$(date)\\\" >> ~/test_logs/\\\"\\\"$JOB_NAME\\\"_${currentBuild.number}.log\\\"\""
+            "sh \"echo \\\"JobName: $JOB_NAME\\\" > ~/test_logs/\\\"\\\"$JOB_NAME\\\"\\\"/\\\"\\\"$JOB_NAME\\\"_${currentBuild.number}.log\\\"\"",
+            "sh \"echo \\\"Current Build Number: ${currentBuild.number}\\\" >> ~/test_logs/\\\"\\\"$JOB_NAME\\\"\\\"/\\\"\\\"$JOB_NAME\\\"_${currentBuild.number}.log\\\"\"",
+            "sh \"echo \\\"Log creation date: \$(date)\\\" >> ~/test_logs/\\\"\\\"$JOB_NAME\\\"\\\"/\\\"\\\"$JOB_NAME\\\"_${currentBuild.number}.log\\\"\""
         ]
 
         environment_obtain_tests = [
             f"ftp_user = credentials('ftp_user')",
             f"ftp_password = credentials('ftp_password')",
             f"ftp_url = '{Constants.FTP_URL}'"
+        ]
+
+        publish_results_commands = [
+            """sh '''
+            #!/bin/bash
+            cd ~/test_results/\"$JOB_NAME\"/
+            find . -type f -exec curl -u $ftp_user:$ftp_password --ftp-create-dirs -T {} ftp://$ftp_url/results/\"$JOB_NAME\"/{} \\\;
+        '''""",
+        #"sh 'cd ~/test_results/\"$JOB_NAME\"/ && find . -type f -exec curl -u $ftp_user:$ftp_password --ftp-create-dirs -T {} ftp://$ftp_url/results/\"$JOB_NAME\"/{} \\\;'",
         ]
 
         # robot tests
@@ -114,9 +121,9 @@ class Jenkins_Wrapper:
             test_dir = available_tests[test_id]["ftp_base_location"]
             test_filename = available_tests[test_id]["test_filename"]
             # obtain test
-            obtain_tests_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository -nH ftp://$ftp_user:$ftp_password@$ftp_url/{test_dir}'")
+            obtain_tests_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ftp_user:$ftp_password@$ftp_url/{test_dir}'")
             # save test location. needed to run the test
-            tests_to_perform.append(os.path.join("~/test_repository", test_dir, test_filename))
+            tests_to_perform.append(os.path.join("~/test_repository/\"$JOB_NAME\"", test_dir, test_filename))
             # save env to export
             for key, value in test_info["test_variables"].items():
                 key = f"{test_id}_{key}"
@@ -125,7 +132,7 @@ class Jenkins_Wrapper:
         print(tests_to_perform)
         run_tests_commands = [
             "sh 'python3 -m pip install  robotframework-python3 paramiko'",
-            "sh 'python3 -m robot.run -d ~/test_results/ " + " ".join(tests_to_perform)+"'"
+            "sh 'python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/ " + " ".join(tests_to_perform)+"'"
             ]
 
         jenkins_script_str = copy.copy(Constants.JENKINS_BASE_PIPELINE_SCRIPT)
@@ -142,6 +149,10 @@ class Jenkins_Wrapper:
         jenkins_script_str = self.__fill_jenkins_script("<perform_tests>", run_tests_commands, jenkins_script_str)
         # update log creation commands
         jenkins_script_str = self.__fill_jenkins_script("<logs_creation>", logs_commands, jenkins_script_str)
+        # update publish_results_environment environment
+        jenkins_script_str = self.__fill_jenkins_script("<publish_results_environment>", environment_obtain_tests, jenkins_script_str)        
+         # update publish results commands
+        jenkins_script_str = self.__fill_jenkins_script("<publish_results>", publish_results_commands, jenkins_script_str)
         # update test instance id
         jenkins_script_str = jenkins_script_str.replace("<test_id>", str(test_instance_id))
         # update CI/CD location
