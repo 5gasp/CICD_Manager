@@ -131,6 +131,23 @@ pipeline {
                 }
             }
         }
+        stage('Cleanup environment') {
+            environment {
+                comm_token = credentials('communication_token')
+                test_id = <test_id>
+            }
+            steps {
+                <cleanup_environment>
+            }
+            post {
+                failure {
+                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "CLEANED_TEST_ENVIRONMENT"}\\' <ci_cd_manager_url_test_status_url>'
+                }
+                success {
+                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "CLEANED_TEST_ENVIRONMENT"}\\'  <ci_cd_manager_url_test_status_url>'
+                }
+            }
+        }
     }
 }"""
 
@@ -146,6 +163,7 @@ TEST_STATUS ={
     "ci_cd_agent_performed_tests": "PERFORMED_TESTS_ON_CI_CD_AGENT",
     "ci_cd_agent_created_logs": "CREATED_LOGS_ON_CI_CD_AGENT",
     "ci_cd_agent_published_test_results": "PUBLISHED_TEST_RESULTS",
+    "ci_cd_agent_cleaned_test_environment": "CLEANED_TEST_ENVIRONMENT",
 }
 
 def load_config():

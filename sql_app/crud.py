@@ -130,7 +130,7 @@ def get_test_instances_by_netapp_and_network_service(db: Session, netapp_id: str
 
 
 def get_last_build_of_test_instance(db: Session, netapp_id: str, network_service_id: str):
-    return len(db.query(models.Test_Instance).filter(models.Test_Instance.netapp_id == netapp_id and models.Test_Instance.network_service_id == network_service_id).all())-1
+    return len(db.query(models.Test_Instance).filter(models.Test_Instance.netapp_id == netapp_id and models.Test_Instance.network_service_id == network_service_id).all())
 
 
 

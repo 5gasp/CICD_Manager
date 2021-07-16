@@ -109,7 +109,12 @@ class Jenkins_Wrapper:
             cd ~/test_results/\"$JOB_NAME\"/
             find . -type f -exec curl -u $ftp_user:$ftp_password --ftp-create-dirs -T {} ftp://$ftp_url/results/\"$JOB_NAME\"/{} \\\;
         '''""",
-        #"sh 'cd ~/test_results/\"$JOB_NAME\"/ && find . -type f -exec curl -u $ftp_user:$ftp_password --ftp-create-dirs -T {} ftp://$ftp_url/results/\"$JOB_NAME\"/{} \\\;'",
+        ]
+
+        cleanup_environment_commands = [
+            "sh 'rm -rf ~/test_repository/\"$JOB_NAME\"'",
+            "sh 'rm -rf ~/test_results/\"$JOB_NAME\"'",
+            #"sh 'mkdir -p ~/test_logs/\"$JOB_NAME\"'"
         ]
 
         # robot tests
@@ -151,8 +156,10 @@ class Jenkins_Wrapper:
         jenkins_script_str = self.__fill_jenkins_script("<logs_creation>", logs_commands, jenkins_script_str)
         # update publish_results_environment environment
         jenkins_script_str = self.__fill_jenkins_script("<publish_results_environment>", environment_obtain_tests, jenkins_script_str)        
-         # update publish results commands
+        # update publish results commands
         jenkins_script_str = self.__fill_jenkins_script("<publish_results>", publish_results_commands, jenkins_script_str)
+        # update cleanup commands
+        jenkins_script_str = self.__fill_jenkins_script("<cleanup_environment>", cleanup_environment_commands, jenkins_script_str)
         # update test instance id
         jenkins_script_str = jenkins_script_str.replace("<test_id>", str(test_instance_id))
         # update CI/CD location
