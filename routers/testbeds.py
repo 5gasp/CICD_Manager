@@ -43,7 +43,12 @@ def get_db():
         db.close()
 
 
-@router.get("/testbeds/all", tags=["testbeds"])
+@router.get(
+    "/testbeds/all", 
+    tags=["testbeds"],
+    summary="Get all testbeds",
+    description="Get all the testbeds available.",
+)
 async def all_testbeds(db: Session = Depends(get_db)):
     data = {"testbeds": [t.as_dict() for t in crud.get_all_testbeds(db)]}
     return Utils.create_response(data=data)

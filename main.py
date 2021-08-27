@@ -37,8 +37,34 @@ logging.basicConfig(
     level=logging.INFO
 )
 
+fast_api_tags_metadata = [
+    {
+        "name": "agents",
+        "description": "Operations related with the CI/CD Agents.",
+    },
+    {
+        "name": "tests",
+        "description": "Operations related with the tests performed on the NetApps.",
+    },
+    {
+        "name": "testbeds",
+        "description": "Operations related with the testbeds.",
+    },
+]
+
+fast_api_description = "REST API of the 5GASP CI_CD_Manager"
+
 # Start Fast API
-app = FastAPI()
+app = FastAPI(
+    title="5GASP CI_CD_Manager",
+    description=fast_api_description,
+    version="0.0.1",
+    contact={
+        "name": "Rafael Direito",
+        "email": "rdireito@av.it.pt",
+    },
+    openapi_tags=fast_api_tags_metadata
+)
 
 # Load Routers
 app.include_router(testbeds.router)

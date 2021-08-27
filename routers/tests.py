@@ -51,13 +51,23 @@ def get_db():
         db.close()
 
 
-@router.get("/tests/all", tags=["tests"])
+@router.get(
+    "/tests/all",
+    tags=["tests"],
+    summary="Get all tests",
+    description="This endpoint provides a list of all the tests that exist in the database.",
+)
 async def all_tests(db: Session = Depends(get_db)):
     data = Constants.TEST_INFO
     return Utils.create_response(data=data)
 
 
-@router.get("/tests/per-testbed", tags=["tests"])
+@router.get(
+    "/tests/per-testbed",
+    tags=["tests"],
+    summary="Get testbed's tests",
+    description="The developers may use this endpoint to get a listing of all the standard tests provided by a testbed.",
+)
 async def tests_per_testbed(testbed: str):
     testbed_tests = Constants.TEST_INFO['tests'].get(testbed, None)
     if testbed_tests:
@@ -66,7 +76,12 @@ async def tests_per_testbed(testbed: str):
     else:
         return Utils.create_response(status_code=400, success=False, errors=["The testbed you chose doesn't exist."])
 
-@router.get("/tests/test-status", tags=["tests"])
+@router.get(
+    "/tests/test-status",
+    tags=["tests"],
+    summary="Get the status of test",
+    description="The developers/apis/web_ui uses this endpoint to gather the status of a test",
+)
 async def get_test_status(netapp_id: str, network_service_id: str , db: Session = Depends(get_db)):
     try:
         data = crud.get_all_test_status_for_test(db, netapp_id, network_service_id)
@@ -76,7 +91,12 @@ async def get_test_status(netapp_id: str, network_service_id: str , db: Session 
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't retrieve the tests status for the netapp and network_service you chose."]) 
 
 
-@router.post("/tests/test-status", tags=["tests"])
+@router.post(
+    "/tests/test-status",
+    tags=["tests"],
+    summary="Update the status of a test",
+    description="When the CI Agent is performing the tests, it will use this endpoint to update their status.",
+)
 async def update_test_status(test_status: schemas.Test_Status_Update,  db: Session = Depends(get_db)):
     try:
         crud.create_test_status_ci_cd_agent(db, test_status)
@@ -85,7 +105,12 @@ async def update_test_status(test_status: schemas.Test_Status_Update,  db: Sessi
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't update test status."]) 
 
 
-@router.post("/tests/new")
+@router.post(
+    "/tests/new", 
+    tags=["tests"],
+    summary="Create a new test",
+    description="Given a file with a test descriptor, create a new test.",
+)
 async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depends(get_db)):
 
     # 1 - get data from the uploaded descriptor
