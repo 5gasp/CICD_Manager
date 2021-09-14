@@ -9,9 +9,27 @@
 # Description:
 # Implementation of a validator for the testing descriptors
 
+import sys
+import os
+import inspect
+from cerberus import Validator
+
+# import from parent directory
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+
+# custom imports
+import testing_descriptors_validator.schema as schema
+import aux.constants as Constants
+import utils.utils as Utils
+
+
 class Test_Descriptor_Validator:
 
-    @staticmethod
+    def __init__(self, descriptor_content):
+        self.descriptor_content = descriptor_content
+
     def is_test_description_valid(test_name, test_info, available_tests):
         # 1. check if the test contains a test_id
         test_id = test_info.get("test_id")
@@ -36,13 +54,9 @@ class Test_Descriptor_Validator:
 
         return True, "" 
 
-    @staticmethod
-    def base_validation(test_descriptor_data): 
-        errors = []
-        if "test_info" not in test_descriptor_data or list(sorted(test_descriptor_data["test_info"].keys())) != ["netapp_id", "network_service_id", "testbed_id" ] :
-            errors.append(f"The test descriptor should have a section \"test_info\" containing the following fields: \"netapp_id\", \"network_service_id\", and \"testbed_id\"")
-        
-        if "tests" not in test_descriptor_data:
-            errors.append("The testing descriptor must have a \"tests\" section, that lists all the tests to be performed")
 
-        return (True, "") if len(errors) == 0 else  (False, errors)
+
+    def structure_validate(self):
+        validator = Validator()
+        validator.validate(self.descriptor_content, schema.SCHEMA)
+        return validator.errors

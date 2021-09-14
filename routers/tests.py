@@ -30,7 +30,7 @@ sys.path.insert(0, parentdir)
 
 # custom imports
 from wrappers.jenkins_wrapper import Jenkins_Wrapper
-from aux.test_descriptor_validator import Test_Descriptor_Validator
+from testing_descriptors_validator.test_descriptor_validator import Test_Descriptor_Validator
 import aux.constants as Constants
 import utils.utils as Utils
 
@@ -120,11 +120,14 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     except:
         return Utils.create_response(status_code=400, success=False, errors=["Unable to parse the submitted file. It must be a YAML."])
 
-    # 2 - validate the base test info
-    ok, errors = Test_Descriptor_Validator.base_validation(test_descriptor_data)
-    if not ok:
-        return Utils.create_response(status_code=400, success=False, errors=errors)
+    # 2 - validate the structure of the testing descriptor
+    test_descriptor_validator =  Test_Descriptor_Validator(test_descriptor_data)
+    structural_validation_errors = test_descriptor_validator.structure_validate()
+    if len(structural_validation_errors) != 0:
+        return Utils.create_response(status_code=400, success=False, errors=structural_validation_errors)
 
+    # Todo Here
+    
     # 3 - check if the testbed exists
     testbed_id = test_descriptor_data["test_info"]["testbed_id"]
     if crud.get_testbed_by_id(db, testbed_id) is None:

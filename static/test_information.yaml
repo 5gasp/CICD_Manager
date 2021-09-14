@@ -15,12 +15,12 @@ tests:
         possible_options: []
         type: str
       - variable_name: host1_username
-        description: login username for Host/VNF 1
+        description: Login username for Host/VNF 1
         mandatory: true
         possible_options: []
         type: str
       - variable_name: host1_password
-        description: login password for Host/VNF 1
+        description: Login password for Host/VNF 1
         mandatory: true
         possible_options: []
         type: str
@@ -30,15 +30,26 @@ tests:
         possible_options: []
         type: str
       - variable_name: host2_username
-        description: login username for Host/VNF 2
+        description: Login username for Host/VNF 2
         mandatory: true
         possible_options: []
         type: str
       - variable_name: host2_password
-        description: login password for Host/VNF 2
+        description: Login password for Host/VNF 2
         mandatory: true
         possible_options: []
         type: str
+      - variable_name: bandwidth_comparator
+        description: Comparator to be used while validating the bandwidth
+        mandatory: true
+        possible_options: ['more than', 'more or equal than', 'less than', 'less or equal than']
+        type: str
+      - variable_name: bandwidth_threshold
+        description: Threshold in mbits per second
+        mandatory: true
+        possible_options: []
+        type: float
+        
     transmission_speed:
       id: transmission_speed
       name: transmission speed
@@ -53,12 +64,12 @@ tests:
         possible_options: []
         type: str
       - variable_name: host1_username
-        description: login username for Host/VNF 1
+        description: Login username for Host/VNF 1
         mandatory: true
         possible_options: []
         type: str
       - variable_name: host1_password
-        description: login password for Host/VNF 1
+        description: Login password for Host/VNF 1
         mandatory: true
         possible_options: []
         type: str
@@ -67,3 +78,71 @@ tests:
         mandatory: true
         possible_options: []
         type: str
+      - variable_name: host2_username
+        description: Login username for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_password
+        description: Login password for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: transmission_speed_comparator
+        description: Comparator to be used while validating the transmission speed
+        mandatory: true
+        possible_options: ['more than', 'more or equal than', 'less than', 'less or equal than']
+        type: str
+      - variable_name: transmission_speed_threshold
+        description: Threshold in milliseconds
+        mandatory: true
+        possible_options: []
+        type: float
+    packet_loss:
+      id: packet_loss
+      name: packet loss
+      description: Tests the packet loss speed between to VNFs. The results are given in %
+      ftp_base_location: tests/packet_loss/
+      test_filename: testPacketLoss.robot
+      test_type: Robot
+      test_variables:
+      - variable_name: host1_ip
+        description: IP of Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_username
+        description: Login username for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_password
+        description: Login password for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_ip
+        description: IP of Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_username
+        description: Login username for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_password
+        description: Login password for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: packet_loss_comparator
+        description: Comparator to be used while validating the packet loss ratio
+        mandatory: true
+        possible_options: ['more than', 'more or equal than', 'less than', 'less or equal than']
+        type: str
+      - variable_name: packet_loss_threshold
+        description: Ratio of packets lost
+        mandatory: true
+        possible_options: []
+        type: float
