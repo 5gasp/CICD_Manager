@@ -29,6 +29,7 @@ class Test_Descriptor_Validator:
 
     def __init__(self, descriptor_content):
         self.descriptor_content = descriptor_content
+        self.executed_tests_info = None
 
     def is_test_description_valid(test_name, test_info, available_tests):
         # 1. check if the test contains a test_id
@@ -54,9 +55,41 @@ class Test_Descriptor_Validator:
 
         return True, "" 
 
+    
+    def validate_tests_parameters(self, testbed_tests):
+        errors = []
+        try:
+            executed_tests_info = []
+            executed_tests_descriptor_id = []
+            for execution in self.descriptor_content["test_phases"]["execution"]:
+                for executions in execution["executions"]:
+                    executed_tests_descriptor_id +=  executions["testcase_ids"]
+            for test_case in self.descriptor_content["test_phases"]["setup"]["testcases"]:
+                if test_case["testcase_id"] in executed_tests_descriptor_id:
+                    executed_tests_info.append(test_case)        
+        except Exception as e:
+            errors.append(e)
+        
+        if len(errors) == 0:
+            for test_info in executed_tests_info:
+                td_test_defined_parameters = {parameter["key"]: parameter["value"] for parameter in test_info["parameters"]}
+                # check if test exists
+                if test_info["name"] in testbed_tests:
+                    for test_variable in testbed_tests[test_info["name"]]["test_variables"]:
+                        # check if all the test mandatory parameters are defined in the descriptor
+                        if test_variable["variable_name"] in td_test_defined_parameters or not test_variable["mandatory"]:
+                            # check if the value respects its possible options (if that's the case)
+                            if len(test_variable["possible_options"]) != 0 and td_test_defined_parameters[test_variable["variable_name"]] not in test_variable["possible_options"]:
+                                errors.append(f"The parameter \"{test_variable['variable_name']}\", for the test {test_info['name']}, is not according to its possible_options.")
+                        else:
+                            errors.append(f"The parameter \"{test_variable['variable_name']}\" must be defined for the test {test_info['name']}.")
+                else:
+                    errors.append(f"{test_info['name']} doesn't exist in the chosen testbed.")
+        
+        self.executed_tests_info = executed_tests_info 
+        return errors
 
-
-    def structure_validate(self):
+    def validate_structure(self):
         validator = Validator()
         validator.validate(self.descriptor_content, schema.SCHEMA)
         return validator.errors

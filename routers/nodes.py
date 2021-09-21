@@ -53,7 +53,7 @@ def get_db():
     description="When the CI/CD Agent is deployed (via a VNF) it registers itself in the CI_CD_Manager, via this endpoint.",
 )
 def create_node(node: schemas.CI_CD_Node_Create, db: Session = Depends(get_db)):
-    db_ci_cd_node = crud.get_ci_cd_node_by_netapp_and_network_service(db, netapp_id=node.netapp_id, network_service_id=node.network_service_id)
+    db_ci_cd_node = crud.get_ci_cd_node_by_testbed(db, node.testbed_id)
     if db_ci_cd_node:
         db_ci_cd_node = crud.update_ci_cd_node(db, node=node)
         return Utils.create_response(success=True, message="Updated CI/CD Node", data=db_ci_cd_node.as_dict_without_password())

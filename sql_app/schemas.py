@@ -20,8 +20,6 @@ import datetime
 # ---------------------------------------- #
 class CI_CD_Node_Base(BaseModel):
     ip: str
-    netapp_id: str
-    network_service_id: str
     username: str
     testbed_id: str
     is_online: bool
@@ -88,5 +86,18 @@ class Test_Status(Test_Status_Base):
     id: int
     timestamp: datetime.datetime
     
+    class Config:
+        orm_mode = True
+
+
+# ---------------------------------------- #
+# -------------- Test Results ------------ #
+# ---------------------------------------- #
+
+class Test_Results(BaseModel):
+    test_id: int
+    ftp_results_directory: str
+    communication_token: str
+
     class Config:
         orm_mode = True

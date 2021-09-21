@@ -39,12 +39,12 @@ tests:
         mandatory: true
         possible_options: []
         type: str
-      - variable_name: bandwidth_comparator
+      - variable_name: comparator
         description: Comparator to be used while validating the bandwidth
         mandatory: true
         possible_options: ['more than', 'more or equal than', 'less than', 'less or equal than']
         type: str
-      - variable_name: bandwidth_threshold
+      - variable_name: threshold
         description: Threshold in mbits per second
         mandatory: true
         possible_options: []
@@ -88,12 +88,12 @@ tests:
         mandatory: true
         possible_options: []
         type: str
-      - variable_name: transmission_speed_comparator
+      - variable_name: comparator
         description: Comparator to be used while validating the transmission speed
         mandatory: true
         possible_options: ['more than', 'more or equal than', 'less than', 'less or equal than']
         type: str
-      - variable_name: transmission_speed_threshold
+      - variable_name: threshold
         description: Threshold in milliseconds
         mandatory: true
         possible_options: []
@@ -136,12 +136,12 @@ tests:
         mandatory: true
         possible_options: []
         type: str
-      - variable_name: packet_loss_comparator
+      - variable_name: comparator
         description: Comparator to be used while validating the packet loss ratio
         mandatory: true
         possible_options: ['more than', 'more or equal than', 'less than', 'less or equal than']
         type: str
-      - variable_name: packet_loss_threshold
+      - variable_name: threshold
         description: Ratio of packets lost
         mandatory: true
         possible_options: []

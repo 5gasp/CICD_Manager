@@ -1,6 +1,6 @@
 test_info:
-  netapp_id: xyz 
-  network_service_id: network_service_xyz 
+  netapp_id: na1 
+  network_service_id: ns1
   testbed_id: testbed_itav 
   description: Infrastructure tests for XYZ NetApp
 
@@ -27,6 +27,7 @@ test_phases:
         type: predefined
         scope: infrastructure
         name: bandwidth
+        description: Test the bandwidth between the OBU and vOBU
         parameters:
           - key: host1_ip
             value: 10.0.13.60
@@ -49,6 +50,7 @@ test_phases:
         type: predefined
         scope: infrastructure
         name: transmission_speed
+        description: Test the transmission speed between the OBU and vOBU
         parameters:
           - key: host1_ip
             value: 10.0.13.60
@@ -71,6 +73,7 @@ test_phases:
         type: predefined
         scope: operational
         name: packet_loss
+        description: Test the packet loss between the OBU and vOBU
         parameters:
           - key: host1_ip
             value: 10.0.13.60

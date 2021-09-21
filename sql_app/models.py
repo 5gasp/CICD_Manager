@@ -23,8 +23,6 @@ class CI_CD_Node(Base):
     __tablename__ = "ci_cd_nodes"
 
     id = Column(Integer, primary_key=True, index=True)
-    netapp_id = Column(String, nullable=False)
-    network_service_id = Column(String,nullable=False)
     ip = Column(String)
     username = Column(String)
     password = Column(String)
@@ -62,6 +60,10 @@ class Test_Instance(Base):
     build = Column(Integer)
     testbed_id = Column(String, ForeignKey("testbeds.id"), nullable=False)
     ci_cd_node_id = Column(Integer, ForeignKey("ci_cd_nodes.id"), nullable=True)
+    extra_information = Column(String)
+    access_token = Column(String, nullable=False)
+    test_log_location = Column(String)
+    test_results_location = Column(String)
   
 
     def as_dict(self):
@@ -82,3 +84,19 @@ class Test_Status(Base):
         dic =  {c.name: getattr(self, c.name) for c in self.__table__.columns}
         dic["timestamp"] = self.timestamp.isoformat()
         return dic
+
+
+class Test_Instance_Tests(Base):
+    __tablename__ = "test_instance-tests"
+
+    id = Column(Integer, primary_key=True, index=True)    
+    test_instance = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
+    description = Column(String)
+    performed_test = Column(String, nullable=False)
+    start_time = Column(String)
+    end_time = Column(String)
+    success = Column(Boolean)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+

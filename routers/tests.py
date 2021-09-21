@@ -22,6 +22,12 @@ import sys
 import os
 import binascii
 import yaml
+import datetime as dt
+from urllib.request import urlopen
+import xml.etree.ElementTree as ET
+import json
+import ftplib
+import io
 
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -41,6 +47,7 @@ logging.basicConfig(
 )
 
 router = APIRouter()
+jenkins_wrapper = Jenkins_Wrapper()
 
 # Dependency
 def get_db():
@@ -99,10 +106,11 @@ async def get_test_status(netapp_id: str, network_service_id: str , db: Session 
 )
 async def update_test_status(test_status: schemas.Test_Status_Update,  db: Session = Depends(get_db)):
     try:
-        crud.create_test_status_ci_cd_agent(db, test_status)
+        crud.create_test_status_ci_cd_agent(db, test_status)            
         return Utils.create_response()
     except Exception as e:
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't update test status."]) 
+
 
 
 @router.post(
@@ -112,7 +120,8 @@ async def update_test_status(test_status: schemas.Test_Status_Update,  db: Sessi
     description="Given a file with a test descriptor, create a new test.",
 )
 async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depends(get_db)):
-
+    global jenkins_wrapper
+    
     # 1 - get data from the uploaded descriptor
     contents = await test_descriptor.read()
     try:
@@ -122,11 +131,10 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
     # 2 - validate the structure of the testing descriptor
     test_descriptor_validator =  Test_Descriptor_Validator(test_descriptor_data)
-    structural_validation_errors = test_descriptor_validator.structure_validate()
+    structural_validation_errors = test_descriptor_validator.validate_structure()
     if len(structural_validation_errors) != 0:
         return Utils.create_response(status_code=400, success=False, errors=structural_validation_errors)
 
-    # Todo Here
     
     # 3 - check if the testbed exists
     testbed_id = test_descriptor_data["test_info"]["testbed_id"]
@@ -136,13 +144,10 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
     # 4 - validate id all tests exist in the selected testbed
     testbed_tests = Constants.TEST_INFO['tests'].get(testbed_id)
-    errors = []
-    for test_name, test_info in test_descriptor_data["tests"].items():
-        ok, error_message = Test_Descriptor_Validator.is_test_description_valid(test_name, test_info, testbed_tests)
-        if not ok:
-            errors.append(error_message)
+
+    errors = test_descriptor_validator.validate_tests_parameters(testbed_tests)
     if len(errors) != 0:
-        return Utils.create_response(status_code=400, success=False, errors=errors)
+        return Utils.create_response(status_code=400, success=False, errors=errors, message="Error on validating test parameters")
 
     # 5 - register the test in database
     netapp_id = test_descriptor_data["test_info"]["netapp_id"]
@@ -156,15 +161,12 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
 
     # Check if the CI/CD Node for this test is already registered
-    selected_ci_cd_node = crud.get_ci_cd_node_by_netapp_and_network_service(db, netapp_id, network_service_id)
+    selected_ci_cd_node = crud.get_ci_cd_node_by_testbed(db, testbed_id)
     if selected_ci_cd_node is None or not selected_ci_cd_node.is_online:
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["ci_cd_agent_provisioned"], False)
-        return Utils.create_response(status_code=400, success=False, errors=[f"It doesn't exist a CI/CD node for the netapp_id {netapp_id}, network_service_id {network_service_id}, or it is offline."])
-    crud.update_ci_cd_agent(db, test_instance.id, selected_ci_cd_node.id)
+        return Utils.create_response(status_code=400, success=False, errors=[f"It doesn't exist a CI/CD Agent for the selected testbed, or it is offline."])
+    crud.update_test_instance_ci_cd_agent(db, test_instance.id, selected_ci_cd_node.id)
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["ci_cd_agent_provisioned"], True)
-
-    # create jenkins connection
-    jenkins_wrapper = Jenkins_Wrapper()
 
     # connect to jenkins server
     ret, message = jenkins_wrapper.connect_to_server(f"http://{selected_ci_cd_node.ip}:8080/", selected_ci_cd_node.username, selected_ci_cd_node.password)
@@ -197,9 +199,10 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     logging.info(f"credential_secret: {credential_secret}")
     selected_ci_cd_node = crud.update_communication_token(db, selected_ci_cd_node.id, credential_secret)
     
+    executed_tests_info = test_descriptor_validator.executed_tests_info
     # create jenkins pipeline script
     try:
-        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(test_descriptor_data["tests"], testbed_tests, test_instance.id)
+        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(executed_tests_info, testbed_tests, test_instance.id)
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
     except Exception as e:
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
@@ -208,11 +211,18 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + '-' + str(test_instance.build)
     ret, message = jenkins_wrapper.create_new_job(job_name, pipeline_config)
+    print("New Job:", message)
     if not ret:
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], False)
         return Utils.create_response(status_code=400, success=False, errors=[message])
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], True)
     jenkins_job_name = message
+
+    for executed_test in executed_tests_info:
+        test_instance_test = crud.create_test_instance_test(db, test_instance.id, executed_test["name"], executed_test["description"])
+        logging.info(f"Registered test '{test_instance_test.performed_test}' for test instance {test_instance.id}.")
+
+    #print(jenkins_wrapper.get_build_log("xyz-network_service_xyz-2", 10))
 
     # run jenkins job
     ret, message = jenkins_wrapper.run_job(jenkins_job_name)
@@ -220,4 +230,82 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
         return Utils.create_response(status_code=400, success=False, errors=[message])
     build_id = message
 
-    return Utils.create_response(success=True, message=f"A new build job was created", data={"job_name": jenkins_job_name, "build_id": build_id})
+    # get jenkins job build number
+    ret, message = jenkins_wrapper.get_last_build_number(job_name)
+    if not ret:
+        return Utils.create_response(status_code=400, success=False, errors=[message])
+    job_build_number = message
+
+    # Update extra information
+    crud.update_test_instance_extra_info(db, test_instance.id, str({"job_name": job_name, "build_number": job_build_number}))
+
+    return Utils.create_response(success=True, message=f"A new build job was created", data={
+        "test_id": test_instance.id,
+        "testbed_id" : test_instance.testbed_id,
+        "netapp_id": netapp_id,
+        "network_service_id": network_service_id,
+        "job_name": jenkins_job_name, 
+        "build_number": job_build_number,
+        "access_token": test_instance.access_token
+        })
+
+
+
+@router.post(
+"/tests/publish-test-results",
+tags=["tests"],
+summary="Publish test results",
+description="After the validation process this endpoint will be used to submit the results to the CI/CD Manager ",
+)
+async def publish_test_results(test_results_information: schemas.Test_Results,  db: Session = Depends(get_db)):
+    global jenkins_wrapper
+    # validate communication token
+
+    try:
+        # get test results
+        tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
+        tests = [t.performed_test for t in tests]
+        for test in tests:
+            xml_str = urlopen(f"ftp://{Constants.FTP_USER}:{Constants.FTP_PASSWORD}@{Constants.FTP_URL}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
+            root = ET.fromstring(xml_str)
+            failed_tests = int(root.findall("statistics")[0].find('total').find('stat').attrib['fail'])
+            
+            start_timestamp = root.findall("suite")[0].findall('status')[0].attrib['starttime'].split(".")[0]
+            end_timestamp = root.findall("suite")[0].findall('status')[-1].attrib['endtime'].split(".")[0]
+            
+            start_date, start_time = start_timestamp.split()
+            start_dt = dt.datetime.strptime(start_time, '%H:%M:%S').replace(year=int(start_date[0:4]), month=int(start_date[4:6]), day=int(start_date[6:8]))
+            end_date, end_time = end_timestamp.split()
+            end_dt = dt.datetime.strptime(end_time, '%H:%M:%S').replace(year=int(end_date[0:4]), month=int(end_date[4:6]), day=int(end_date[6:8]))
+
+            success = failed_tests == 0
+            crud.update_test_status_of_test_instance(db, test_results_information.test_id, test, str(start_dt), str(end_dt), success)
+
+        
+        
+        # get test console log
+        test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)
+        extra_information = json.loads(test_instance_dic['extra_information'].replace("'", "\""))
+        selected_ci_cd_node = crud.get_ci_cd_agent_given_test_instance_id(db, test_results_information.test_id)
+        if selected_ci_cd_node is None or not selected_ci_cd_node.is_online:
+            return Utils.create_response(status_code=400, success=False, errors=[f"It doesn't exist a CI/CD Agent for the selected testbed, or it is offline."])
+        ret, message = jenkins_wrapper.connect_to_server(f"http://{selected_ci_cd_node.ip}:8080/", selected_ci_cd_node.username, selected_ci_cd_node.password)
+        if not ret:
+            return Utils.create_response(status_code=400, success=False, errors=[message])
+
+        ret, message = jenkins_wrapper.get_build_log(extra_information['job_name'], extra_information['build_number'])
+        if not ret:
+            return Utils.create_response(status_code=400, success=False, errors=[message])
+        
+        # save console log to ftp
+        session = ftplib.FTP(Constants.FTP_URL.split(':')[0], Constants.FTP_USER, Constants.FTP_PASSWORD)
+        session.storbinary(f'STOR {test_results_information.ftp_results_directory}/console_log.log', io.BytesIO(message.encode('utf-8')) )
+        session.quit()
+
+        # update test instance
+        crud.update_test_instance_after_validation_process(db, test_results_information.test_id , f"{test_results_information.ftp_results_directory}/console_log.log", test_results_information.ftp_results_directory)
+
+        return Utils.create_response(data=tests)
+    except Exception as e:
+        print(e)
+        return Utils.create_response(status_code=400, success=False, errors=["Couldn't get performed test status."]) 

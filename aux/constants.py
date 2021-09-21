@@ -49,14 +49,16 @@ pipeline {
                 test_id = <test_id>
             }
             steps {
-                <setup_environment>
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                    <setup_environment>
+                }
             }
             post {
                 failure {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "ENVIRONMENT_SETUP_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "ENVIRONMENT_SETUP_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
                 }
                 success {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "ENVIRONMENT_SETUP_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "ENVIRONMENT_SETUP_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
                 }
             }
         }
@@ -67,14 +69,16 @@ pipeline {
                 test_id = <test_id>
             }
             steps {
-                <obtain_tests>
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                    <obtain_tests>
+                }
             }
             post {
                 failure {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "OBTAINED_TESTS_ON_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "OBTAINED_TESTS_ON_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
                 }
                 success {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "OBTAINED_TESTS_ON_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "OBTAINED_TESTS_ON_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
                 }
             }
         }
@@ -85,14 +89,16 @@ pipeline {
                 test_id = <test_id>
             }
             steps {
-                <perform_tests>
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                    <perform_tests>
+                }
             }
             post {
                 failure {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "PERFORMED_TESTS_ON_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "PERFORMED_TESTS_ON_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
                 }
                 success {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "PERFORMED_TESTS_ON_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "PERFORMED_TESTS_ON_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
                 }
             }
         }
@@ -102,14 +108,16 @@ pipeline {
                 test_id = <test_id>
             }
             steps {
-                <logs_creation>
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                    <logs_creation>
+                }
             }
             post {
                 failure {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "CREATED_LOGS_ON_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "CREATED_LOGS_ON_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
                 }
                 success {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "CREATED_LOGS_ON_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "CREATED_LOGS_ON_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
                 }
             }
         }
@@ -120,14 +128,16 @@ pipeline {
                 test_id = <test_id>
             }
             steps {
-                <publish_results>
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                    <publish_results>
+                }
             }
             post {
                 failure {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "PUBLISHED_TEST_RESULTS"}\\' <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "PUBLISHED_TEST_RESULTS"}\\' <ci_cd_manager_url_test_status_url>'
                 }
                 success {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "PUBLISHED_TEST_RESULTS"}\\'  <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "PUBLISHED_TEST_RESULTS"}\\'  <ci_cd_manager_url_test_status_url>'
                 }
             }
         }
@@ -137,15 +147,27 @@ pipeline {
                 test_id = <test_id>
             }
             steps {
-                <cleanup_environment>
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                    <cleanup_environment>
+                }
             }
             post {
                 failure {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "CLEANED_TEST_ENVIRONMENT"}\\' <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "CLEANED_TEST_ENVIRONMENT"}\\' <ci_cd_manager_url_test_status_url>'
                 }
                 success {
-                    sh 'curl --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "CLEANED_TEST_ENVIRONMENT"}\\'  <ci_cd_manager_url_test_status_url>'
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "CLEANED_TEST_ENVIRONMENT"}\\'  <ci_cd_manager_url_test_status_url>'
                 }
+            }
+        }
+        stage('End Testing Process') {
+            environment {
+                comm_token = credentials('communication_token')
+                test_id = <test_id>
+            }
+            steps {
+                sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "TEST_ENDED"}\\'  <ci_cd_manager_url_test_status_url>'
+                sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "ftp_results_directory":"results/\\'$JOB_NAME\\'"}\\'  <ci_cd_manager_url_publish_test_results>'
             }
         }
     }
@@ -164,6 +186,7 @@ TEST_STATUS ={
     "ci_cd_agent_created_logs": "CREATED_LOGS_ON_CI_CD_AGENT",
     "ci_cd_agent_published_test_results": "PUBLISHED_TEST_RESULTS",
     "ci_cd_agent_cleaned_test_environment": "CLEANED_TEST_ENVIRONMENT",
+    "test_ended": "TEST_ENDED",
 }
 
 def load_config():

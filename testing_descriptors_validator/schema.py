@@ -81,7 +81,11 @@ SCHEMA = {
                                     'type': 'integer'
                                 },
                                 'name': {
-                                    'type': True,
+                                    'required': True,
+                                    'type': 'string'
+                                },
+                                'description': {
+                                    'required': False,
                                     'type': 'string'
                                 },
                                 'type': {

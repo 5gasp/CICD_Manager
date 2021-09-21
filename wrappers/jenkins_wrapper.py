@@ -68,6 +68,23 @@ class Jenkins_Wrapper:
         return True, ""
 
     @requires_auth
+    def get_build_log(self, job_name, build_number):
+        try:
+            ret = self.jenkins_server.get_build_console_output(job_name, build_number)
+        except Exception as e:
+            return False, f"Unable to get build logs. Cause: {str(e)}"
+        return True, ret
+
+    @requires_auth
+    def get_last_build_number(self, job_name):
+        try:
+            ret = self.jenkins_server.get_job_info(job_name)["nextBuildNumber"]
+        except Exception as e:
+            return False, f"Unable to get last build number for job {job_name}. Cause: {str(e)}"
+        return True, ret
+
+
+    @requires_auth
     def create_new_job(self, job_name, job_config_xml_str):
         try:
             ret = self.jenkins_server.create_job(job_name, job_config_xml_str)
@@ -83,7 +100,7 @@ class Jenkins_Wrapper:
             return False, f"Unable to run the job '{job_name}'. Cause: {str(e)}"
         return True, build_number
 
-    def create_jenkins_pipeline_script(self, test_description, available_tests, test_instance_id):
+    def create_jenkins_pipeline_script(self, executed_tests_info, available_tests, test_instance_id):
         # base commands
         setup_environment_commands = [
             "sh 'mkdir -p ~/test_repository/\"$JOB_NAME\"'",
@@ -118,27 +135,28 @@ class Jenkins_Wrapper:
         ]
 
         # robot tests
-        tests_to_perform = []
+        tests_to_perform = {}
         variables_to_export = []
         obtain_tests_commands = []
-        for test, test_info in test_description.items():
-            test_id = test_info["test_id"]
+        for test_info in executed_tests_info:
+            test_id = test_info["name"]
             test_dir = available_tests[test_id]["ftp_base_location"]
             test_filename = available_tests[test_id]["test_filename"]
             # obtain test
             obtain_tests_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ftp_user:$ftp_password@$ftp_url/{test_dir}'")
             # save test location. needed to run the test
-            tests_to_perform.append(os.path.join("~/test_repository/\"$JOB_NAME\"", test_dir, test_filename))
+            tests_to_perform[test_id] = str(os.path.join("~/test_repository/\"$JOB_NAME\"", test_dir, test_filename))
             # save env to export
-            for key, value in test_info["test_variables"].items():
-                key = f"{test_id}_{key}"
-                variables_to_export.append(f"{key} = '{value}'")
+            for parameter in test_info["parameters"]:
+                key = f"{test_id}_{parameter['key']}"
+                variables_to_export.append(f"{key} = '{parameter['value']}'")
 
-        print(tests_to_perform)
         run_tests_commands = [
-            "sh 'python3 -m pip install  robotframework-python3 paramiko'",
-            "sh 'python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/ " + " ".join(tests_to_perform)+"'"
-            ]
+            "sh 'python3 -m pip install robotframework==4.1.1 paramiko==2.7.2'",
+        ]
+        for test_name, test_location  in tests_to_perform.items():
+            run_tests_commands.append("sh 'python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/" + test_name +  " " + test_location +"'")
+
 
         jenkins_script_str = copy.copy(Constants.JENKINS_BASE_PIPELINE_SCRIPT)
 
@@ -164,6 +182,7 @@ class Jenkins_Wrapper:
         jenkins_script_str = jenkins_script_str.replace("<test_id>", str(test_instance_id))
         # update CI/CD location
         jenkins_script_str = jenkins_script_str.replace("<ci_cd_manager_url_test_status_url>", Constants.CI_CD_MANAGER_URL+"/tests/test-status")
+        jenkins_script_str = jenkins_script_str.replace("<ci_cd_manager_url_publish_test_results>", Constants.CI_CD_MANAGER_URL+"/tests/publish-test-results")
 
         config = open(Constants.BASE_PIPELINE_FILEPATH).read()
         config = config.replace("add_pipeline_configuration_here", jenkins_script_str)

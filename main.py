@@ -25,7 +25,7 @@ sys.path.insert(0, parentdir)
 
 # custom imports
 from sql_app.database import SessionLocal, engine
-from routers import testbeds, tests, nodes
+from routers import testbeds, tests, nodes, gui
 import aux.constants as Constants
 import utils.utils as Utils
 from sql_app import models
@@ -70,7 +70,7 @@ app = FastAPI(
 app.include_router(testbeds.router)
 app.include_router(tests.router)
 app.include_router(nodes.router)
-
+app.include_router(gui.router)
 
 # Dependency
 def get_db():
