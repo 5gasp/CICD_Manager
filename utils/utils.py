@@ -27,7 +27,7 @@ logging.basicConfig(
 )
 
 def create_response(status_code=200, data=[], errors=[], success=True, message=""):
-    return JSONResponse(status_code=status_code, content={"message": message, "success": success, "data": data, "errors": errors})
+    return JSONResponse(status_code=status_code, content={"message": message, "success": success, "data": data, "errors": errors}, headers={"Access-Control-Allow-Origin": "*"})
 
 
 def load_testbeds_to_db(session, testbed_info_file):
