@@ -66,7 +66,7 @@ class Test_Descriptor_Validator:
                     executed_tests_descriptor_id +=  executions["testcase_ids"]
             for test_case in self.descriptor_content["test_phases"]["setup"]["testcases"]:
                 if test_case["testcase_id"] in executed_tests_descriptor_id:
-                    executed_tests_info.append(test_case)        
+                    executed_tests_info.append(test_case)     
         except Exception as e:
             errors.append(e)
         
@@ -88,6 +88,19 @@ class Test_Descriptor_Validator:
         
         self.executed_tests_info = executed_tests_info 
         return errors
+
+    def validate_metrics_collection_process(self, metrics_collection_information):
+        mandatory_parameters = [mci["variable_name"] for mci in metrics_collection_information["metrics_collection"]["variables"] if mci["mandatory"]]
+        descriptors_metrics_collection_processes = self.descriptor_content["test_phases"]["setup"]["metrics_collection"]
+        for descriptors_metrics_collection_process in descriptors_metrics_collection_processes:
+            # get the defined paraemeters
+            described_keys = [ param["key"] for param in descriptors_metrics_collection_process["parameters"]]
+            # check if all the mandatory parameters are defined
+            all_mandatory_tags_defined = all(elem in described_keys for elem in mandatory_parameters)
+            if not all_mandatory_tags_defined:
+                return False
+        return True
+    
 
     def validate_structure(self):
         validator = Validator()

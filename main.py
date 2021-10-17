@@ -29,6 +29,8 @@ from routers import testbeds, tests, nodes, gui
 import aux.constants as Constants
 import utils.utils as Utils
 from sql_app import models
+import wrappers.jenkins.constants as JenkinsConstants
+
 
 
 # Logger
@@ -50,6 +52,10 @@ fast_api_tags_metadata = [
         "name": "testbeds",
         "description": "Operations related with the testbeds.",
     },
+    {
+        "name": "gui",
+        "description": "Endpoints provided to the GUI.",
+    }
 ]
 
 fast_api_description = "REST API of the 5GASP CI_CD_Manager"
@@ -104,11 +110,26 @@ async def startup_event():
         db.close()
         logging.critical(message)
         return exit(3)
-        
-    db.close()
+
+    # Load metrics collection info
+    ret, message = Constants.load_metrics_collection_info()
+    if not ret:
+        db.close()
+        logging.critical(message)
+        return exit(4)
     
     # Load Config
     ret, message = Constants.load_config()
     if not ret:
         logging.critical(message)
-        return exit(4)
+        db.close()
+        return exit(5)
+
+
+    # Load Jenkins Pipeline
+    try:
+        JenkinsConstants.BASE_PIPELINE = open(JenkinsConstants.BASE_PIPELINE_FILEPATH).read()
+    except Exception as e:
+        logging.critical(3)
+        db.close()
+        return exit(6)

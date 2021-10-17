@@ -38,7 +38,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 # custom imports
-from wrappers.jenkins_wrapper import Jenkins_Wrapper
+from wrappers.jenkins.wrapper import Jenkins_Wrapper
 from testing_descriptors_validator.test_descriptor_validator import Test_Descriptor_Validator
 import aux.constants as Constants
 import utils.utils as Utils

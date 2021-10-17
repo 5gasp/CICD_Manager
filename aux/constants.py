@@ -30,6 +30,10 @@ TEST_INFO = None
 TEST_INFO_FILEPATH = "static/test_information.yaml"
 TESTBED_INFO_FILEPATH = "static/testbeds_information.yaml"
 
+# Metrics Collection Info
+METRICS_COLLECTION_INFO = None
+METRICS_COLLECTION_INFO_FILEPATH = "static/metrics_collection_information.yaml"
+
 # PIPELINE INFO
 BASE_PIPELINE_FILEPATH = "static/pipeline.xml"
 
@@ -39,154 +43,24 @@ FTP_PASSWORD = None
 FTP_URL = None
 
 
-JENKINS_BASE_PIPELINE_SCRIPT = """
-pipeline {
-    agent any
-    stages {
-        stage('Setup environment') {
-            environment {
-                comm_token = credentials('communication_token')
-                test_id = <test_id>
-            }
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                    <setup_environment>
-                }
-            }
-            post {
-                failure {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "ENVIRONMENT_SETUP_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
-                }
-                success {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "ENVIRONMENT_SETUP_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
-                }
-            }
-        }
-        stage('Obtain Tests') {
-            environment {
-                <obtain_tests_environment>
-                comm_token = credentials('communication_token')
-                test_id = <test_id>
-            }
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                    <obtain_tests>
-                }
-            }
-            post {
-                failure {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "OBTAINED_TESTS_ON_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
-                }
-                success {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "OBTAINED_TESTS_ON_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
-                }
-            }
-        }
-        stage('Perform Tests') {
-            environment {
-                <perform_tests_environment>
-                comm_token = credentials('communication_token')
-                test_id = <test_id>
-            }
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                    <perform_tests>
-                }
-            }
-            post {
-                failure {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "PERFORMED_TESTS_ON_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
-                }
-                success {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "PERFORMED_TESTS_ON_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
-                }
-            }
-        }
-        stage('Logs') {
-            environment {
-                comm_token = credentials('communication_token')
-                test_id = <test_id>
-            }
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                    <logs_creation>
-                }
-            }
-            post {
-                failure {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "CREATED_LOGS_ON_CI_CD_AGENT"}\\' <ci_cd_manager_url_test_status_url>'
-                }
-                success {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "CREATED_LOGS_ON_CI_CD_AGENT"}\\'  <ci_cd_manager_url_test_status_url>'
-                }
-            }
-        }
-        stage('Publish Results') {
-            environment {
-                <publish_results_environment>
-                comm_token = credentials('communication_token')
-                test_id = <test_id>
-            }
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                    <publish_results>
-                }
-            }
-            post {
-                failure {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "PUBLISHED_TEST_RESULTS"}\\' <ci_cd_manager_url_test_status_url>'
-                }
-                success {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "PUBLISHED_TEST_RESULTS"}\\'  <ci_cd_manager_url_test_status_url>'
-                }
-            }
-        }
-        stage('Cleanup environment') {
-            environment {
-                comm_token = credentials('communication_token')
-                test_id = <test_id>
-            }
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                    <cleanup_environment>
-                }
-            }
-            post {
-                failure {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "CLEANED_TEST_ENVIRONMENT"}\\' <ci_cd_manager_url_test_status_url>'
-                }
-                success {
-                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "CLEANED_TEST_ENVIRONMENT"}\\'  <ci_cd_manager_url_test_status_url>'
-                }
-            }
-        }
-        stage('End Testing Process') {
-            environment {
-                comm_token = credentials('communication_token')
-                test_id = <test_id>
-            }
-            steps {
-                sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "TEST_ENDED"}\\'  <ci_cd_manager_url_test_status_url>'
-                sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "ftp_results_directory":"results/\\'$JOB_NAME\\'"}\\'  <ci_cd_manager_url_publish_test_results>'
-            }
-        }
-    }
-}"""
 
 TEST_STATUS ={
     "submitted_on_manager": "SUBMITTED_TO_CI_CD_MANAGER",
     "ci_cd_agent_provisioned": "PROVISIONED_CI_CD_AGENT",
     "ci_cd_agent_auth": "AUTHENTICATED_ON_CI_CD_AGENT",
-    "created_comm_token": "CREATED_COMMUNICATION_TOKEN_BETWEEN_MANAGER_AND_AGENT",
+    "created_comm_token": "CREATED_COMMUNICATION_TOKEN_ON_CI_CD_AGENT",
     "created_pipeline_script": "CREATED_PIPELINE_SCRIPT",
     "submitted_pipeline_script": "SUBMITTED_PIPELINE_SCRIPT",
     "ci_cd_agent_setup_environment": "ENVIRONMENT_SETUP_CI_CD_AGENT",
+    "monitoring_started": "STARTED_MONITORING",
     "ci_cd_agent_obtained_tests": "OBTAINED_TESTS_ON_CI_CD_AGENT",
     "ci_cd_agent_performed_tests": "PERFORMED_TESTS_ON_CI_CD_AGENT",
     "ci_cd_agent_created_logs": "CREATED_LOGS_ON_CI_CD_AGENT",
+    "monitoring_ended": "ENDED_MONITORING",
     "ci_cd_agent_published_test_results": "PUBLISHED_TEST_RESULTS",
     "ci_cd_agent_cleaned_test_environment": "CLEANED_TEST_ENVIRONMENT",
     "test_ended": "TEST_ENDED",
+    "obtained_metrics_collection_files": "OBTAINED_METRICS_COLLECTION_FILES",
 }
 
 def load_config():
@@ -212,3 +86,13 @@ def load_test_info():
     global TEST_INFO
     with open(TEST_INFO_FILEPATH) as mfile:
         TEST_INFO = yaml.load(mfile, Loader=yaml.FullLoader)
+
+
+def load_metrics_collection_info():
+    global METRICS_COLLECTION_INFO
+    try:
+        with open(METRICS_COLLECTION_INFO_FILEPATH) as mfile:
+            METRICS_COLLECTION_INFO = yaml.load(mfile, Loader=yaml.FullLoader)
+    except:
+        return False, "Could not load the metrics collection information"
+    return True, ""

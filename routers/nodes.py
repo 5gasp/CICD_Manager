@@ -46,7 +46,7 @@ def get_db():
         db.close()
 
 @router.post(
-    "/nodes/new", 
+    "/agents/new", 
     response_model=schemas.CI_CD_Node, 
     tags=["agents"],
     summary="Register new CI/CD Agent",
@@ -63,7 +63,7 @@ def create_node(node: schemas.CI_CD_Node_Create, db: Session = Depends(get_db)):
 
 
 @router.get(
-    "/nodes/all", 
+    "/agents/all", 
     response_model=List[schemas.CI_CD_Node], 
     tags=["agents"],
     summary="Get all CI/CD Agents",

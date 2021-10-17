@@ -65,7 +65,7 @@ def load_test_info(db, tests_info_file):
             return False, "Wrong structure"
 
         tests_data = tests_data["tests"]
-
+        print(tests_data.keys())
         if len(set(tests_data.keys())) != len(tests_data.keys()):
             return False, "Duplicated testbeds"
 

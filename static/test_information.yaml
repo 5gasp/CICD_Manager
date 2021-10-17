@@ -42,7 +42,7 @@ tests:
       - variable_name: comparator
         description: Comparator to be used while validating the bandwidth
         mandatory: true
-        possible_options: ['more than', 'more or equal than', 'less than', 'less or equal than']
+        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
         type: str
       - variable_name: threshold
         description: Threshold in mbits per second
@@ -91,7 +91,7 @@ tests:
       - variable_name: comparator
         description: Comparator to be used while validating the transmission speed
         mandatory: true
-        possible_options: ['more than', 'more or equal than', 'less than', 'less or equal than']
+        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
         type: str
       - variable_name: threshold
         description: Threshold in milliseconds
@@ -139,10 +139,34 @@ tests:
       - variable_name: comparator
         description: Comparator to be used while validating the packet loss ratio
         mandatory: true
-        possible_options: ['more than', 'more or equal than', 'less than', 'less or equal than']
+        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
         type: str
       - variable_name: threshold
         description: Ratio of packets lost
         mandatory: true
         possible_options: []
         type: float
+
+    open_ports:
+      id: open_ports
+      name: open ports
+      description: Validates the if a VM's open ports are the ones that should be opened
+      ftp_base_location: tests/open_ports/
+      test_filename: testOpenPorts.robot
+      test_type: Robot
+      test_variables:
+      - variable_name: host
+        description: Host of the target VNF
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: expected_open_port
+        description: Port that should be opened
+        mandatory: true
+        possible_options: []
+        type: int
+      - variable_name: expected_protocol
+        description: Protocol for which the port should be opened
+        mandatory: true
+        possible_options: []
+        type: str

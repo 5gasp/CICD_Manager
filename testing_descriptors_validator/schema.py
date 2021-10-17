@@ -119,6 +119,39 @@ SCHEMA = {
                             },
                         },
                     },
+                    'metrics_collection': {
+                        'required': False,
+                        'type': 'list',
+                        'schema': {
+                            'type': 'dict',
+                            'schema': {
+                                'metrics_collection_id': {
+                                    'required': True,
+                                    'type': 'integer'
+                                },
+                                'description': {
+                                    'required': False,
+                                    'type': 'string'
+                                },
+                                'parameters': {
+                                    'required': True,
+                                    'type': 'list',
+                                    'schema': {
+                                        'type': 'dict',
+                                        'schema': {
+                                            'key': {
+                                                'required': True,
+                                                'type': 'string'
+                                            },
+                                            'value': {
+                                                'required': True,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
                 },
             },
             'execution': {

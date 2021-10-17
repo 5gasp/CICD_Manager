@@ -35,7 +35,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 # custom imports
-from wrappers.jenkins_wrapper import Jenkins_Wrapper
+from wrappers.jenkins.wrapper import Jenkins_Wrapper
 from testing_descriptors_validator.test_descriptor_validator import Test_Descriptor_Validator
 import aux.constants as Constants
 import utils.utils as Utils
@@ -149,14 +149,22 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     if len(errors) != 0:
         return Utils.create_response(status_code=400, success=False, errors=errors, message="Error on validating test parameters")
 
-    # 5 - register the test in database
+
+    # 5 - validate metrics collection information
+    metrics_collection_information = Constants.METRICS_COLLECTION_INFO
+    is_ok = test_descriptor_validator.validate_metrics_collection_process(metrics_collection_information)
+    if not is_ok:
+        return Utils.create_response(status_code=400, success=False, errors=errors, message="Badly defined parameters for the metrics collection process")
+    descriptor_metrics_collection = test_descriptor_data["test_phases"]["setup"]["metrics_collection"]
+
+    # 6 - register the test in database
     netapp_id = test_descriptor_data["test_info"]["netapp_id"]
     network_service_id = test_descriptor_data["test_info"]["network_service_id"]
 
-    # 5.a register new test
+    # 6.a register new test
     test_instance = crud.create_test_instance(db, netapp_id, network_service_id, testbed_id)
 
-    # 5.b update test status
+    # 6.b update test status
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_on_manager"], True)
 
 
@@ -200,14 +208,15 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     selected_ci_cd_node = crud.update_communication_token(db, selected_ci_cd_node.id, credential_secret)
     
     executed_tests_info = test_descriptor_validator.executed_tests_info
+
     # create jenkins pipeline script
     try:
-        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(executed_tests_info, testbed_tests, test_instance.id)
+        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(executed_tests_info, testbed_tests, descriptor_metrics_collection, metrics_collection_information, test_instance.id)
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
     except Exception as e:
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
-    
+
     # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + '-' + str(test_instance.build)
     ret, message = jenkins_wrapper.create_new_job(job_name, pipeline_config)
@@ -219,10 +228,9 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     jenkins_job_name = message
 
     for executed_test in executed_tests_info:
-        test_instance_test = crud.create_test_instance_test(db, test_instance.id, executed_test["name"], executed_test["description"])
+        test_instance_test = crud.create_test_instance_test(db, test_instance.id, f"{executed_test['name']}-test-id-{executed_test['testcase_id']}", executed_test["description"])
         logging.info(f"Registered test '{test_instance_test.performed_test}' for test instance {test_instance.id}.")
 
-    #print(jenkins_wrapper.get_build_log("xyz-network_service_xyz-2", 10))
 
     # run jenkins job
     ret, message = jenkins_wrapper.run_job(jenkins_job_name)
@@ -309,3 +317,46 @@ async def publish_test_results(test_results_information: schemas.Test_Results,  
     except Exception as e:
         print(e)
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't get performed test status."]) 
+
+
+
+@router.get(
+    "/tests/test-report",
+    tags=["tests"],
+    summary="Get the report of test process",
+    description="The developers can use this endpoint to gather the report of a test",
+)
+async def get_test_status(test_id: int, access_token: str, db: Session = Depends(get_db)):
+    # test status
+    test_status = None
+    try:
+        data = crud.get_all_test_status_for_test_given_id(db, test_id)
+        test_status = [status.as_dict() for status in data]
+    except Exception as e:
+        logging.error(e)
+        return Utils.create_response(status_code=400, success=False, errors=["Couldn't retrieve the tests status."]) 
+
+    # test base info
+    test_base_info = None
+    try:
+        data = crud.get_test_base_information(db, test_id)
+        test_base_info = data
+    except Exception as e:
+        logging.error(e)
+        return Utils.create_response(status_code=400, success=False, errors=["Couldn't retrieve the test base information."]) 
+
+    # tests performed
+    tests_performed = None
+    try:
+        data = crud.get_tests_of_test_instance(db, test_id)
+        tests_performed = [d.as_dict() for d in data]
+    except Exception as e:
+        logging.error(e)
+        return Utils.create_response(status_code=400, success=False, errors=["Couldn't retrieve the test performed."]) 
+
+
+    return Utils.create_response(data={
+        "test_status": test_status,
+        "test_base_info": test_base_info,
+        "tests_performed": tests_performed,
+    })

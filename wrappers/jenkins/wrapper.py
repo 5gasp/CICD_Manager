@@ -27,7 +27,8 @@ sys.path.insert(0, parentdir)
 
 # custom imports
 import aux.constants as Constants
-
+import wrappers.jenkins.constants as JenkinsConstants
+import wrappers.jenkins.pipeline_configuration as JenkinsPipelineConfiguration
 
 # Logger
 logging.basicConfig(
@@ -67,6 +68,7 @@ class Jenkins_Wrapper:
         self.jenkins_server = server
         return True, ""
 
+
     @requires_auth
     def get_build_log(self, job_name, build_number):
         try:
@@ -74,6 +76,7 @@ class Jenkins_Wrapper:
         except Exception as e:
             return False, f"Unable to get build logs. Cause: {str(e)}"
         return True, ret
+
 
     @requires_auth
     def get_last_build_number(self, job_name):
@@ -92,6 +95,7 @@ class Jenkins_Wrapper:
             return False, f"Unable to create new job. Cause: {str(e)}"
         return True, job_name
 
+
     @requires_auth
     def run_job(self, job_name):
         try:
@@ -99,96 +103,6 @@ class Jenkins_Wrapper:
         except Exception as e:
             return False, f"Unable to run the job '{job_name}'. Cause: {str(e)}"
         return True, build_number
-
-    def create_jenkins_pipeline_script(self, executed_tests_info, available_tests, test_instance_id):
-        # base commands
-        setup_environment_commands = [
-            "sh 'mkdir -p ~/test_repository/\"$JOB_NAME\"'",
-            "sh 'mkdir -p ~/test_results/\"$JOB_NAME\"'",
-            "sh 'mkdir -p ~/test_logs/\"$JOB_NAME\"'"
-        ]
-
-        logs_commands = [
-            "sh \"echo \\\"JobName: $JOB_NAME\\\" > ~/test_logs/\\\"\\\"$JOB_NAME\\\"\\\"/\\\"\\\"$JOB_NAME\\\"_${currentBuild.number}.log\\\"\"",
-            "sh \"echo \\\"Current Build Number: ${currentBuild.number}\\\" >> ~/test_logs/\\\"\\\"$JOB_NAME\\\"\\\"/\\\"\\\"$JOB_NAME\\\"_${currentBuild.number}.log\\\"\"",
-            "sh \"echo \\\"Log creation date: \$(date)\\\" >> ~/test_logs/\\\"\\\"$JOB_NAME\\\"\\\"/\\\"\\\"$JOB_NAME\\\"_${currentBuild.number}.log\\\"\""
-        ]
-
-        environment_obtain_tests = [
-            f"ftp_user = credentials('ftp_user')",
-            f"ftp_password = credentials('ftp_password')",
-            f"ftp_url = '{Constants.FTP_URL}'"
-        ]
-
-        publish_results_commands = [
-            """sh '''
-            #!/bin/bash
-            cd ~/test_results/\"$JOB_NAME\"/
-            find . -type f -exec curl -u $ftp_user:$ftp_password --ftp-create-dirs -T {} ftp://$ftp_url/results/\"$JOB_NAME\"/{} \\\;
-        '''""",
-        ]
-
-        cleanup_environment_commands = [
-            "sh 'rm -rf ~/test_repository/\"$JOB_NAME\"'",
-            "sh 'rm -rf ~/test_results/\"$JOB_NAME\"'",
-            #"sh 'mkdir -p ~/test_logs/\"$JOB_NAME\"'"
-        ]
-
-        # robot tests
-        tests_to_perform = {}
-        variables_to_export = []
-        obtain_tests_commands = []
-        for test_info in executed_tests_info:
-            test_id = test_info["name"]
-            test_dir = available_tests[test_id]["ftp_base_location"]
-            test_filename = available_tests[test_id]["test_filename"]
-            # obtain test
-            obtain_tests_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ftp_user:$ftp_password@$ftp_url/{test_dir}'")
-            # save test location. needed to run the test
-            tests_to_perform[test_id] = str(os.path.join("~/test_repository/\"$JOB_NAME\"", test_dir, test_filename))
-            # save env to export
-            for parameter in test_info["parameters"]:
-                key = f"{test_id}_{parameter['key']}"
-                variables_to_export.append(f"{key} = '{parameter['value']}'")
-
-        run_tests_commands = [
-            "sh 'python3 -m pip install robotframework==4.1.1 paramiko==2.7.2'",
-        ]
-        for test_name, test_location  in tests_to_perform.items():
-            run_tests_commands.append("sh 'python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/" + test_name +  " " + test_location +"'")
-
-
-        jenkins_script_str = copy.copy(Constants.JENKINS_BASE_PIPELINE_SCRIPT)
-
-        # update environment variables
-        jenkins_script_str = self.__fill_jenkins_script("<perform_tests_environment>", variables_to_export, jenkins_script_str)
-        # update setup_environment
-        jenkins_script_str = self.__fill_jenkins_script("<setup_environment>", setup_environment_commands, jenkins_script_str)
-        # update obtain_tests environment
-        jenkins_script_str = self.__fill_jenkins_script("<obtain_tests_environment>", environment_obtain_tests, jenkins_script_str)
-        # update obtain_tests
-        jenkins_script_str = self.__fill_jenkins_script("<obtain_tests>", obtain_tests_commands, jenkins_script_str)
-        # update perform_tests
-        jenkins_script_str = self.__fill_jenkins_script("<perform_tests>", run_tests_commands, jenkins_script_str)
-        # update log creation commands
-        jenkins_script_str = self.__fill_jenkins_script("<logs_creation>", logs_commands, jenkins_script_str)
-        # update publish_results_environment environment
-        jenkins_script_str = self.__fill_jenkins_script("<publish_results_environment>", environment_obtain_tests, jenkins_script_str)        
-        # update publish results commands
-        jenkins_script_str = self.__fill_jenkins_script("<publish_results>", publish_results_commands, jenkins_script_str)
-        # update cleanup commands
-        jenkins_script_str = self.__fill_jenkins_script("<cleanup_environment>", cleanup_environment_commands, jenkins_script_str)
-        # update test instance id
-        jenkins_script_str = jenkins_script_str.replace("<test_id>", str(test_instance_id))
-        # update CI/CD location
-        jenkins_script_str = jenkins_script_str.replace("<ci_cd_manager_url_test_status_url>", Constants.CI_CD_MANAGER_URL+"/tests/test-status")
-        jenkins_script_str = jenkins_script_str.replace("<ci_cd_manager_url_publish_test_results>", Constants.CI_CD_MANAGER_URL+"/tests/publish-test-results")
-
-        config = open(Constants.BASE_PIPELINE_FILEPATH).read()
-        config = config.replace("add_pipeline_configuration_here", jenkins_script_str)
-
-        # print(repr(config))
-        return config
 
 
     @requires_auth
@@ -271,9 +185,10 @@ class Jenkins_Wrapper:
         
         return True, ""
 
-    def __fill_jenkins_script(self, tag_to_replace, commands_lst, jenkins_script_str):
-        item1 = re.search(tag_to_replace, jenkins_script_str, re.MULTILINE)
-        item2 = re.search("{\s*" + tag_to_replace, jenkins_script_str, re.MULTILINE)
-        line_offset = item1.span(0)[0] - item2.span(0)[0] - 2
-        commands_str = "\n{}".format(line_offset * " ").join(commands_lst)
-        return jenkins_script_str.replace(tag_to_replace, commands_str)
+
+    def create_jenkins_pipeline_script(self, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information, test_instance_id):
+        jenkins_script_str = copy.copy(JenkinsConstants.JENKINS_BASE_PIPELINE_SCRIPT)
+        pipeline_configuration = JenkinsPipelineConfiguration.Jenkins_Pipeline_Configuration(jenkins_script_str, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information, test_instance_id)
+        conf = pipeline_configuration.create_jenkins_pipeline_script()
+        return conf
+  
