@@ -8,12 +8,27 @@
 # Description:
 # Contains the connection to the CI/CD Manager's Database
 
-
+import aux.constants as Constants
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import configparser
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:postgres@10.0.13.27:5432/5gasp"
+# load config
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+# Test config
+try:
+    # Load Variables
+    Constants.DB_LOCATION = config['DB']['Location']
+    Constants.DB_NAME = config['DB']['Name']
+    Constants.DB_USER = config['DB']['User']
+    Constants.DB_PASSWORD = config['DB']['Password']
+except:
+    exit(2)
+
+SQLALCHEMY_DATABASE_URL = f"postgresql://{Constants.DB_USER}:{Constants.DB_PASSWORD}@{Constants.DB_LOCATION}/{Constants.DB_NAME}"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL
 )

@@ -66,12 +66,27 @@ def load_test_info(db, tests_info_file):
             return False, "Wrong structure"
 
         tests_data = tests_data["tests"]
-        print(tests_data.keys())
         if len(set(tests_data.keys())) != len(tests_data.keys()):
             return False, "Duplicated testbeds"
 
         for testbed in tests_data:
             if crud.get_testbed_by_id(db, testbed) is None:
                 return False, "Testbed doesn't exist"
-                
+
     return True, ""    
+
+
+def load_testbeds_info(testbed_info_file):
+    try:
+        with open(testbed_info_file) as mfile:
+            testbeds_data = yaml.load(mfile, Loader=yaml.FullLoader)
+
+            Constants.TESTBEDS_INFO = testbeds_data
+        return True, ""   
+    except:
+        return False, "Unable to load testbeds information"
+
+
+def get_ltr_info_for_testbed(testbed_id):
+    ltr_info = Constants.TESTBEDS_INFO["testbeds"][testbed_id]["ltr"]
+    return ltr_info

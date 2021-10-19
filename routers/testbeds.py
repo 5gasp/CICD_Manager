@@ -25,7 +25,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 # custom imports
-from utils import utils as Utils
+from aux import utils as Utils
 router = APIRouter()
 
 # Logger

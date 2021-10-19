@@ -22,7 +22,7 @@ sys.path.insert(0, parentdir)
 # custom imports
 import testing_descriptors_validator.schema as schema
 import aux.constants as Constants
-import utils.utils as Utils
+import aux.utils as Utils
 
 
 class Test_Descriptor_Validator:

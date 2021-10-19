@@ -17,6 +17,7 @@ sys.path.insert(0, parentdir)
 
 # custom imports
 import aux.constants as Constants
+import aux.utils as Utils
 import wrappers.jenkins.constants as JenkinsConstants
 
 # Logger
@@ -27,20 +28,23 @@ logging.basicConfig(
 
 class Jenkins_Pipeline_Configuration:
     
-    def __init__(self, jenkins_script_str, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information,  test_instance_id):
+    def __init__(self, jenkins_script_str, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information,  test_instance_id, testbed_id):
         self.jenkins_script_str = jenkins_script_str
         self.executed_tests_info = executed_tests_info
         self.available_tests = available_tests
         self.descriptor_metrics_collection = descriptor_metrics_collection
         self.metrics_collection_information = metrics_collection_information
         self.test_instance_id = test_instance_id
+        self.testbed_id = testbed_id
+        self.ltr_info = Utils.get_ltr_info_for_testbed(testbed_id)
 
 
     def create_jenkins_pipeline_script(self):
     
         # fill the pipeline script
+        print(self.ltr_info)
         self.add_environment_setup_to_jenkins_pipeline_script()
-        self.add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self.descriptor_metrics_collection, self.metrics_collection_information)
+        self.add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self.metrics_collection_information)
         self.add_metrics_colllection_mechanism_to_jenkins_pipeline_script(self.descriptor_metrics_collection, self.metrics_collection_information)
         self.add_obtain_and_perform_tests_to_jenkins_pipeline_script(self.executed_tests_info, self.available_tests)
         self.add_publish_results_to_jenkins_pipeline_script()
@@ -51,7 +55,6 @@ class Jenkins_Pipeline_Configuration:
         # update CI/CD location
         self.jenkins_script_str = self.jenkins_script_str.replace("<ci_cd_manager_url_test_status_url>", Constants.CI_CD_MANAGER_URL+"/tests/test-status")
         self.jenkins_script_str = self.jenkins_script_str.replace("<ci_cd_manager_url_publish_test_results>", Constants.CI_CD_MANAGER_URL+"/tests/publish-test-results")
-
         config = JenkinsConstants.BASE_PIPELINE
         config = config.replace("add_pipeline_configuration_here", self.jenkins_script_str)
 
@@ -76,9 +79,9 @@ class Jenkins_Pipeline_Configuration:
         ]
 
         environment_obtain_tests = [
-            f"ftp_user = credentials('ftp_user')",
-            f"ftp_password = credentials('ftp_password')",
-            f"ftp_url = '{Constants.FTP_URL}'"
+            f"ltr_user = credentials('ltr_user')",
+            f"ltr_password = credentials('ltr_password')",
+            f"ltr_location = '{self.ltr_info['location']}'"
         ]
 
         run_tests_commands = []
@@ -89,14 +92,12 @@ class Jenkins_Pipeline_Configuration:
 
         # robot tests
         tests_to_perform = {}        
-        print("---", executed_tests_info)
         for test_info in executed_tests_info:
             test_id = test_info["name"]
-            print("test_id--", test_id)
             test_dir = available_tests[test_id]["ftp_base_location"]
             test_filename = available_tests[test_id]["test_filename"]
             # obtain test
-            obtain_tests_commands.add(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ftp_user:$ftp_password@$ftp_url/{test_dir}'")
+            obtain_tests_commands.add(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ltr_user:$ltr_password@$ltr_location/{test_dir}'")
             # save test location. needed to run the test
             tests_to_perform[test_id] = str(os.path.join("~/test_repository/\"$JOB_NAME\"", test_dir, test_filename))
             # save env to export
@@ -116,16 +117,19 @@ class Jenkins_Pipeline_Configuration:
 
     def add_publish_results_to_jenkins_pipeline_script(self):
         publish_results_environment = [
-            f"ftp_user = credentials('ftp_user')",
-            f"ftp_password = credentials('ftp_password')",
-            f"ftp_url = '{Constants.FTP_URL}'"
+            f"ltr_user = credentials('ltr_user')",
+            f"ltr_password = credentials('ltr_password')",
+            f"ltr_location = '{self.ltr_info['location']}'",
+            f"results_ftp_location = '{Constants.FTP_RESULTS_URL}'",
+            f"results_ftp_user = '{Constants.FTP_RESULTS_USER}'",
+            f"results_ftp_password = '{Constants.FTP_RESULTS_PASSWORD}'",
         ]
 
         publish_results_commands = [
             """sh '''
             #!/bin/bash
             cd ~/test_results/\"$JOB_NAME\"/
-            find . -type f -exec curl -u $ftp_user:$ftp_password --ftp-create-dirs -T {} ftp://$ftp_url/results/\"$JOB_NAME\"/{} \\\;
+            find . -type f -exec curl -u $results_ftp_user:$results_ftp_password --ftp-create-dirs -T {} ftp://$results_ftp_location/\"$JOB_NAME\"/{} \\\;
         '''""",
         ]
         self.__update_jenkins_script("<publish_results>", publish_results_commands)
@@ -141,19 +145,16 @@ class Jenkins_Pipeline_Configuration:
         return self.__update_jenkins_script("<cleanup_environment>", cleanup_environment_commands)
 
 
-    def add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self, descriptor_metrics_collection, metrics_collection_information):
-        print(descriptor_metrics_collection)
-        print(metrics_collection_information)
-
+    def add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self, metrics_collection_information):
         obtain_metrics_environment = [
-            f"ftp_user = credentials('ftp_user')",
-            f"ftp_password = credentials('ftp_password')",
-            f"ftp_url = '{Constants.FTP_URL}'"
+            f"ltr_user = credentials('ltr_user')",
+            f"ltr_password = credentials('ltr_password')",
+            f"ltr_location = '{self.ltr_info['location']}'"
         ]
 
         obtain_metrics_collection_file_commands = []
         metrics_dir = metrics_collection_information["metrics_collection"]["ftp_base_location"]
-        obtain_metrics_collection_file_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ftp_user:$ftp_password@$ftp_url/{metrics_dir}'")
+        obtain_metrics_collection_file_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ltr_user:$ltr_password@$ltr_location/{metrics_dir}'")
         self.__update_jenkins_script("<obtain_metrics_collection_files>", obtain_metrics_collection_file_commands)
         self.__update_jenkins_script("<obtain_metrics_environment>", obtain_metrics_environment)
 

@@ -8,21 +8,7 @@
 #
 # Description:
 # Contains several constant variables needed in the workflow of the
-# CI/CD Manage
-
-# generic imports
-import configparser
-import logging
-import yaml
-import os
-import inspect
-
-# Logger
-logging.basicConfig(
-    format="%(module)-15s:%(levelname)-10s| %(message)s",
-    level=logging.INFO
-)
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+# CI/CD Manager
 
 
 # CI/CD MANAGER 
@@ -38,9 +24,18 @@ METRICS_COLLECTION_INFO = None
 METRICS_COLLECTION_INFO_FILEPATH = None
 
 # FTP
-FTP_USER = None
-FTP_PASSWORD = None
-FTP_URL = None
+FTP_RESULTS_USER = None
+FTP_RESULTS_PASSWORD = None
+FTP_RESULTS_URL = None
+
+# Database
+DB_NAME = None
+DB_LOCATION = None
+DB_USER = None
+DB_PASSWORD = None
+
+# Testbeds
+TESTBEDS_INFO = None
 
 # Possible Test Status
 TEST_STATUS ={
@@ -61,41 +56,3 @@ TEST_STATUS ={
     "test_ended": "TEST_ENDED",
     "obtained_metrics_collection_files": "OBTAINED_METRICS_COLLECTION_FILES",
 }
-
-def load_config():
-    global FTP_USER, FTP_PASSWORD, FTP_URL, CI_CD_MANAGER_URL, TEST_INFO_FILEPATH, TESTBED_INFO_FILEPATH, METRICS_COLLECTION_INFO_FILEPATH
-
-    # load config
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-
-    # Test config
-    try:
-        # Load Variables
-        FTP_USER = config['FTP']['User']
-        FTP_PASSWORD = config['FTP']['Password']
-        FTP_URL = config['FTP']['Url']
-        CI_CD_MANAGER_URL = config['CI_CD_MANAGER']['Url']
-        TEST_INFO_FILEPATH = config['DESCRIPTORS_LOCATION']['Tests_Information_Descriptor_Filepath']
-        TESTBED_INFO_FILEPATH = config['DESCRIPTORS_LOCATION']['Testbeds_Information_Descriptor_Filepath']
-        METRICS_COLLECTION_INFO_FILEPATH = config['DESCRIPTORS_LOCATION']['Metrics_Collection_Information_Descriptor_Filepath']
-        print(TESTBED_INFO_FILEPATH)
-    except:
-        return False, "The config file should have the folling sections with the following variables: FTP -> User, Password, Url | CI_CD_MANAGER -> Url | DESCRIPTORS_LOCATION -> Tests_Information_Descriptor_Filepath, Testbeds_Information_Descriptor_Filepath, Metrics_Collection_Information_Descriptor_Filepath"
-    return True, ""
-
-
-def load_test_info():
-    global TEST_INFO
-    with open(TEST_INFO_FILEPATH) as mfile:
-        TEST_INFO = yaml.load(mfile, Loader=yaml.FullLoader)
-
-
-def load_metrics_collection_info():
-    global METRICS_COLLECTION_INFO
-    try:
-        with open(METRICS_COLLECTION_INFO_FILEPATH) as mfile:
-            METRICS_COLLECTION_INFO = yaml.load(mfile, Loader=yaml.FullLoader)
-    except:
-        return False, "Could not load the metrics collection information"
-    return True, ""

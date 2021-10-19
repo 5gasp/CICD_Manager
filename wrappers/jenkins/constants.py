@@ -4,7 +4,7 @@ import inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 # PIPELINE INFO
-BASE_PIPELINE_FILEPATH = os.path.join(currentdir, "static", "pipeline.xml")
+BASE_PIPELINE_FILEPATH = os.path.join(currentdir, "pipeline.xml")
 BASE_PIPELINE = None
 
 JENKINS_BASE_PIPELINE_SCRIPT = """
@@ -174,7 +174,7 @@ pipeline {
             }
             steps {
                 sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "TEST_ENDED"}\\'  <ci_cd_manager_url_test_status_url>'
-                sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "ftp_results_directory":"results/\\'$JOB_NAME\\'"}\\'  <ci_cd_manager_url_publish_test_results>'
+                sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "ftp_results_directory":"\\'$JOB_NAME\\'"}\\'  <ci_cd_manager_url_publish_test_results>'
             }
         }
     }

@@ -16,21 +16,13 @@ from fastapi.responses import HTMLResponse
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from sql_app.database import SessionLocal
-from sql_app import crud, schemas
-from fastapi import File, UploadFile
+from sql_app import crud
 from sqlalchemy.orm import Session
 import logging
 import inspect
 import sys
 import os
-import binascii
-import yaml
-import datetime as dt
 from urllib.request import urlopen
-import xml.etree.ElementTree as ET
-import json
-import ftplib
-import io
 
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -39,9 +31,8 @@ sys.path.insert(0, parentdir)
 
 # custom imports
 from wrappers.jenkins.wrapper import Jenkins_Wrapper
-from testing_descriptors_validator.test_descriptor_validator import Test_Descriptor_Validator
 import aux.constants as Constants
-import utils.utils as Utils
+import aux.utils as Utils
 
 # Logger
 logging.basicConfig(
@@ -87,7 +78,7 @@ async def get_testing_process_status(test_id: int, access_token: str, db: Sessio
 async def get_testing_console_log(test_id: int, access_token: str, db: Session = Depends(get_db)):
     # get test instance information
     test_instance = crud.get_test_instance(db, test_id)
-    test_console_log = urlopen(f"ftp://{Constants.FTP_USER}:{Constants.FTP_PASSWORD}@{Constants.FTP_URL}/{test_instance.test_log_location}").read()
+    test_console_log = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_instance.test_log_location}").read()
     test_console_log = test_console_log.decode('utf-8')
     return PlainTextResponse(content=test_console_log , headers={"Access-Control-Allow-Origin": "*"})
     
@@ -130,9 +121,8 @@ async def get_tests_performed(test_id: int, access_token: str, db: Session = Dep
     description="After the validation pipeline, several files are created by the Robot Framework. This endpoint retrieves these files",
 )
 async def get_test_output_file(test_id: int, access_token: str, test_name: str, file_name: str, db: Session = Depends(get_db)):
-    # get test instance information
     test_instance = crud.get_test_instance(db, test_id)
-    print(test_instance.test_results_location)
-    test_console_log = urlopen(f"ftp://{Constants.FTP_USER}:{Constants.FTP_PASSWORD}@{Constants.FTP_URL}/{test_instance.test_results_location}/{test_name}/{file_name}").read()
+    print(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_instance.test_results_location}/{test_name}/{file_name}")
+    test_console_log = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_instance.test_results_location}/{test_name}/{file_name}").read()
     test_console_log = test_console_log.decode('utf-8')
     return HTMLResponse(content=test_console_log,  headers={"Access-Control-Allow-Origin": "*"})

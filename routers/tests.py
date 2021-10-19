@@ -38,7 +38,7 @@ sys.path.insert(0, parentdir)
 from wrappers.jenkins.wrapper import Jenkins_Wrapper
 from testing_descriptors_validator.test_descriptor_validator import Test_Descriptor_Validator
 import aux.constants as Constants
-import utils.utils as Utils
+import aux.utils as Utils
 
 # Logger
 logging.basicConfig(
@@ -194,12 +194,15 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
         return Utils.create_response(status_code=400, success=False, errors=[message])
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_comm_token"], True)
     
+    testbed_id = test_instance.testbed_id
+    ltr_info = Utils.get_ltr_info_for_testbed(testbed_id)
+
     # b - ftp_user
-    ret, message = jenkins_wrapper.create_credential("ftp_user", Constants.FTP_USER, "FTP user for obtaining the tests.")
+    ret, message = jenkins_wrapper.create_credential("ltr_user", ltr_info["user"], "FTP user for obtaining the tests.")
     if not ret:
         return Utils.create_response(status_code=400, success=False, errors=[message])
     # c - ftp_password
-    ret, message = jenkins_wrapper.create_credential("ftp_password", Constants.FTP_PASSWORD, "FTP password for obtaining the tests.")
+    ret, message = jenkins_wrapper.create_credential("ltr_password", ltr_info["password"], "FTP password for obtaining the tests.")
     if not ret:
         return Utils.create_response(status_code=400, success=False, errors=[message])
 
@@ -211,7 +214,7 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
     # create jenkins pipeline script
     try:
-        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(executed_tests_info, testbed_tests, descriptor_metrics_collection, metrics_collection_information, test_instance.id)
+        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(executed_tests_info, testbed_tests, descriptor_metrics_collection, metrics_collection_information, test_instance.id, test_instance.testbed_id)
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
     except Exception as e:
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
@@ -220,7 +223,6 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + '-' + str(test_instance.build)
     ret, message = jenkins_wrapper.create_new_job(job_name, pipeline_config)
-    print("New Job:", message)
     if not ret:
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], False)
         return Utils.create_response(status_code=400, success=False, errors=[message])
@@ -273,7 +275,7 @@ async def publish_test_results(test_results_information: schemas.Test_Results,  
         tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
         tests = [t.performed_test for t in tests]
         for test in tests:
-            xml_str = urlopen(f"ftp://{Constants.FTP_USER}:{Constants.FTP_PASSWORD}@{Constants.FTP_URL}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
+            xml_str = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
             root = ET.fromstring(xml_str)
             failed_tests = int(root.findall("statistics")[0].find('total').find('stat').attrib['fail'])
             
@@ -303,14 +305,15 @@ async def publish_test_results(test_results_information: schemas.Test_Results,  
         if not ret:
             return Utils.create_response(status_code=400, success=False, errors=[message])
         
+        testbed_id = test_instance_dic["testbed_id"]
         # save console log to ftp
-        session = ftplib.FTP(Constants.FTP_URL.split(':')[0], Constants.FTP_USER, Constants.FTP_PASSWORD)
+        session = ftplib.FTP(Constants.FTP_RESULTS_URL.split(':')[0], Constants.FTP_RESULTS_USER, Constants.FTP_RESULTS_PASSWORD)
         session.storbinary(f'STOR {test_results_information.ftp_results_directory}/console_log.log', io.BytesIO(message.encode('utf-8')) )
         session.quit()
 
         # update test instance
         crud.update_test_instance_after_validation_process(db, test_results_information.test_id , f"{test_results_information.ftp_results_directory}/console_log.log", test_results_information.ftp_results_directory)
-
+        print("---->", test_results_information.ftp_results_directory)
         return Utils.create_response(data=tests)
     except Exception as e:
         print(e)

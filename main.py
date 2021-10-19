@@ -27,7 +27,8 @@ sys.path.insert(0, parentdir)
 from sql_app.database import SessionLocal, engine
 from routers import testbeds, tests, nodes, gui
 import aux.constants as Constants
-import utils.utils as Utils
+import aux.startup as Startup
+import aux.utils as Utils
 from sql_app import models
 import wrappers.jenkins.constants as JenkinsConstants
 
@@ -91,7 +92,7 @@ def get_db():
 async def startup_event():
 
     # Load Config
-    ret, message = Constants.load_config()
+    ret, message = Startup.load_config()
     if not ret:
         logging.critical(message)
         return exit(1)
@@ -111,6 +112,12 @@ async def startup_event():
         db.close()
         return exit(3)
 
+    ret, message = Utils.load_testbeds_info(Constants.TESTBED_INFO_FILEPATH)
+    if not ret:
+        logging.critical(message)
+        db.close()
+        return exit(3)
+
     # Load test info
     ret, message = Utils.load_test_info(db, Constants.TEST_INFO_FILEPATH)
     if not ret:
@@ -119,7 +126,7 @@ async def startup_event():
         return exit(4)
 
     # Load metrics collection info
-    ret, message = Constants.load_metrics_collection_info()
+    ret, message = Startup.load_metrics_collection_info()
     if not ret:
         db.close()
         logging.critical(message)
