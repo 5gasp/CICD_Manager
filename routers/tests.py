@@ -268,7 +268,6 @@ description="After the validation process this endpoint will be used to submit t
 async def publish_test_results(test_results_information: schemas.Test_Results,  db: Session = Depends(get_db)):
     global jenkins_wrapper
     # validate communication token
-
     try:
         # get test results
         tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
@@ -289,7 +288,6 @@ async def publish_test_results(test_results_information: schemas.Test_Results,  
             success = failed_tests == 0
             crud.update_test_status_of_test_instance(db, test_results_information.test_id, test, str(start_dt), str(end_dt), success)
 
-        
         
         # get test console log
         test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)

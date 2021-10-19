@@ -31,6 +31,7 @@ class Test_Descriptor_Validator:
         self.descriptor_content = descriptor_content
         self.executed_tests_info = None
 
+
     def is_test_description_valid(test_name, test_info, available_tests):
         # 1. check if the test contains a test_id
         test_id = test_info.get("test_id")
@@ -88,6 +89,7 @@ class Test_Descriptor_Validator:
         
         self.executed_tests_info = executed_tests_info 
         return errors
+
 
     def validate_metrics_collection_process(self, metrics_collection_information):
         mandatory_parameters = [mci["variable_name"] for mci in metrics_collection_information["metrics_collection"]["variables"] if mci["mandatory"]]

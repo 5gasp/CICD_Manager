@@ -1,3 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# Author: Rafael Direito (rdireito@av.it.pt)
+# Date:  7th june 2021
+# Last Update: 12th july 2021
+
+# Description:
+# Contains the connection to the CI/CD Manager's Database
+
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker

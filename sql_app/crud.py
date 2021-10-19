@@ -167,6 +167,7 @@ def get_ci_cd_agent_given_test_instance_id(db: Session, test_instance_id: int):
     ci_cd_node_id = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first().ci_cd_node_id
     return get_ci_cd_node_by_id(db, ci_cd_node_id)
 
+
 # ---------------------------------------- #
 # -------------- Test Status ------------- #
 # ---------------------------------------- #

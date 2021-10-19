@@ -27,7 +27,8 @@ logging.basicConfig(
 )
 
 def create_response(status_code=200, data=[], errors=[], success=True, message=""):
-    return JSONResponse(status_code=status_code, content={"message": message, "success": success, "data": data, "errors": errors}, headers={"Access-Control-Allow-Origin": "*"})
+    return JSONResponse(status_code=status_code, content={"message": message, "success": success, 
+    "data": data, "errors": errors}, headers={"Access-Control-Allow-Origin": "*"})
 
 
 def load_testbeds_to_db(session, testbed_info_file):
@@ -72,7 +73,5 @@ def load_test_info(db, tests_info_file):
         for testbed in tests_data:
             if crud.get_testbed_by_id(db, testbed) is None:
                 return False, "Testbed doesn't exist"
-
-        # ... further elaborate, once we have the final testing descriptors
-
+                
     return True, ""    

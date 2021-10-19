@@ -14,12 +14,15 @@
 import configparser
 import logging
 import yaml
+import os
+import inspect
 
 # Logger
 logging.basicConfig(
     format="%(module)-15s:%(levelname)-10s| %(message)s",
     level=logging.INFO
 )
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 
 # CI/CD MANAGER 
@@ -27,23 +30,19 @@ CI_CD_MANAGER_URL = None
 
 # TEST/TESTBED INFO
 TEST_INFO = None
-TEST_INFO_FILEPATH = "static/test_information.yaml"
-TESTBED_INFO_FILEPATH = "static/testbeds_information.yaml"
+TEST_INFO_FILEPATH = None
+TESTBED_INFO_FILEPATH = None
 
 # Metrics Collection Info
 METRICS_COLLECTION_INFO = None
-METRICS_COLLECTION_INFO_FILEPATH = "static/metrics_collection_information.yaml"
-
-# PIPELINE INFO
-BASE_PIPELINE_FILEPATH = "static/pipeline.xml"
+METRICS_COLLECTION_INFO_FILEPATH = None
 
 # FTP
 FTP_USER = None
 FTP_PASSWORD = None
 FTP_URL = None
 
-
-
+# Possible Test Status
 TEST_STATUS ={
     "submitted_on_manager": "SUBMITTED_TO_CI_CD_MANAGER",
     "ci_cd_agent_provisioned": "PROVISIONED_CI_CD_AGENT",
@@ -64,7 +63,7 @@ TEST_STATUS ={
 }
 
 def load_config():
-    global FTP_USER, FTP_PASSWORD, FTP_URL, CI_CD_MANAGER_URL
+    global FTP_USER, FTP_PASSWORD, FTP_URL, CI_CD_MANAGER_URL, TEST_INFO_FILEPATH, TESTBED_INFO_FILEPATH, METRICS_COLLECTION_INFO_FILEPATH
 
     # load config
     config = configparser.ConfigParser()
@@ -77,8 +76,12 @@ def load_config():
         FTP_PASSWORD = config['FTP']['Password']
         FTP_URL = config['FTP']['Url']
         CI_CD_MANAGER_URL = config['CI_CD_MANAGER']['Url']
+        TEST_INFO_FILEPATH = config['DESCRIPTORS_LOCATION']['Tests_Information_Descriptor_Filepath']
+        TESTBED_INFO_FILEPATH = config['DESCRIPTORS_LOCATION']['Testbeds_Information_Descriptor_Filepath']
+        METRICS_COLLECTION_INFO_FILEPATH = config['DESCRIPTORS_LOCATION']['Metrics_Collection_Information_Descriptor_Filepath']
+        print(TESTBED_INFO_FILEPATH)
     except:
-        return False, "The config file should have the folling sections with the following variables: FTP -> User, Password, Url | CI_CD_MANAGER -> Url"
+        return False, "The config file should have the folling sections with the following variables: FTP -> User, Password, Url | CI_CD_MANAGER -> Url | DESCRIPTORS_LOCATION -> Tests_Information_Descriptor_Filepath, Testbeds_Information_Descriptor_Filepath, Metrics_Collection_Information_Descriptor_Filepath"
     return True, ""
 
 

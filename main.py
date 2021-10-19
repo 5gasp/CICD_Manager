@@ -89,12 +89,19 @@ def get_db():
 # __init__
 @app.on_event("startup")
 async def startup_event():
+
+    # Load Config
+    ret, message = Constants.load_config()
+    if not ret:
+        logging.critical(message)
+        return exit(1)
+
     # Connect to Database
     try:
         models.Base.metadata.create_all(bind=engine)
     except Exception as e:
         logging.critical("Unable to connect to database. Exception:", e)
-        exit(1)
+        exit(2)
     
     db = SessionLocal()
     # Load testbed info
@@ -102,30 +109,22 @@ async def startup_event():
     if not ret:
         logging.critical(message)
         db.close()
-        return exit(2)
+        return exit(3)
 
     # Load test info
     ret, message = Utils.load_test_info(db, Constants.TEST_INFO_FILEPATH)
     if not ret:
         db.close()
         logging.critical(message)
-        return exit(3)
+        return exit(4)
 
     # Load metrics collection info
     ret, message = Constants.load_metrics_collection_info()
     if not ret:
         db.close()
         logging.critical(message)
-        return exit(4)
-    
-    # Load Config
-    ret, message = Constants.load_config()
-    if not ret:
-        logging.critical(message)
-        db.close()
         return exit(5)
-
-
+    
     # Load Jenkins Pipeline
     try:
         JenkinsConstants.BASE_PIPELINE = open(JenkinsConstants.BASE_PIPELINE_FILEPATH).read()
