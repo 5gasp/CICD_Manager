@@ -61,7 +61,9 @@ def get_db():
 )
 async def get_testing_process_status(test_id: int, access_token: str, db: Session = Depends(get_db)):
     try:
-        data = crud.get_all_test_status_for_test_given_id(db, test_id)
+        data = crud.get_all_test_status_for_test_given_id(db, test_id, access_token)
+        if not data:
+            return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."]) 
         return Utils.create_response(data=[status.as_dict() for status in data])
     except Exception as e:
         logging.error(e)
@@ -77,7 +79,10 @@ async def get_testing_process_status(test_id: int, access_token: str, db: Sessio
 )
 async def get_testing_console_log(test_id: int, access_token: str, db: Session = Depends(get_db)):
     # get test instance information
-    test_instance = crud.get_test_instance(db, test_id)
+    test_instance = crud.get_test_instance(db, test_id, access_token)
+    print(test_instance)
+    if not test_instance:
+        return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."])
     test_console_log = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_instance.test_log_location}").read()
     test_console_log = test_console_log.decode('utf-8')
     return PlainTextResponse(content=test_console_log , headers={"Access-Control-Allow-Origin": "*"})
@@ -90,8 +95,12 @@ async def get_testing_console_log(test_id: int, access_token: str, db: Session =
     description="Get test base information (NetApp id, Testbed, Starting Time, ...)",
 )
 async def get_test_base_information(test_id: int, access_token: str, db: Session = Depends(get_db)):
+    print("access_token", access_token)
     try:
-        data = crud.get_test_base_information(db, test_id)
+        data = crud.get_test_base_information(db, test_id, access_token)
+        print(data)
+        if not data:
+            return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."]) 
         return Utils.create_response(data=data)
     except Exception as e:
         logging.error(e)
@@ -106,7 +115,9 @@ async def get_test_base_information(test_id: int, access_token: str, db: Session
 )
 async def get_tests_performed(test_id: int, access_token: str, db: Session = Depends(get_db)):
     try:
-        data = crud.get_tests_of_test_instance(db, test_id)
+        data = crud.get_tests_of_test_instance(db, test_id, access_token)
+        if not data:
+            return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."]) 
         return Utils.create_response(data=[d.as_dict() for d in data])
     except Exception as e:
         logging.error(e)
@@ -121,8 +132,9 @@ async def get_tests_performed(test_id: int, access_token: str, db: Session = Dep
     description="After the validation pipeline, several files are created by the Robot Framework. This endpoint retrieves these files",
 )
 async def get_test_output_file(test_id: int, access_token: str, test_name: str, file_name: str, db: Session = Depends(get_db)):
-    test_instance = crud.get_test_instance(db, test_id)
-    print(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_instance.test_results_location}/{test_name}/{file_name}")
+    test_instance = crud.get_test_instance(db, test_id, access_token)
+    if not test_instance:
+        return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."]) 
     test_console_log = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_instance.test_results_location}/{test_name}/{file_name}").read()
     test_console_log = test_console_log.decode('utf-8')
     return HTMLResponse(content=test_console_log,  headers={"Access-Control-Allow-Origin": "*"})

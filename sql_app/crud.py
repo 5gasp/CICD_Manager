@@ -9,12 +9,13 @@
 # Contains all the CRUD operations over the Database
 
 
-# generic imports
-from os import access
-from sqlalchemy.orm import Session
 import logging
 import random
 import string
+# generic imports
+from os import access
+
+from sqlalchemy.orm import Session
 
 # custom imports
 from . import models, schemas
@@ -131,8 +132,11 @@ def update_test_instance_extra_info(db: Session, test_id: int, extra_information
     logging.info(f"Updated extra information on test instance {db_test_instance.id}.")
     return db_test_instance
 
-def get_test_instance(db: Session, test_id: int):
-    db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id).first()
+def get_test_instance(db: Session, test_id: int, access_token: str = None):
+    if access_token is None:
+        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id).first()
+    else:
+        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id, models.Test_Instance.access_token == access_token).first()
     return db_test_instance
 
 def update_test_instance_ci_cd_agent(db: Session, test_id: int, ci_cd_id: int):
@@ -154,14 +158,14 @@ def update_test_instance_after_validation_process(db: Session, test_id: int, tes
     return db_test_instance
   
 def get_test_instances_by_netapp_and_network_service(db: Session, netapp_id: str, network_service_id: str):
-    return db.query(models.Test_Instance).filter(models.Test_Instance.netapp_id == netapp_id and models.Test_Instance.network_service_id == network_service_id).all()
+    return db.query(models.Test_Instance).filter(models.Test_Instance.netapp_id == netapp_id, models.Test_Instance.network_service_id == network_service_id).all()
 
 def get_test_instances_by_id(db: Session, test_instance_id: int):
     return db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first().as_dict()
 
 
 def get_last_build_of_test_instance(db: Session, netapp_id: str, network_service_id: str):
-    return len(db.query(models.Test_Instance).filter(models.Test_Instance.netapp_id == netapp_id and models.Test_Instance.network_service_id == network_service_id).all())
+    return len(db.query(models.Test_Instance).filter(models.Test_Instance.netapp_id == netapp_id, models.Test_Instance.network_service_id == network_service_id).all())
 
 def get_ci_cd_agent_given_test_instance_id(db: Session, test_instance_id: int):
     ci_cd_node_id = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first().ci_cd_node_id
@@ -208,7 +212,11 @@ def get_all_test_status_for_test(db: Session, netapp_id: str, network_service_id
         dic["test_status"]["Build " + str(t.build)] = [ts.as_dict() for ts in get_test_status_given_test_id(db, t.id)]
     return dic
 
-def get_all_test_status_for_test_given_id(db: Session, test_id: int):
+def get_all_test_status_for_test_given_id(db: Session, test_id: int, access_token: str = None):
+    if access_token:
+        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id, models.Test_Instance.access_token == access_token).first()
+        if not db_test_instance:
+            return
     test_status = get_test_status_given_test_id(db, test_id)
     return test_status
 
@@ -239,13 +247,19 @@ def update_test_instance_test(db: Session, test_instance_id: int, performed_test
     return test_instance_test
 
 
-def get_tests_of_test_instance(db: Session, test_instance_id: int):
-    test_instance_tests = db.query(models.Test_Instance_Tests).filter(models.Test_Instance_Tests.test_instance == test_instance_id).all()
+def get_tests_of_test_instance(db: Session, test_instance_id: int, access_token: str = None):
+    if access_token is None:
+        test_instance_tests = db.query(models.Test_Instance_Tests).filter(models.Test_Instance_Tests.test_instance == test_instance_id).all()
+    else:
+        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id, models.Test_Instance.access_token == access_token).first()
+        if not db_test_instance:
+            return
+        test_instance_tests = db.query(models.Test_Instance_Tests).filter(models.Test_Instance_Tests.test_instance == test_instance_id).all()
     return test_instance_tests
 
 
 def update_test_status_of_test_instance(db: Session, test_instance_id: int, performed_test: str, start_time: str, end_time: str, success: bool):
-    test_instance_test = db.query(models.Test_Instance_Tests).filter(models.Test_Instance_Tests.test_instance == test_instance_id and 
+    test_instance_test = db.query(models.Test_Instance_Tests).filter(models.Test_Instance_Tests.test_instance == test_instance_id, 
     models.Test_Instance_Tests.performed_test == performed_test).first()
     test_instance_test.start_time = start_time
     test_instance_test.end_time = end_time
@@ -272,9 +286,17 @@ def is_communication_token_for_test_valid(db: Session, test_instance_id: int, co
     return True
 
 
-def get_test_base_information(db: Session, test_instance_id: int):
+def get_test_base_information(db: Session, test_instance_id: int, access_token: str = None):
     data = {}
-    db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first()
+    print("---", access_token)
+    if access_token is None:
+        print(1)
+        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first()
+    else:
+        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id, models.Test_Instance.access_token == access_token).first()      
+        if not db_test_instance:
+            return
+
     all_test_status = get_all_test_status_for_test_given_id(db, test_instance_id)
     starting_time = all_test_status[0].timestamp
     test_status = all([ts.success for ts in all_test_status])
@@ -286,4 +308,3 @@ def get_test_base_information(db: Session, test_instance_id: int):
         "started_at": str(starting_time),
         "test_status": test_status,
     }
-
