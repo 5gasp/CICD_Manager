@@ -83,6 +83,7 @@ async def tests_per_testbed(testbed: str):
     else:
         return Utils.create_response(status_code=400, success=False, errors=["The testbed you chose doesn't exist."])
 
+
 @router.get(
     "/tests/test-status",
     tags=["tests"],
@@ -233,7 +234,6 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
         test_instance_test = crud.create_test_instance_test(db, test_instance.id, f"{executed_test['name']}-test-id-{executed_test['testcase_id']}", executed_test["description"])
         logging.info(f"Registered test '{test_instance_test.performed_test}' for test instance {test_instance.id}.")
 
-
     # run jenkins job
     ret, message = jenkins_wrapper.run_job(jenkins_job_name)
     if not ret:
@@ -290,7 +290,6 @@ async def publish_test_results(test_results_information: schemas.Test_Results,  
             success = failed_tests == 0
             crud.update_test_status_of_test_instance(db, test_results_information.test_id, test, str(start_dt), str(end_dt), success)
 
-        
         # get test console log
         test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)
         extra_information = json.loads(test_instance_dic['extra_information'].replace("'", "\""))
@@ -313,7 +312,7 @@ async def publish_test_results(test_results_information: schemas.Test_Results,  
 
         # update test instance
         crud.update_test_instance_after_validation_process(db, test_results_information.test_id , f"{test_results_information.ftp_results_directory}/console_log.log", test_results_information.ftp_results_directory)
-        print("---->", test_results_information.ftp_results_directory)
+
         return Utils.create_response(data=tests)
     except Exception as e:
         print(e)

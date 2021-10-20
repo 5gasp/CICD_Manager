@@ -46,10 +46,7 @@ class Test_Descriptor_Validator:
         mandatory_variables = [variable['variable_name'] for variable in available_tests[test_id]['test_variables'] if variable['mandatory']]
         test_descriptor_variables = [key for key in test_info["test_variables"].keys()]
         
-        missing = []
-        for mandatory_variable in mandatory_variables:
-            if mandatory_variable not in test_descriptor_variables:
-                missing.append(mandatory_variable)
+        missing = [mandatory_variable for mandatory_variable in mandatory_variables  if mandatory_variable not in test_descriptor_variables]
         
         if len(missing) != 0:
             return False, f"The test {test_name} is missing the following mandatory variables: {missing}"
@@ -71,6 +68,8 @@ class Test_Descriptor_Validator:
         except Exception as e:
             errors.append(e)
         
+        self.executed_tests_info = executed_tests_info 
+
         if len(errors) == 0:
             for test_info in executed_tests_info:
                 td_test_defined_parameters = {parameter["key"]: parameter["value"] for parameter in test_info["parameters"]}
@@ -86,8 +85,7 @@ class Test_Descriptor_Validator:
                             errors.append(f"The parameter \"{test_variable['variable_name']}\" must be defined for the test {test_info['name']}.")
                 else:
                     errors.append(f"{test_info['name']} doesn't exist in the chosen testbed.")
-        
-        self.executed_tests_info = executed_tests_info 
+    
         return errors
 
 

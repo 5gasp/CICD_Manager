@@ -54,14 +54,14 @@ def load_config():
 
 
 def load_test_info():
-    with open(Constants.TEST_INFO_FILEPATH) as mfile:
-        TEST_INFO = yaml.load(mfile, Loader=yaml.FullLoader)
+    with open(Constants.TEST_INFO_FILEPATH) as file:
+        TEST_INFO = yaml.load(file, Loader=yaml.FullLoader)
 
 
 def load_metrics_collection_info():
     try:
-        with open(Constants.METRICS_COLLECTION_INFO_FILEPATH) as mfile:
-            Constants.METRICS_COLLECTION_INFO = yaml.load(mfile, Loader=yaml.FullLoader)
+        with open(Constants.METRICS_COLLECTION_INFO_FILEPATH) as file:
+            Constants.METRICS_COLLECTION_INFO = yaml.load(file, Loader=yaml.FullLoader)
     except:
         return False, "Could not load the metrics collection information"
     return True, ""

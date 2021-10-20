@@ -61,7 +61,6 @@ class Jenkins_Pipeline_Configuration:
         return config
   
 
-
     def add_environment_setup_to_jenkins_pipeline_script(self):
         setup_environment_commands = [
             "sh 'mkdir -p ~/test_repository/\"$JOB_NAME\"'",
@@ -77,7 +76,6 @@ class Jenkins_Pipeline_Configuration:
             "paramiko==2.7.2",
             "python3-nmap==1.5.1",
         ]
-
         environment_obtain_tests = [
             f"ltr_user = credentials('ltr_user')",
             f"ltr_password = credentials('ltr_password')",

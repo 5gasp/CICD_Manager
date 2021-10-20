@@ -80,7 +80,6 @@ async def get_testing_process_status(test_id: int, access_token: str, db: Sessio
 async def get_testing_console_log(test_id: int, access_token: str, db: Session = Depends(get_db)):
     # get test instance information
     test_instance = crud.get_test_instance(db, test_id, access_token)
-    print(test_instance)
     if not test_instance:
         return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."])
     test_console_log = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_instance.test_log_location}").read()

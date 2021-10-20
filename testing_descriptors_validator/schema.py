@@ -1,4 +1,4 @@
-SCHEMA = {
+VALIDATION_SCHEMA = {
     'test_info': {
         'required': True,
         'type': 'dict',

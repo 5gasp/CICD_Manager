@@ -26,6 +26,8 @@ logging.basicConfig(
     level=logging.INFO
 )
 
+
+
 # ---------------------------------------- #
 # -------------- CI/CD Nodes ------------- #
 # ---------------------------------------- #
@@ -67,6 +69,7 @@ def get_ci_cd_node_by_testbed(db: Session, testbed_id: str):
 def get_all_nodes(db: Session, skip: int = 0, limit: int = 500):
     return db.query(models.CI_CD_Node).offset(skip).limit(limit).all()
 
+
 def update_communication_token(db: Session, id: int, token: str):
     db_ci_cd_node = db.query(models.CI_CD_Node).filter(models.CI_CD_Node.id == id).first()
     db_ci_cd_node.communication_token = token
@@ -74,6 +77,8 @@ def update_communication_token(db: Session, id: int, token: str):
     db.refresh(db_ci_cd_node)
     logging.info(f"Updated ci_cd_nodes communication token on CI/CD Agent with id {db_ci_cd_node.id}")
     return db_ci_cd_node
+
+
 
 # ---------------------------------------- #
 # --------------- Testbeds --------------- #
@@ -109,6 +114,7 @@ def get_all_testbeds(db: Session, skip: int = 0, limit: int = 500):
     return db.query(models.Testbed).offset(skip).limit(limit).all()
 
 
+
 # ---------------------------------------- #
 # ------------ Test Instances ------------ #
 # ---------------------------------------- #
@@ -124,6 +130,7 @@ def create_test_instance(db: Session, netapp_id: str, network_service_id: str, t
     logging.info(f"Created test instance for netapp_id '{netapp_id}' and network_service_id '{network_service_id}'.")
     return test_instance
 
+
 def update_test_instance_extra_info(db: Session, test_id: int, extra_information: str):
     db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id).first()
     db_test_instance.extra_information = extra_information
@@ -132,12 +139,14 @@ def update_test_instance_extra_info(db: Session, test_id: int, extra_information
     logging.info(f"Updated extra information on test instance {db_test_instance.id}.")
     return db_test_instance
 
+
 def get_test_instance(db: Session, test_id: int, access_token: str = None):
     if access_token is None:
         db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id).first()
     else:
         db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id, models.Test_Instance.access_token == access_token).first()
     return db_test_instance
+
 
 def update_test_instance_ci_cd_agent(db: Session, test_id: int, ci_cd_id: int):
     db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id).first()
@@ -157,8 +166,10 @@ def update_test_instance_after_validation_process(db: Session, test_id: int, tes
     logging.info(f"Updated test_results_location and test_log_location on test instance {db_test_instance.id}.")
     return db_test_instance
   
+
 def get_test_instances_by_netapp_and_network_service(db: Session, netapp_id: str, network_service_id: str):
     return db.query(models.Test_Instance).filter(models.Test_Instance.netapp_id == netapp_id, models.Test_Instance.network_service_id == network_service_id).all()
+
 
 def get_test_instances_by_id(db: Session, test_instance_id: int):
     return db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first().as_dict()
@@ -167,9 +178,11 @@ def get_test_instances_by_id(db: Session, test_instance_id: int):
 def get_last_build_of_test_instance(db: Session, netapp_id: str, network_service_id: str):
     return len(db.query(models.Test_Instance).filter(models.Test_Instance.netapp_id == netapp_id, models.Test_Instance.network_service_id == network_service_id).all())
 
+
 def get_ci_cd_agent_given_test_instance_id(db: Session, test_instance_id: int):
     ci_cd_node_id = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first().ci_cd_node_id
     return get_ci_cd_node_by_id(db, ci_cd_node_id)
+
 
 
 # ---------------------------------------- #
@@ -184,11 +197,11 @@ def create_test_status(db: Session, test_id: int, state: str, success: bool):
     logging.info(f"Created test status: {test_status.as_dict()}")
     return test_status
 
+
 def create_test_status_ci_cd_agent(db: Session, test_status: schemas.Test_Status_Update):    
     # 1 - validate communication token
     if not is_communication_token_for_test_valid(db, test_status.test_id, test_status.communication_token):
         raise Exception("Communication Tokens don't match")
-
     # 2 - create status
     test_status = models.Test_Status(test_id=test_status.test_id, state=test_status.state.upper(), success=test_status.success)
     db.add(test_status)
@@ -196,6 +209,7 @@ def create_test_status_ci_cd_agent(db: Session, test_status: schemas.Test_Status
     db.refresh(test_status)
     logging.info(f"CI/CD Agent created test status: {test_status.as_dict()}")
     return test_status
+
 
 def get_test_status_given_test_id(db: Session, test_id: int):
     return db.query(models.Test_Status).filter(models.Test_Status.test_id == test_id).all()
@@ -212,13 +226,13 @@ def get_all_test_status_for_test(db: Session, netapp_id: str, network_service_id
         dic["test_status"]["Build " + str(t.build)] = [ts.as_dict() for ts in get_test_status_given_test_id(db, t.id)]
     return dic
 
+
 def get_all_test_status_for_test_given_id(db: Session, test_id: int, access_token: str = None):
-    if access_token:
-        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id, models.Test_Instance.access_token == access_token).first()
-        if not db_test_instance:
-            return
-    test_status = get_test_status_given_test_id(db, test_id)
-    return test_status
+    if __validate_test_instance_access_token(db, test_id, access_token):
+        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id).first()
+        test_status = get_test_status_given_test_id(db, test_id)
+        return test_status
+
 
 
 # ---------------------------------------- #
@@ -248,14 +262,9 @@ def update_test_instance_test(db: Session, test_instance_id: int, performed_test
 
 
 def get_tests_of_test_instance(db: Session, test_instance_id: int, access_token: str = None):
-    if access_token is None:
+    if __validate_test_instance_access_token(db, test_instance_id, access_token):
         test_instance_tests = db.query(models.Test_Instance_Tests).filter(models.Test_Instance_Tests.test_instance == test_instance_id).all()
-    else:
-        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id, models.Test_Instance.access_token == access_token).first()
-        if not db_test_instance:
-            return
-        test_instance_tests = db.query(models.Test_Instance_Tests).filter(models.Test_Instance_Tests.test_instance == test_instance_id).all()
-    return test_instance_tests
+        return test_instance_tests
 
 
 def update_test_status_of_test_instance(db: Session, test_instance_id: int, performed_test: str, start_time: str, end_time: str, success: bool):
@@ -279,7 +288,6 @@ def is_communication_token_for_test_valid(db: Session, test_instance_id: int, co
     # 1 get the CI/CD Agent for the test instance
     db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first()
     db_ci_cd_node = db.query(models.CI_CD_Node).filter(models.CI_CD_Node.id == db_test_instance.ci_cd_node_id).first()
-
     # 2 -check if the communication token is ok
     if db_ci_cd_node.communication_token != communication_token:
         return False
@@ -288,23 +296,25 @@ def is_communication_token_for_test_valid(db: Session, test_instance_id: int, co
 
 def get_test_base_information(db: Session, test_instance_id: int, access_token: str = None):
     data = {}
-    print("---", access_token)
-    if access_token is None:
-        print(1)
-        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first()
-    else:
-        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id, models.Test_Instance.access_token == access_token).first()      
-        if not db_test_instance:
-            return
+    if __validate_test_instance_access_token(db, test_instance_id, access_token):
+        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first()      
+        all_test_status = get_all_test_status_for_test_given_id(db, test_instance_id)
+        starting_time = all_test_status[0].timestamp
+        test_status = all([ts.success for ts in all_test_status])
+        return {
+            "test_id": db_test_instance.id,
+            "netapp_id": db_test_instance.netapp_id,
+            "network_service_id": db_test_instance.network_service_id,
+            "testbed_id": db_test_instance.testbed_id,
+            "started_at": str(starting_time),
+            "test_status": test_status,
+        }
 
-    all_test_status = get_all_test_status_for_test_given_id(db, test_instance_id)
-    starting_time = all_test_status[0].timestamp
-    test_status = all([ts.success for ts in all_test_status])
-    return {
-        "test_id": db_test_instance.id,
-        "netapp_id": db_test_instance.netapp_id,
-        "network_service_id": db_test_instance.network_service_id,
-        "testbed_id": db_test_instance.testbed_id,
-        "started_at": str(starting_time),
-        "test_status": test_status,
-    }
+def __validate_test_instance_access_token(db: Session, test_instance_id: int, access_token: str = None):
+    if access_token is not None:
+        db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id, models.Test_Instance.access_token == access_token).first()   
+        if not db_test_instance: 
+            logging.info(f"Invalid access_token for test_instance_id {test_instance_id}.")
+            return False
+    return True
+    
