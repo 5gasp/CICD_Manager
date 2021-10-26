@@ -160,6 +160,7 @@ class Jenkins_Pipeline_Configuration:
     def add_metrics_colllection_mechanism_to_jenkins_pipeline_script(self, descriptor_metrics_collection, metrics_collection_information):
         needed_python_modules =[
             "scp==0.14.1",
+            "robotframework==4.1.1",
         ]
         execute_metrics_collection_commands = []
         execute_metrics_collection_commands.append(f"sh 'python3 -m pip install {' '.join(needed_python_modules)}'")
