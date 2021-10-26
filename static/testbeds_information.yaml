@@ -4,7 +4,7 @@ testbeds:
     name: Testbed ITAv
     description: Testbed at IT Aveiro
     ltr:
-      location: 10.0.13.27:21
+      location: 10.0.12.79:21
       user: ftp-user
       password: ftp-password
   testbed_odins:
