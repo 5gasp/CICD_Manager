@@ -104,5 +104,5 @@ class Test_Descriptor_Validator:
 
     def validate_structure(self):
         validator = Validator()
-        validator.validate(self.descriptor_content, schema.SCHEMA)
+        validator.validate(self.descriptor_content, schema.VALIDATION_SCHEMA)
         return validator.errors
