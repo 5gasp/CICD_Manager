@@ -34,6 +34,11 @@ DB_LOCATION = None
 DB_USER = None
 DB_PASSWORD = None
 
+# Metrics Repository
+MR_LOCATION = None
+MR_DB = None
+
+
 # Testbeds
 TESTBEDS_INFO = None
 

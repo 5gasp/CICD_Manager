@@ -179,7 +179,10 @@ class Jenkins_Pipeline_Configuration:
                 value = parameter['value']
                 export_variables_commands.append(f"export {key}={value}")
             export_variables_commands.append("export metrics_collection_action=<action>")
-
+            # add metrisc repository info
+            export_variables_commands.append(f"export INFLUX_DB_URL={Constants.MR_LOCATION}")
+            export_variables_commands.append(f"export INFLUX_DB_NAME={Constants.MR_DB}")
+            # envs to one line
             export_variables_commands_str = " ; ".join(export_variables_commands)
             execute_metrics_collection_commands.append(f"sh '{ export_variables_commands_str} ; python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{metrics_collection_id} {metrics_to_collect[metrics_collection_id]}'")
         
