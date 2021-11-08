@@ -13,7 +13,8 @@ from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from sql_app.database import SessionLocal
-from sql_app import crud, schemas
+from sql_app import crud
+from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
 from fastapi import File, UploadFile
 from sqlalchemy.orm import Session
 import logging
@@ -105,7 +106,7 @@ async def get_test_status(netapp_id: str, network_service_id: str , db: Session 
     summary="Update the status of a test",
     description="When the CI Agent is performing the tests, it will use this endpoint to update their status.",
 )
-async def update_test_status(test_status: schemas.Test_Status_Update,  db: Session = Depends(get_db)):
+async def update_test_status(test_status: ci_cd_manager_schemas.Test_Status_Update,  db: Session = Depends(get_db)):
     try:
         crud.create_test_status_ci_cd_agent(db, test_status)            
         return Utils.create_response()
@@ -267,7 +268,7 @@ tags=["tests"],
 summary="Publish test results",
 description="After the validation process this endpoint will be used to submit the results to the CI/CD Manager ",
 )
-async def publish_test_results(test_results_information: schemas.Test_Results,  db: Session = Depends(get_db)):
+async def publish_test_results(test_results_information: ci_cd_manager_schemas.Test_Results,  db: Session = Depends(get_db)):
     global jenkins_wrapper
     # validate communication token
     try:

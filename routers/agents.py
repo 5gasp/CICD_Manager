@@ -15,7 +15,8 @@ from sqlalchemy.orm import Session
 from sql_app import crud
 from sql_app.database import SessionLocal
 from sqlalchemy.orm import Session
-from sql_app import crud, schemas
+from sql_app import crud
+from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
 from typing import List
 import logging
 import inspect
@@ -47,12 +48,12 @@ def get_db():
 
 @router.post(
     "/agents/new", 
-    response_model=schemas.CI_CD_Node, 
+    response_model=ci_cd_manager_schemas.CI_CD_Node, 
     tags=["agents"],
     summary="Register new CI/CD Agent",
     description="When the CI/CD Agent is deployed (via a VNF) it registers itself in the CI_CD_Manager, via this endpoint.",
 )
-def create_node(node: schemas.CI_CD_Node_Create, db: Session = Depends(get_db)):
+def create_node(node: ci_cd_manager_schemas.CI_CD_Node_Create, db: Session = Depends(get_db)):
     db_ci_cd_node = crud.get_ci_cd_node_by_testbed(db, node.testbed_id)
     if db_ci_cd_node:
         db_ci_cd_node = crud.update_ci_cd_node(db, node=node)
@@ -64,7 +65,7 @@ def create_node(node: schemas.CI_CD_Node_Create, db: Session = Depends(get_db)):
 
 @router.get(
     "/agents/all", 
-    response_model=List[schemas.CI_CD_Node], 
+    response_model=List[ci_cd_manager_schemas.CI_CD_Node], 
     tags=["agents"],
     summary="Get all CI/CD Agents",
     description="Using this endpoint is possible to obtain a list of all the CI/CD Agents.",

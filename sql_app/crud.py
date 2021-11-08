@@ -18,7 +18,8 @@ from os import access
 from sqlalchemy.orm import Session
 
 # custom imports
-from . import models, schemas
+from . import models
+from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
 
 # Logger
 logging.basicConfig(
@@ -32,7 +33,7 @@ logging.basicConfig(
 # -------------- CI/CD Nodes ------------- #
 # ---------------------------------------- #
 
-def create_ci_cd_node(db: Session, node: schemas.CI_CD_Node_Create):
+def create_ci_cd_node(db: Session, node: ci_cd_manager_schemas.CI_CD_Node_Create):
     db_ci_cd_node = models.CI_CD_Node(ip=node.ip, username=node.username, password=node.password,
                                      testbed_id=node.testbed_id,
                                       is_online=node.is_online)
@@ -43,7 +44,7 @@ def create_ci_cd_node(db: Session, node: schemas.CI_CD_Node_Create):
     return db_ci_cd_node
 
 
-def update_ci_cd_node(db: Session, node: schemas.CI_CD_Node_Create):
+def update_ci_cd_node(db: Session, node: ci_cd_manager_schemas.CI_CD_Node_Create):
     db_ci_cd_node = db.query(models.CI_CD_Node).filter(models.CI_CD_Node.testbed_id == node.testbed_id).first()
     db_ci_cd_node.ip = node.ip
     db_ci_cd_node.username = node.username
@@ -84,7 +85,7 @@ def update_communication_token(db: Session, id: int, token: str):
 # --------------- Testbeds --------------- #
 # ---------------------------------------- #
 
-def create_testbed(db: Session, testbed: schemas.Testbed_Base):
+def create_testbed(db: Session, testbed: ci_cd_manager_schemas.Testbed_Base):
     testbed_instance = models.Testbed(name=testbed.name, description=testbed.description)
     db.add(testbed_instance)
     db.commit()
@@ -198,7 +199,7 @@ def create_test_status(db: Session, test_id: int, state: str, success: bool):
     return test_status
 
 
-def create_test_status_ci_cd_agent(db: Session, test_status: schemas.Test_Status_Update):    
+def create_test_status_ci_cd_agent(db: Session, test_status: ci_cd_manager_schemas.Test_Status_Update):    
     # 1 - validate communication token
     if not is_communication_token_for_test_valid(db, test_status.test_id, test_status.communication_token):
         raise Exception("Communication Tokens don't match")

@@ -25,7 +25,7 @@ sys.path.insert(0, parentdir)
 
 # custom imports
 from sql_app.database import SessionLocal, engine
-from routers import testbeds, tests, agents, gui
+from routers import testbeds, tests, agents, gui, tmf653_endpoints
 import aux.constants as Constants
 import aux.startup as Startup
 import aux.utils as Utils
@@ -78,6 +78,7 @@ app.include_router(testbeds.router)
 app.include_router(tests.router)
 app.include_router(agents.router)
 app.include_router(gui.router)
+app.include_router(tmf653_endpoints.router)
 
 # Dependency
 def get_db():
