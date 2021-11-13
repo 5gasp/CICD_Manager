@@ -10,6 +10,7 @@
 
 # custom imports
 import aux.constants as Constants
+from sql_app import crud
 
 # generic imports
 import configparser
@@ -67,3 +68,16 @@ def load_metrics_collection_info():
     except:
         return False, "Could not load the metrics collection information"
     return True, ""
+
+
+def startup_roles(db):
+    for role in Constants.USER_ROLES:
+        crud.create_role(db, role)
+
+
+def create_default_admin(db):
+    crud.register_user(
+        db = db, 
+        username = Constants.DEFAULT_ADMIN_CREDENTIALS['username'], 
+        password = Constants.DEFAULT_ADMIN_CREDENTIALS['password'],
+        roles = Constants.USER_ROLES)

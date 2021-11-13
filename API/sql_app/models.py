@@ -87,7 +87,7 @@ class Test_Status(Base):
 
 
 class Test_Instance_Tests(Base):
-    __tablename__ = "test_instance-tests"
+    __tablename__ = "test_instance_tests"
 
     id = Column(Integer, primary_key=True, index=True)    
     test_instance = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
@@ -96,6 +96,34 @@ class Test_Instance_Tests(Base):
     start_time = Column(String)
     end_time = Column(String)
     success = Column(Boolean)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class User(Base):
+    __tablename__ = "user"
+    id = Column(Integer, primary_key=True, index=True)    
+    username = Column(String, unique=True, index=True)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, nullable=False)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class User_Role(Base):
+    __tablename__ = "user_role"
+    id = Column(Integer, primary_key=True, index=True)    
+    user = Column(Integer, ForeignKey("user.id"), nullable=False, index=True)
+    role = Column(Integer, ForeignKey("role.id"), nullable=False)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
+class Role(Base):
+    __tablename__ = "role"
+    id = Column(Integer, primary_key=True, index=True)    
+    role = Column(String, unique=True)
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

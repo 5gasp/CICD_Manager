@@ -11,7 +11,6 @@
 # submit new testing jobs, etc
 
 # generic imports
-from routers import testbeds
 from fastapi import FastAPI
 import logging
 import inspect
@@ -25,7 +24,7 @@ sys.path.insert(0, parentdir)
 
 # custom imports
 from sql_app.database import SessionLocal, engine
-from routers import testbeds, tests, agents, gui, tmf653_endpoints
+from routers import testbeds, tests, agents, gui, tmf653_endpoints, auth
 import aux.constants as Constants
 import aux.startup as Startup
 import aux.utils as Utils
@@ -79,6 +78,7 @@ app.include_router(tests.router)
 app.include_router(agents.router)
 app.include_router(gui.router)
 app.include_router(tmf653_endpoints.router)
+app.include_router(auth.router)
 
 # Dependency
 def get_db():
@@ -106,6 +106,11 @@ async def startup_event():
         exit(2)
     
     db = SessionLocal()
+
+    # create roles
+    Startup.startup_roles(db)
+    Startup.create_default_admin(db)
+    
     # Load testbed info
     ret, message = Utils.load_testbeds_to_db(db, Constants.TESTBED_INFO_FILEPATH)
     if not ret:

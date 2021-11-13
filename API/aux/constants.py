@@ -10,6 +10,15 @@
 # Contains several constant variables needed in the workflow of the
 # CI/CD Manager
 
+# AUTH
+SECRET_KEY = "99cb3e97787cf81a7f418c42b96a06f77ce25ddbb2f7f83a53cf3474896624f9"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
+DEFAULT_ADMIN_CREDENTIALS = {
+    "username": "admin",
+    "password": "admin"
+}
+USER_ROLES = ["ADMIN", "USER"]
 
 # CI/CD MANAGER 
 CI_CD_MANAGER_URL = None
