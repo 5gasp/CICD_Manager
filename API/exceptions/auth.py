@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 
 class UserInvalidCredentials(Exception):
     """Exception raised for errors in the credential validation for a user.
@@ -97,8 +99,9 @@ class UserCreationFailed(Exception):
 class CouldNotDecodeBearerToken(Exception):
     """Exception raised when it is impossible to decode the bearer token.
     """
-
+    
     def __init__(self):
+        self.status_code = HTTPStatus.FORBIDDEN
         self.message = 'Could not decode Bearer Token'
         super().__init__(self.message)
 

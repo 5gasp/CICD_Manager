@@ -3,7 +3,7 @@
 #
 # Author: Rafael Direito (rdireito@av.it.pt)
 # Date: 1st july 2021
-# Last Update: 12th july 2021
+# Last Update: 16th november 2021
 
 # Description:
 # Constains all the endpoints related to the CI/CD Agents
@@ -12,31 +12,38 @@
 from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
-from sql_app import crud
-from sql_app.database import SessionLocal
 from sqlalchemy.orm import Session
-from sql_app import crud
-from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
 from typing import List
 import logging
 import inspect
 import sys
 import os
 
+# custom imports
+import sql_app.CRUD.agents as CRUD_Agents
+import sql_app.CRUD.auth as CRUD_Auth
+from sql_app.database import SessionLocal
+from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
+from http import HTTPStatus
+from aux import auth
+from exceptions.auth import *
+import aux.utils as Utils
+
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-# custom imports
-import aux.utils as Utils
+# start the router
 router = APIRouter()
+
 
 # Logger
 logging.basicConfig(
     format="%(module)-20s:%(levelname)-15s| %(message)s",
     level=logging.INFO
 )
+
 
 # Dependency
 def get_db():
@@ -46,31 +53,66 @@ def get_db():
     finally:
         db.close()
 
+
 @router.post(
     "/agents/new", 
-    response_model=ci_cd_manager_schemas.CI_CD_Node, 
     tags=["agents"],
     summary="Register new CI/CD Agent",
     description="When the CI/CD Agent is deployed (via a VNF) it registers itself in the CI_CD_Manager, via this endpoint.",
 )
-def create_node(node: ci_cd_manager_schemas.CI_CD_Node_Create, db: Session = Depends(get_db)):
-    db_ci_cd_node = crud.get_ci_cd_node_by_testbed(db, node.testbed_id)
-    if db_ci_cd_node:
-        db_ci_cd_node = crud.update_ci_cd_node(db, node=node)
-        return Utils.create_response(success=True, message="Updated CI/CD Node", data=db_ci_cd_node.as_dict_without_password())
+def create_agent(agent: ci_cd_manager_schemas.CI_CD_Agent_Create, token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
+    try:
+        login_username = auth.get_current_user(token)
+        roles = CRUD_Auth.get_user_roles(db, login_username)
+        # check if operation was ordered by an admin
+        if "ADMIN" not in roles:
+            raise NotEnoughPrivileges(login_username, 'register_new_ci_cd_agent')
+        # try to create a ci_cd_agent
+        db_ci_cd_agent = CRUD_Agents.create_ci_cd_agent(db=db, agent=agent)
+        return Utils.create_response(status_code=HTTPStatus.CREATED, success=True, message="Created CI/CD Agent", data=db_ci_cd_agent.as_dict_without_password())
+    except Exception as e:
+        logging.error(e)
+        return Utils.create_response(status_code=e.status_code, success=False, errors=[e.message]) 
 
-    db_ci_cd_node = crud.create_ci_cd_node(db=db, node=node)
-    return Utils.create_response(success=True, message="Created CI/CD Node", data=db_ci_cd_node.as_dict_without_password())
+
+@router.delete(
+    "/agents/delete/{agent_id}", 
+    tags=["agents"],
+    summary="Delete CI/CD Agent",
+    description="Delete a CI/CD given its Id",
+)
+def delete_agent(agent_id: int, token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
+    try:
+        login_username = auth.get_current_user(token)
+        roles = CRUD_Auth.get_user_roles(db, login_username)
+        # check if operation was ordered by an admin
+        if "ADMIN" not in roles:
+            raise NotEnoughPrivileges(login_username, 'delete_ci_cd_agent')
+        # try to create a ci_cd_agent
+        CRUD_Agents.delete_ci_cd_agent(db=db, agent_id=agent_id)
+        return Utils.create_response(status_code=HTTPStatus.OK, success=True, message="Deleted CI/CD Agent")
+    except Exception as e:
+        logging.error(e)
+        return Utils.create_response(status_code=e.status_code, success=False, errors=[e.message]) 
 
 
 @router.get(
     "/agents/all", 
-    response_model=List[ci_cd_manager_schemas.CI_CD_Node], 
+    response_model=List[ci_cd_manager_schemas.CI_CD_Agent], 
     tags=["agents"],
     summary="Get all CI/CD Agents",
     description="Using this endpoint is possible to obtain a list of all the CI/CD Agents.",
 )
-def get_nodes(skip: int = 0, limit: int = 500, db: Session = Depends(get_db)):
-    ci_cd_nodes = crud.get_all_nodes(db, skip=skip, limit=limit)
-    return Utils.create_response(success=True, message="Got all CI/CD Nodes", data=[n.as_dict_without_password() for n in ci_cd_nodes])
+def get_nodes(skip: int = 0, limit: int = 500, token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
+    try:
+        login_username = auth.get_current_user(token)
+        roles = CRUD_Auth.get_user_roles(db, login_username)
+        # check if operation was ordered by an admin
+        if "ADMIN" not in roles:
+            raise NotEnoughPrivileges(login_username, 'register_new_user')
+        ci_cd_nodes = CRUD_Agents.get_all_nodes(db, skip=skip, limit=limit)
+        return Utils.create_response(success=True, message="Got all CI/CD Nodes", data=[n.as_dict_without_password() for n in ci_cd_nodes])
+    except Exception as e:
+        logging.error(e)
+        return Utils.create_response(status_code=401, success=False, errors=[e.message]) 
 

@@ -22,6 +22,7 @@ from . import models
 from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
 from aux import auth
 from exceptions.auth import *
+from exceptions.agents import *
 # Logger
 logging.basicConfig(
     format="%(module)-15s:%(levelname)-10s| %(message)s",
@@ -31,13 +32,17 @@ logging.basicConfig(
 
 
 # ---------------------------------------- #
-# -------------- CI/CD Nodes ------------- #
+# -------------- CI/CD Agents ------------- #
 # ---------------------------------------- #
 
-def create_ci_cd_node(db: Session, node: ci_cd_manager_schemas.CI_CD_Node_Create):
-    db_ci_cd_node = models.CI_CD_Node(ip=node.ip, username=node.username, password=node.password,
-                                     testbed_id=node.testbed_id,
-                                      is_online=node.is_online)
+def create_ci_cd_agent(db: Session, agent: ci_cd_manager_schemas.CI_CD_Agent_Create):
+    db_ci_cd_node = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.ip == agent.ip, models.CI_CD_Agent.testbed_id == agent.testbed_id).first()
+
+    if db_ci_cd_node:
+        raise AgentAlreadyExists(db_ci_cd_node.id, db_ci_cd_node.ip, db_ci_cd_node.username,  db_ci_cd_node.testbed_id)
+    db_ci_cd_node = models.CI_CD_Agent(ip=agent.ip, username=agent.username, password=agent.password,
+                                     testbed_id=agent.testbed_id,
+                                      is_online=agent.is_online)
     db.add(db_ci_cd_node)
     db.commit()
     db.refresh(db_ci_cd_node)
@@ -45,8 +50,8 @@ def create_ci_cd_node(db: Session, node: ci_cd_manager_schemas.CI_CD_Node_Create
     return db_ci_cd_node
 
 
-def update_ci_cd_node(db: Session, node: ci_cd_manager_schemas.CI_CD_Node_Create):
-    db_ci_cd_node = db.query(models.CI_CD_Node).filter(models.CI_CD_Node.testbed_id == node.testbed_id).first()
+def update_ci_cd_node(db: Session, node: ci_cd_manager_schemas.CI_CD_Agent_Create):
+    db_ci_cd_node = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.testbed_id == node.testbed_id).first()
     db_ci_cd_node.ip = node.ip
     db_ci_cd_node.username = node.username
     db_ci_cd_node.password = node.password
@@ -59,21 +64,21 @@ def update_ci_cd_node(db: Session, node: ci_cd_manager_schemas.CI_CD_Node_Create
 
 
 def get_ci_cd_node_by_id(db: Session, id: int):
-    return db.query(models.CI_CD_Node).filter(models.CI_CD_Node.id == id).first()
+    return db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.id == id).first()
 
 
 def get_ci_cd_node_by_testbed(db: Session, testbed_id: str):
     testbed_id =  db.query(models.Testbed).filter(models.Testbed.id == testbed_id).first().id
     if not testbed_id: return None
-    return db.query(models.CI_CD_Node).filter(models.CI_CD_Node.testbed_id == testbed_id).first()
+    return db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.testbed_id == testbed_id).first()
 
 
 def get_all_nodes(db: Session, skip: int = 0, limit: int = 500):
-    return db.query(models.CI_CD_Node).offset(skip).limit(limit).all()
+    return db.query(models.CI_CD_Agent).offset(skip).limit(limit).all()
 
 
 def update_communication_token(db: Session, id: int, token: str):
-    db_ci_cd_node = db.query(models.CI_CD_Node).filter(models.CI_CD_Node.id == id).first()
+    db_ci_cd_node = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.id == id).first()
     db_ci_cd_node.communication_token = token
     db.commit()
     db.refresh(db_ci_cd_node)
@@ -289,7 +294,7 @@ def update_test_status_of_test_instance(db: Session, test_instance_id: int, perf
 def is_communication_token_for_test_valid(db: Session, test_instance_id: int, communication_token: str):
     # 1 get the CI/CD Agent for the test instance
     db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first()
-    db_ci_cd_node = db.query(models.CI_CD_Node).filter(models.CI_CD_Node.id == db_test_instance.ci_cd_node_id).first()
+    db_ci_cd_node = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.id == db_test_instance.ci_cd_node_id).first()
     # 2 -check if the communication token is ok
     if db_ci_cd_node.communication_token != communication_token:
         return False

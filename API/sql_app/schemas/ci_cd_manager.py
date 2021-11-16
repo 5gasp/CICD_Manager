@@ -16,20 +16,20 @@ from pydantic import BaseModel
 import datetime
 
 # ---------------------------------------- #
-# -------------- CI/CD Nodes ------------- #
+# -------------- CI/CD Agents ------------- #
 # ---------------------------------------- #
-class CI_CD_Node_Base(BaseModel):
+class CI_CD_Agent_Base(BaseModel):
     ip: str
     username: str
     testbed_id: str
     is_online: bool
 
 
-class CI_CD_Node_Create(CI_CD_Node_Base):
+class CI_CD_Agent_Create(CI_CD_Agent_Base):
     password: str
     
 
-class CI_CD_Node(CI_CD_Node_Base):
+class CI_CD_Agent(CI_CD_Agent_Base):
     id: int
     communication_token: str
 
