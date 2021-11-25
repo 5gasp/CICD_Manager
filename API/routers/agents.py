@@ -19,6 +19,8 @@ import inspect
 import sys
 import os
 
+from starlette.types import Message
+
 # custom imports
 import sql_app.CRUD.agents as CRUD_Agents
 import sql_app.CRUD.auth as CRUD_Auth
@@ -28,6 +30,7 @@ from http import HTTPStatus
 from aux import auth
 from exceptions.auth import *
 import aux.utils as Utils
+from wrappers.jenkins.wrapper import Jenkins_Wrapper
 
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -68,6 +71,12 @@ def create_agent(agent: ci_cd_manager_schemas.CI_CD_Agent_Create, token: str = D
         if "ADMIN" not in roles:
             raise NotEnoughPrivileges(login_username, 'register_new_ci_cd_agent')
         # try to create a ci_cd_agent
+        # check if the credentials are correct
+        jenkins_wrapper = Jenkins_Wrapper()
+        ret, message = jenkins_wrapper.connect_to_server(f"http://{agent.ip}:8080/", agent.username, agent.password)
+        if not ret:
+            return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=False, errors=["Could not establish a connection with the CI/CD Agent - " + message]) 
+
         db_ci_cd_agent = CRUD_Agents.create_ci_cd_agent(db=db, agent=agent)
         return Utils.create_response(status_code=HTTPStatus.CREATED, success=True, message="Created CI/CD Agent", data=db_ci_cd_agent.as_dict_without_password())
     except Exception as e:
@@ -103,7 +112,7 @@ def delete_agent(agent_id: int, token: str = Depends(auth.oauth2_scheme), db: Se
     summary="Get all CI/CD Agents",
     description="Using this endpoint is possible to obtain a list of all the CI/CD Agents.",
 )
-def get_nodes(skip: int = 0, limit: int = 500, token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
+def get_agents(skip: int = 0, limit: int = 500, token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
     try:
         login_username = auth.get_current_user(token)
         roles = CRUD_Auth.get_user_roles(db, login_username)
