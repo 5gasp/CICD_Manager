@@ -95,7 +95,7 @@ class Jenkins_Wrapper:
             return False, f"Unable to create new job. Cause: {str(e)}"
         return True, job_name
 
-
+    
     @requires_auth
     def run_job(self, job_name):
         try:
@@ -103,6 +103,14 @@ class Jenkins_Wrapper:
         except Exception as e:
             return False, f"Unable to run the job '{job_name}'. Cause: {str(e)}"
         return True, build_number
+    
+    @requires_auth
+    def get_jobs(self):
+        try:
+            jobs = self.jenkins_server.get_jobs()
+        except Exception as e:
+            return False, f"Unable to obtain Jenkins Jobs. Cause: {str(e)}"
+        return True, jobs
 
 
     @requires_auth

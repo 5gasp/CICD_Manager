@@ -59,10 +59,10 @@ def get_ci_cd_node_by_id(db: Session, id: int):
     return db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.id == id).first()
 
 
-def get_ci_cd_node_by_testbed(db: Session, testbed_id: str):
+def get_ci_cd_agents_by_testbed(db: Session, testbed_id: str):
     testbed_id =  db.query(models.Testbed).filter(models.Testbed.id == testbed_id).first().id
     if not testbed_id: return None
-    return db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.testbed_id == testbed_id).first()
+    return db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.testbed_id == testbed_id).all()
 
 
 def get_all_nodes(db: Session, skip: int = 0, limit: int = 500):

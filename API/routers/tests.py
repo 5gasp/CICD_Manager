@@ -14,6 +14,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from sql_app.database import SessionLocal
 from sql_app import crud
+import sql_app.CRUD.agents as CRUD_Agents
 from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
 from fastapi import File, UploadFile
 from sqlalchemy.orm import Session
@@ -48,7 +49,7 @@ logging.basicConfig(
 )
 
 router = APIRouter()
-jenkins_wrapper = Jenkins_Wrapper()
+
 
 # Dependency
 def get_db():
@@ -122,7 +123,7 @@ async def update_test_status(test_status: ci_cd_manager_schemas.Test_Status_Upda
     description="Given a file with a test descriptor, create a new test.",
 )
 async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depends(get_db)):
-    global jenkins_wrapper
+    
     
     # 1 - get data from the uploaded descriptor
     contents = await test_descriptor.read()
@@ -171,18 +172,23 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
 
     # Check if the CI/CD Node for this test is already registered
-    selected_ci_cd_node = crud.get_ci_cd_node_by_testbed(db, testbed_id)
-    if selected_ci_cd_node is None or not selected_ci_cd_node.is_online:
-        crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["ci_cd_agent_provisioned"], False)
-        return Utils.create_response(status_code=400, success=False, errors=[f"It doesn't exist a CI/CD Agent for the selected testbed, or it is offline."])
-    crud.update_test_instance_ci_cd_agent(db, test_instance.id, selected_ci_cd_node.id)
-    crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["ci_cd_agent_provisioned"], True)
+    
+    testbeds_ci_cd_agents = CRUD_Agents.get_ci_cd_agents_by_testbed(db, testbed_id)
+    available_agents_jobs = []
+    for ci_cd_agent in testbeds_ci_cd_agents:
+        jenkins_wrapper = Jenkins_Wrapper()
+        ret, message = jenkins_wrapper.connect_to_server(f"http://{ci_cd_agent.ip}:8080/", ci_cd_agent.username, ci_cd_agent.password)
+        if ret:
+            active_jobs = [job['color'] for job in jenkins_wrapper.get_jobs()[1]].count('blue_anime')
+            available_agents_jobs.append((jenkins_wrapper, ci_cd_agent, active_jobs))
+    
+    if len(available_agents_jobs) == 0:
+         return Utils.create_response(status_code=400, success=False, errors=["No CI/CD Agent Available"])
 
-    # connect to jenkins server
-    ret, message = jenkins_wrapper.connect_to_server(f"http://{selected_ci_cd_node.ip}:8080/", selected_ci_cd_node.username, selected_ci_cd_node.password)
-    if not ret:
-        crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["ci_cd_agent_auth"], False)
-        return Utils.create_response(status_code=400, success=False, errors=[message])
+    selected_ci_cd_agent_info = sorted(available_agents_jobs, key=lambda e: e[2])[0]
+    jenkins_wrapper = selected_ci_cd_agent_info[0]
+    selected_ci_cd_node = selected_ci_cd_agent_info[1]
+    print(selected_ci_cd_node, selected_ci_cd_node.ip)
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["ci_cd_agent_auth"], True)
 
     # create jenkins  credentials
@@ -210,7 +216,7 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
     # update communication credential on db
     logging.info(f"credential_secret: {credential_secret}")
-    selected_ci_cd_node = crud.update_communication_token(db, selected_ci_cd_node.id, credential_secret)
+    selected_ci_cd_node = CRUD_Agents.update_communication_token(db, selected_ci_cd_node.id, credential_secret)
     
     executed_tests_info = test_descriptor_validator.executed_tests_info
 
@@ -224,6 +230,7 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
     # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + '-' + str(test_instance.build)
+    print(job_name)
     ret, message = jenkins_wrapper.create_new_job(job_name, pipeline_config)
     if not ret:
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], False)
