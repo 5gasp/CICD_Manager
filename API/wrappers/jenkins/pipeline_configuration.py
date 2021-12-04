@@ -106,7 +106,7 @@ class Jenkins_Pipeline_Configuration:
                 export_variables_commands.append(f"export {key}={value}")
                 
             export_variables_commands_str = " ; ".join(export_variables_commands)
-            run_tests_commands.append(f"sh '{ export_variables_commands_str} ; python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{test_id}-test-id-{test_info['testcase_id']} {tests_to_perform[test_id]}'")
+            run_tests_commands.append(f"sh '{ export_variables_commands_str} ; python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{test_id}-test-id-{test_info['testcase_id']} {tests_to_perform[test_id]} || true'")
         # fill jenkins pipeline script
         self.__update_jenkins_script("<obtain_tests_environment>", environment_obtain_tests)
         self.__update_jenkins_script("<obtain_tests>", obtain_tests_commands)
