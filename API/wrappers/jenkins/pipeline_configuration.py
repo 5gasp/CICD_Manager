@@ -158,6 +158,14 @@ class Jenkins_Pipeline_Configuration:
 
 
     def add_metrics_colllection_mechanism_to_jenkins_pipeline_script(self, descriptor_metrics_collection, metrics_collection_information):
+
+        if not descriptor_metrics_collection:
+            self.__update_jenkins_script("<start_metrics_collection>", ["sh 'echo \"No metrics to collect\"'"])
+            self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "start")
+            self.__update_jenkins_script("<end_metrics_collection>", ["sh 'echo \"No metrics collected\"'"])
+            self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "stop")
+            return
+            
         needed_python_modules =[
             "scp==0.14.1",
             "robotframework==4.1.1",
@@ -192,6 +200,8 @@ class Jenkins_Pipeline_Configuration:
         self.__update_jenkins_script("<end_metrics_collection>", execute_metrics_collection_commands)
         self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "stop")
         
+        
+
 
     def __update_jenkins_script(self, tag_to_replace, commands_lst):
         item1 = re.search(tag_to_replace, self.jenkins_script_str, re.MULTILINE)

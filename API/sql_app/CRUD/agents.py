@@ -31,11 +31,11 @@ logging.basicConfig(
 
 
 def create_ci_cd_agent(db: Session, agent: ci_cd_manager_schemas.CI_CD_Agent_Create):
-    db_ci_cd_agent = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.ip == agent.ip, models.CI_CD_Agent.testbed_id == agent.testbed_id).first()
+    db_ci_cd_agent = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.url == agent.url, models.CI_CD_Agent.testbed_id == agent.testbed_id).first()
 
     if db_ci_cd_agent:
-        raise AgentAlreadyExists(db_ci_cd_agent.id, db_ci_cd_agent.ip, db_ci_cd_agent.username,  db_ci_cd_agent.testbed_id)
-    db_ci_cd_agent = models.CI_CD_Agent(ip=agent.ip, username=agent.username, password=agent.password,
+        raise AgentAlreadyExists(db_ci_cd_agent.id, db_ci_cd_agent.url, db_ci_cd_agent.username,  db_ci_cd_agent.testbed_id)
+    db_ci_cd_agent = models.CI_CD_Agent(url=agent.url, username=agent.username, password=agent.password,
                                      testbed_id=agent.testbed_id,
                                       is_online=agent.is_online)
     db.add(db_ci_cd_agent)

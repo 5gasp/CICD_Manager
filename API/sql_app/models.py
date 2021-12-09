@@ -23,7 +23,7 @@ class CI_CD_Agent(Base):
     __tablename__ = "ci_cd_nodes"
 
     id = Column(Integer, primary_key=True, index=True)
-    ip = Column(String)
+    url = Column(String)
     username = Column(String)
     password = Column(String)
     testbed_id = Column(String, ForeignKey("testbeds.id"), nullable=False)

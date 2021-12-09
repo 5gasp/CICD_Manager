@@ -73,7 +73,7 @@ def create_agent(agent: ci_cd_manager_schemas.CI_CD_Agent_Create, token: str = D
         # try to create a ci_cd_agent
         # check if the credentials are correct
         jenkins_wrapper = Jenkins_Wrapper()
-        ret, message = jenkins_wrapper.connect_to_server(f"http://{agent.ip}:8080/", agent.username, agent.password)
+        ret, message = jenkins_wrapper.connect_to_server(agent.url, agent.username, agent.password)
         if not ret:
             return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=False, errors=["Could not establish a connection with the CI/CD Agent - " + message]) 
 

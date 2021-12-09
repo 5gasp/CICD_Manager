@@ -112,7 +112,7 @@ async def update_test_status(test_status: ci_cd_manager_schemas.Test_Status_Upda
         crud.create_test_status_ci_cd_agent(db, test_status)            
         return Utils.create_response()
     except Exception as e:
-        return Utils.create_response(status_code=400, success=False, errors=["Couldn't update test status."]) 
+        return Utils.create_response(status_code=400, success=False, errors=[f"Couldn't update test status - {e}."]) 
 
 
 
@@ -158,7 +158,10 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     is_ok = test_descriptor_validator.validate_metrics_collection_process(metrics_collection_information)
     if not is_ok:
         return Utils.create_response(status_code=400, success=False, errors=errors, message="Badly defined parameters for the metrics collection process")
-    descriptor_metrics_collection = test_descriptor_data["test_phases"]["setup"]["metrics_collection"]
+   
+    descriptor_metrics_collection = None
+    if "metrics_collection" in test_descriptor_data["test_phases"]["setup"]:
+        descriptor_metrics_collection = test_descriptor_data["test_phases"]["setup"]["metrics_collection"]
 
     # 6 - register the test in database
     netapp_id = test_descriptor_data["test_info"]["netapp_id"]
@@ -177,7 +180,7 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     available_agents_jobs = []
     for ci_cd_agent in testbeds_ci_cd_agents:
         jenkins_wrapper = Jenkins_Wrapper()
-        ret, message = jenkins_wrapper.connect_to_server(f"http://{ci_cd_agent.ip}:8080/", ci_cd_agent.username, ci_cd_agent.password)
+        ret, message = jenkins_wrapper.connect_to_server(ci_cd_agent.url, ci_cd_agent.username, ci_cd_agent.password)
         if ret:
             active_jobs = [job['color'] for job in jenkins_wrapper.get_jobs()[1]].count('blue_anime')
             available_agents_jobs.append((jenkins_wrapper, ci_cd_agent, active_jobs))
@@ -188,7 +191,8 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     selected_ci_cd_agent_info = sorted(available_agents_jobs, key=lambda e: e[2])[0]
     jenkins_wrapper = selected_ci_cd_agent_info[0]
     selected_ci_cd_node = selected_ci_cd_agent_info[1]
-    print(selected_ci_cd_node, selected_ci_cd_node.ip)
+    
+    crud.update_test_instance_ci_cd_agent(db, test_instance.id , selected_ci_cd_node.id)
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["ci_cd_agent_auth"], True)
 
     # create jenkins  credentials
@@ -276,12 +280,13 @@ summary="Publish test results",
 description="After the validation process this endpoint will be used to submit the results to the CI/CD Manager ",
 )
 async def publish_test_results(test_results_information: ci_cd_manager_schemas.Test_Results,  db: Session = Depends(get_db)):
-    global jenkins_wrapper
+    
     # validate communication token
     try:
         # get test results
         tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
         tests = [t.performed_test for t in tests]
+        print("HERE1")
         for test in tests:
             xml_str = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
             root = ET.fromstring(xml_str)
@@ -299,12 +304,17 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
             crud.update_test_status_of_test_instance(db, test_results_information.test_id, test, str(start_dt), str(end_dt), success)
 
         # get test console log
+
         test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)
         extra_information = json.loads(test_instance_dic['extra_information'].replace("'", "\""))
         selected_ci_cd_node = crud.get_ci_cd_agent_given_test_instance_id(db, test_results_information.test_id)
+
         if selected_ci_cd_node is None or not selected_ci_cd_node.is_online:
             return Utils.create_response(status_code=400, success=False, errors=[f"It doesn't exist a CI/CD Agent for the selected testbed, or it is offline."])
-        ret, message = jenkins_wrapper.connect_to_server(f"http://{selected_ci_cd_node.ip}:8080/", selected_ci_cd_node.username, selected_ci_cd_node.password)
+        
+        jenkins_wrapper = Jenkins_Wrapper() 
+        
+        ret, message = jenkins_wrapper.connect_to_server(selected_ci_cd_node.url, selected_ci_cd_node.username, selected_ci_cd_node.password)
         if not ret:
             return Utils.create_response(status_code=400, success=False, errors=[message])
 

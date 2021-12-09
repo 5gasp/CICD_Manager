@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session
 from . import models
 from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
 from aux import auth
+from sql_app.CRUD import agents as agents_crud
 from exceptions.auth import *
 from exceptions.agents import *
 # Logger
@@ -130,7 +131,7 @@ def get_last_build_of_test_instance(db: Session, netapp_id: str, network_service
 
 def get_ci_cd_agent_given_test_instance_id(db: Session, test_instance_id: int):
     ci_cd_node_id = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first().ci_cd_node_id
-    return get_ci_cd_node_by_id(db, ci_cd_node_id)
+    return agents_crud.get_ci_cd_node_by_id(db, ci_cd_node_id)
 
 
 
@@ -237,6 +238,7 @@ def is_communication_token_for_test_valid(db: Session, test_instance_id: int, co
     # 1 get the CI/CD Agent for the test instance
     db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first()
     db_ci_cd_node = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.id == db_test_instance.ci_cd_node_id).first()
+    print(db_test_instance.as_dict())
     # 2 -check if the communication token is ok
     if db_ci_cd_node.communication_token != communication_token:
         return False

@@ -91,14 +91,15 @@ class Test_Descriptor_Validator:
 
     def validate_metrics_collection_process(self, metrics_collection_information):
         mandatory_parameters = [mci["variable_name"] for mci in metrics_collection_information["metrics_collection"]["variables"] if mci["mandatory"]]
-        descriptors_metrics_collection_processes = self.descriptor_content["test_phases"]["setup"]["metrics_collection"]
-        for descriptors_metrics_collection_process in descriptors_metrics_collection_processes:
-            # get the defined paraemeters
-            described_keys = [ param["key"] for param in descriptors_metrics_collection_process["parameters"]]
-            # check if all the mandatory parameters are defined
-            all_mandatory_tags_defined = all(elem in described_keys for elem in mandatory_parameters)
-            if not all_mandatory_tags_defined:
-                return False
+        if 'metrics_collection' in self.descriptor_content["test_phases"]["setup"]:
+            descriptors_metrics_collection_processes = self.descriptor_content["test_phases"]["setup"]["metrics_collection"]
+            for descriptors_metrics_collection_process in descriptors_metrics_collection_processes:
+                # get the defined paraemeters
+                described_keys = [ param["key"] for param in descriptors_metrics_collection_process["parameters"]]
+                # check if all the mandatory parameters are defined
+                all_mandatory_tags_defined = all(elem in described_keys for elem in mandatory_parameters)
+                if not all_mandatory_tags_defined:
+                    return False
         return True
     
 

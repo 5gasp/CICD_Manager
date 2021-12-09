@@ -19,7 +19,7 @@ import datetime
 # -------------- CI/CD Agents ------------- #
 # ---------------------------------------- #
 class CI_CD_Agent_Base(BaseModel):
-    ip: str
+    url: str
     username: str
     testbed_id: str
     is_online: bool

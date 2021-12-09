@@ -30,13 +30,13 @@ test_phases:
         description: Test the bandwidth between the OBU and vOBU
         parameters:
           - key: host1_ip
-            value: 10.0.12.81
+            value: 10.0.12.228
           - key: host1_username
             value: ubuntu
           - key: host1_password
             value: password
           - key: host2_ip
-            value: 10.0.12.82
+            value: 10.0.12.239
           - key: host2_username
             value: ubuntu
           - key: host2_password
@@ -53,13 +53,13 @@ test_phases:
         description: Test the transmission speed between the OBU and vOBU
         parameters:
           - key: host1_ip
-            value: 10.0.12.81
+            value: 10.0.12.228
           - key: host1_username
             value: ubuntu
           - key: host1_password
             value: password
           - key: host2_ip
-            value: 10.0.12.82
+            value: 10.0.12.239
           - key: host2_username
             value: ubuntu
           - key: host2_password
@@ -76,13 +76,13 @@ test_phases:
         description: Test the packet loss between the OBU and vOBU
         parameters:
           - key: host1_ip
-            value: 10.0.12.81
+            value: 10.0.12.228
           - key: host1_username
             value: ubuntu
           - key: host1_password
             value: password
           - key: host2_ip
-            value: 10.0.12.82
+            value: 10.0.12.239
           - key: host2_username
             value: ubuntu
           - key: host2_password
@@ -99,7 +99,7 @@ test_phases:
         description: Test the open ports in the OBU VNF
         parameters:
           - key: host
-            value: 10.0.12.81
+            value: 10.0.12.228
           - key: expected_open_port
             value: 22
           - key: expected_protocol
@@ -112,29 +112,29 @@ test_phases:
         description: Test the open ports in the OBU VNF
         parameters:
           - key: host
-            value: 10.0.12.82
+            value: 10.0.12.239
           - key: expected_open_port
             value: 22
           - key: expected_protocol
             value: tcp
 
-    metrics_collection:
-      - metrics_collection_id: 1
-        parameters:
-            - key: host
-              value: 10.0.12.81
-            - key: host_username
-              value: ubuntu
-            - key: host_password
-              value: password
-      - metrics_collection_id: 2
-        parameters:
-            - key: host
-              value: 10.0.12.82
-            - key: host_username
-              value: ubuntu
-            - key: host_password
-              value: password
+    #metrics_collection:
+    #  - metrics_collection_id: 1
+    #    parameters:
+    #        - key: host
+    #          value: 10.0.12.228
+    #        - key: host_username
+    #          value: ubuntu
+    #        - key: host_password
+    #          value: password
+    #  - metrics_collection_id: 2
+    #    parameters:
+    #        - key: host
+    #          value: 10.0.12.239
+    #        - key: host_username
+    #          value: ubuntu
+    #        - key: host_password
+    #          value: password
   execution:
     - batch_id: 1
       scope: infrastructure
