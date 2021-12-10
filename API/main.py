@@ -16,6 +16,7 @@ import logging
 import inspect
 import sys
 import os
+import time
 
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -99,10 +100,16 @@ async def startup_event():
         return exit(1)
 
     # Connect to Database
-    try:
-        models.Base.metadata.create_all(bind=engine)
-    except Exception as e:
-        logging.critical("Unable to connect to database. Exception:", e)
+    MODELS_INITIALIZED = False
+    for i in range(10):
+        try:
+            models.Base.metadata.create_all(bind=engine)
+            MODELS_INITIALIZED = True
+            break
+        except Exception as e:
+            time.sleep(10)
+        
+    if not MODELS_INITIALIZED:
         exit(2)
     
     db = SessionLocal()

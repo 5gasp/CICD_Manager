@@ -6,7 +6,7 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.sql.functions import user
-from API.routers.tests import new_test
+from routers.tests import new_test
 from sql_app.database import SessionLocal
 from sqlalchemy.orm import Session
 import logging
