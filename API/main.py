@@ -12,6 +12,7 @@
 
 # generic imports
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import logging
 import inspect
 import sys
@@ -72,6 +73,16 @@ app = FastAPI(
     },
     openapi_tags=fast_api_tags_metadata
 )
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origin_regex="http(s)?://ci-cd-manager\.5gasp\.eu.*",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Load Routers
 app.include_router(testbeds.router)
