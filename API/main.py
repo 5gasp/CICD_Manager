@@ -77,7 +77,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex="http(s)?://ci-cd-manager\.5gasp\.eu.*",
+    allow_origin_regex="http(s)?://ci-cd-(manager)|(service)\.5gasp\.eu.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

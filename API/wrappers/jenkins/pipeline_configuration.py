@@ -36,13 +36,11 @@ class Jenkins_Pipeline_Configuration:
         self.metrics_collection_information = metrics_collection_information
         self.test_instance_id = test_instance_id
         self.testbed_id = testbed_id
-        self.ltr_info = Utils.get_ltr_info_for_testbed(testbed_id)
 
 
     def create_jenkins_pipeline_script(self):
     
         # fill the pipeline script
-        print(self.ltr_info)
         self.add_environment_setup_to_jenkins_pipeline_script()
         self.add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self.metrics_collection_information)
         self.add_metrics_colllection_mechanism_to_jenkins_pipeline_script(self.descriptor_metrics_collection, self.metrics_collection_information)
@@ -79,7 +77,7 @@ class Jenkins_Pipeline_Configuration:
         environment_obtain_tests = [
             f"ltr_user = credentials('ltr_user')",
             f"ltr_password = credentials('ltr_password')",
-            f"ltr_location = '{self.ltr_info['location']}'"
+            f"ltr_location = credentials('ltr_location')"
         ]
 
         run_tests_commands = []
@@ -117,7 +115,7 @@ class Jenkins_Pipeline_Configuration:
         publish_results_environment = [
             f"ltr_user = credentials('ltr_user')",
             f"ltr_password = credentials('ltr_password')",
-            f"ltr_location = '{self.ltr_info['location']}'",
+            f"ltr_location = credentials('ltr_location')",
             f"results_ftp_location = '{Constants.FTP_RESULTS_URL}'",
             f"results_ftp_user = '{Constants.FTP_RESULTS_USER}'",
             f"results_ftp_password = '{Constants.FTP_RESULTS_PASSWORD}'",
@@ -147,7 +145,7 @@ class Jenkins_Pipeline_Configuration:
         obtain_metrics_environment = [
             f"ltr_user = credentials('ltr_user')",
             f"ltr_password = credentials('ltr_password')",
-            f"ltr_location = '{self.ltr_info['location']}'"
+            f"ltr_location = credentials('ltr_location')"
         ]
 
         obtain_metrics_collection_file_commands = []
