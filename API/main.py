@@ -118,6 +118,7 @@ async def startup_event():
             MODELS_INITIALIZED = True
             break
         except Exception as e:
+            print(f"entering..{e}")
             time.sleep(10)
         
     if not MODELS_INITIALIZED:

@@ -22,7 +22,7 @@ class UserLogin(BaseModel):
 class UserRegister(BaseModel):
     username: str
     password: str
-    roles: list[str]
+    roles: List[str]
 
 class Token(BaseModel):
     access_token: str

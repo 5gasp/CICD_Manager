@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Author: Rafael Direito (rdireito@av.it.pt)
+# Author: Daniel Gomes (dagomes@av.it.pt),
 # Date: 19th october 2021
 # Last Update: 19th october 2021
 
@@ -48,7 +48,12 @@ def load_config():
         Constants.DB_PASSWORD = config['DB']['Password']
         Constants.MR_LOCATION = config['METRICS-REPOSITORY']['InfluxDB_Location']
         Constants.MR_DB = config['METRICS-REPOSITORY']['DB_Name']
-    except:
+        Constants.NODS_HOST = config['NODS']['Host']
+        Constants.NODS_USER = config['NODS']['User']
+        Constants.NODS_PASSWORD = config['NODS']['Password']
+    except Exception as e:
+        print(e)
+        print("-----")
         return False, """The config file should have the folling sections with the following variables: 
         FTP -> User, Password, Url | CI_CD_MANAGER -> Url | DESCRIPTORS_LOCATION -> Tests_Information_Descriptor_Filepath, 
         Testbeds_Information_Descriptor_Filepath, Metrics_Collection_Information_Descriptor_Filepath | DB -> Location, 

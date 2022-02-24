@@ -45,7 +45,7 @@ def create_role(db: Session, role: str):
     return db_role
 
 
-def register_user(db: Session, username: str, password: str, roles: list[str]):
+def register_user(db: Session, username: str, password: str, roles: list):
     # 1 - check if user already exists
     db_user = db.query(models.User).filter(models.User.username == username).first()   
     if db_user:

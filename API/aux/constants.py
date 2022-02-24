@@ -47,6 +47,10 @@ DB_PASSWORD = None
 MR_LOCATION = None
 MR_DB = None
 
+#NODS
+NODS_USER=None
+NODS_PASSWORD=None
+NODS_HOST=None
 
 # Testbeds
 TESTBEDS_INFO = None

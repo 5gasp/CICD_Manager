@@ -62,9 +62,9 @@ class CharacteristicRelationship(BaseModel):
     type:str = Field(default=None, alias='@type')
 
 
-class Any(BaseModel):
-    # No implementation provided by the TMF653 Standard
-    pass
+# class Any(BaseModel):
+#     # No implementation provided by the TMF653 Standard
+#     pass
 
 
 class AppliedConsequence(BaseModel):
@@ -103,9 +103,9 @@ class MeasureThresholdRuleViolation(BaseModel):
 class Characteristic(BaseModel):
     id: str = None
     name: str
-    valueType: str
+    valueType: str = None
     characteristicRelationship: List[CharacteristicRelationship] = None
-    value: str = None # @Todo Should be Any 
+    value: Any = None # @Todo Should be Any 
     baseType: str = Field(default=None, alias='@baseType')
     schemaLocation:str = Field(default=None, alias='@schemaLocation')
     type:str = Field(default=None, alias='@type')
