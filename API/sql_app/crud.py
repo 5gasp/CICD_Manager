@@ -69,11 +69,13 @@ def get_all_testbeds(db: Session, skip: int = 0, limit: int = 500):
 # ------------ Test Instances ------------ #
 # ---------------------------------------- #
 
-def create_test_instance(db: Session, netapp_id: str, network_service_id: str, testbed_id: str, extra_information: str = None):
+def create_test_instance(db: Session, netapp_id: str, network_service_id: str, testbed_id: str, extra_information: str = None, nods_id:str = None):
     current_build = get_last_build_of_test_instance(db, netapp_id, network_service_id) + 1
     test_instance = models.Test_Instance(netapp_id=netapp_id, network_service_id=network_service_id, build=current_build, testbed_id=testbed_id, access_token=''.join(random.choice(string.ascii_lowercase) for i in range(16)))
     if extra_information:
         test_instance.extra_information = extra_information
+    if nods_id:
+        test_instance.nods_id = nods_id
     db.add(test_instance)
     db.commit()
     db.refresh(test_instance)

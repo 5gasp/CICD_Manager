@@ -64,7 +64,7 @@ class Test_Instance(Base):
     access_token = Column(String, nullable=False)
     test_log_location = Column(String)
     test_results_location = Column(String)
-  
+    nods_id = Column(String)
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

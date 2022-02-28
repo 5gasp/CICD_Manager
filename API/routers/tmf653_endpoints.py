@@ -25,6 +25,7 @@ import sys
 import os
 from fastapi import File
 import aux.constants as Constants
+import aux.utils as Utils
 from fastapi.responses import FileResponse
 import requests
 import yaml
@@ -84,7 +85,11 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
 
     # Get Service Test Characteristics
     characteristics = []
+    nods_id = None
     for characteristic in serviceTestParsed.characteristic:
+        # NODS_ID to later on patch data on NODS
+        if characteristic.name == "NODS_ServiceTest_ID":
+            nods_id=characteristic.value['value']
         characteristics.append({
             'id': characteristic.id, 
             'name': characteristic.name, 
@@ -96,10 +101,10 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
     service_test_specification_href = serviceTestParsed.testSpecification.href
     
     #2.2 - Authenticate with the NODS
-    success, token =  get_nods_token()
+    success, token =  Utils.get_nods_token()
     #2.3 -> Query the Service Test Specification Endpoint
     try:
-        success, response = get_serviceTestSpecification(token=token,_id=service_test_specification_id)
+        success, response = Utils.get_serviceTestSpecification(token=token,_id=service_test_specification_id)
         if not success:
             return Utils.create_response(status_code=400, success=False, message=f"{response}", data=[])
     except Exception as e:
@@ -110,7 +115,7 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
    
     try:
         attachment_url = response['attachment'][0]["url"]
-        success, response = get_serviceTestDescriptor(token=token,url=attachment_url)
+        success, response = Utils.get_serviceTestDescriptor(token=token,url=attachment_url)
         descriptors_text = response.text
         if not success:
             return Utils.create_response(status_code=400, success=False, message=f"{response}", data=[])
@@ -166,7 +171,7 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
     network_service_id = rendered_descriptor["test_info"]["network_service_id"]
 
     # # 10.a register new test
-    test_instance = crud.create_test_instance(db, netapp_id, network_service_id, testbed_id)
+    test_instance = crud.create_test_instance(db, netapp_id, network_service_id, testbed_id,nods_id=nods_id)
 
     # # 10.b update test status
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_on_manager"], True)
@@ -268,38 +273,3 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
         "build_number": job_build_number,
         "access_token": test_instance.access_token
         })
-
-
-def get_nods_token():
-    auth_url = f'{Constants.NODS_HOST}/auth/realms/openslice/protocol/openid-connect/token'
-    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    data={'username': Constants.NODS_USER, 'password': Constants.NODS_PASSWORD,
-     'grant_type':'password', 'client_id':'osapiWebClientId','client_secret':'secret'}
-    logging.info("Authenticating to Nods")
-    response = requests.post(url=auth_url, headers=headers, data=data)
-    token = response.json()['access_token']
-    logging.info("Retrieved NODS Auth Token")
-    return True, token
-
-
-def get_serviceTestSpecification(token,_id):
-    auth_url = f'{Constants.NODS_HOST}/tmf-api/serviceTestManagement/v4/serviceTestSpecification/{_id}'
-    headers = {'Authorization': f'Bearer {token}'}
-    try:
-        response = requests.get(url=auth_url,headers=headers)
-        if response.status_code != 200:
-            raise Exception(response.content)
-    except Exception as e:
-        return False, f"Unable to get ServiceTestSpecification. Reason: {e}"
-    return True, response.json()
-
-def get_serviceTestDescriptor(token,url):
-    headers = {'Authorization': f'Bearer ' + token}
-    url =  f'{Constants.NODS_HOST}/tmf-api{url}'
-    response = requests.get(url=url,headers=headers)
-    try:
-        if response.status_code != 200:
-            raise Exception(response.content)
-    except Exception as e:
-        return False, f"Unable to get ServiceTest Descriptor. Reason: {e}"
-    return True,response

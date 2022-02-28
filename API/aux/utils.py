@@ -15,6 +15,7 @@
 from fastapi.responses import JSONResponse
 import logging
 import yaml
+import requests
 
 # custom imports
 import aux.constants as Constants
@@ -90,3 +91,47 @@ def load_testbeds_info(testbed_info_file):
 def get_ltr_info_for_testbed(testbed_id):
     ltr_info = Constants.TESTBEDS_INFO["testbeds"][testbed_id]["ltr"]
     return ltr_info
+
+
+# TODO: Create a class with a decorator for NODS Authentication
+def get_nods_token():
+    auth_url = f'{Constants.NODS_HOST}/auth/realms/openslice/protocol/openid-connect/token'
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    data={'username': Constants.NODS_USER, 'password': Constants.NODS_PASSWORD,
+     'grant_type':'password', 'client_id':'osapiWebClientId','client_secret':'secret'}
+    logging.info("Authenticating to Nods")
+    response = requests.post(url=auth_url, headers=headers, data=data)
+    token = response.json()['access_token']
+    logging.info("Retrieved NODS Auth Token")
+    return True, token
+
+
+def get_serviceTestSpecification(token,_id):
+    auth_url = f'{Constants.NODS_HOST}/tmf-api/serviceTestManagement/v4/serviceTestSpecification/{_id}'
+    headers = {'Authorization': f'Bearer {token}'}
+    try:
+        response = requests.get(url=auth_url,headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+    except Exception as e:
+        return False, f"Unable to get ServiceTestSpecification. Reason: {e}"
+    return True, response.json()
+
+def get_serviceTestDescriptor(token,url):
+    headers = {'Authorization': f'Bearer ' + token}
+    url =  f'{Constants.NODS_HOST}/tmf-api{url}'
+    response = requests.get(url=url,headers=headers)
+    try:
+        if response.status_code != 200:
+            raise Exception(response.content)
+    except Exception as e:
+        return False, f"Unable to get ServiceTest Descriptor. Reason: {e}"
+    return True,response
+
+def patch_results(token,nods_id,data):
+    headers = {'Authorization': f'Bearer ' + token,'Content-Type': 'application/json'}
+    logging.info("patching data result on NODS")
+    url =  f'{Constants.NODS_HOST}/tmf-api/serviceTestManagement/v4/serviceTest/{nods_id}'
+    response = requests.patch(url=url,headers=headers,json=data)
+    print(response.text)
+    return True,response

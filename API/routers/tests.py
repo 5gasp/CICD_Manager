@@ -287,6 +287,10 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
         tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
         tests = [t.performed_test for t in tests]
         print("HERE1")
+        payload = {'characteristic': []}
+        counter = 1
+        test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)
+
         for test in tests:
             xml_str = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
             root = ET.fromstring(xml_str)
@@ -302,10 +306,14 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
 
             success = failed_tests == 0
             crud.update_test_status_of_test_instance(db, test_results_information.test_id, test, str(start_dt), str(end_dt), success)
+            token = test_instance_dic['access_token']
+            url = f'{Constants.CI_CD_MANAGER_URL}/gui/test-output-file?test_id={test_results_information.test_id}&access_token={token}&test_name={test}&filename=log.html'
+            payload['characteristic'].append({f'testResultsURL{counter}': url})
+            counter+=1
+        print(payload)
 
         # get test console log
 
-        test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)
         extra_information = json.loads(test_instance_dic['extra_information'].replace("'", "\""))
         selected_ci_cd_node = crud.get_ci_cd_agent_given_test_instance_id(db, test_results_information.test_id)
 
@@ -331,6 +339,10 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
         # update test instance
         crud.update_test_instance_after_validation_process(db, test_results_information.test_id , f"{test_results_information.ftp_results_directory}/console_log.log", test_results_information.ftp_results_directory)
 
+        # patch data on NODS
+        _,token = Utils.get_nods_token()
+        nods_id = test_instance_dic['nods_id']
+        Utils.patch_results(token,nods_id,payload)
         return Utils.create_response(data=tests)
     except Exception as e:
         print(e)
