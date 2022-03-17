@@ -12,14 +12,17 @@
 
 
 # generic imports
+from datetime import datetime
 from fastapi.responses import JSONResponse
 import logging
 import yaml
 import requests
+from sqlalchemy.orm import class_mapper
 
 # custom imports
 import aux.constants as Constants
 from sql_app import crud
+import sql_app.schemas.ci_cd_manager as Schemas 
 
 # Logger
 logging.basicConfig(
@@ -49,9 +52,17 @@ def load_testbeds_to_db(session, testbed_info_file):
                 t_id = testbed
                 t_name = testbed_data["name"]
                 t_description = testbed_data["description"]
-                # if testbed has not been crated yet
+                # if testbed has not been created yet
                 if not crud.get_testbed_by_id(session, t_id):
-                    crud.create_testbed(session, t_id, t_name, t_description)
+                    ltrdata = Schemas.LTRData_Base(
+                        location=testbed_data['ltr']['location'],
+                        user=testbed_data['ltr']['user'],
+                        password=testbed_data['ltr']['password']
+                    )
+                    testbed_payload = Schemas.Testbed_Create(name=t_name,
+                    description=t_description,id=t_id, ltrdata=ltrdata)
+
+                    crud.create_testbed(session,testbed_payload)
         except Exception as e:
             return False, "Wrong structure: " + str(e)
         
@@ -81,7 +92,6 @@ def load_testbeds_info(testbed_info_file):
     try:
         with open(testbed_info_file) as mfile:
             testbeds_data = yaml.load(mfile, Loader=yaml.FullLoader)
-
             Constants.TESTBEDS_INFO = testbeds_data
         return True, ""   
     except:
@@ -135,3 +145,23 @@ def patch_results(token,nods_id,data):
     response = requests.patch(url=url,headers=headers,json=data)
     print(response.text)
     return True,response
+
+
+###https://stackoverflow.com/questions/23554119/convert-sqlalchemy-orm-result-to-dict
+def object_to_dict(obj, found=None):
+    if found is None:
+        found = set()
+    mapper = class_mapper(obj.__class__)
+    columns = [column.key for column in mapper.columns]
+    get_key_value = lambda c: (c, getattr(obj, c).isoformat()) if isinstance(getattr(obj, c), datetime) else (c, getattr(obj, c))
+    out = dict(map(get_key_value, columns))
+    for name, relation in mapper.relationships.items():
+        if relation not in found:
+            found.add(relation)
+            related_obj = getattr(obj, name)
+            if related_obj is not None:
+                if relation.uselist:
+                    out[name] = [object_to_dict(child, found) for child in related_obj]
+                else:
+                    out[name] = object_to_dict(related_obj, found)
+    return out

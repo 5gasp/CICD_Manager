@@ -143,19 +143,19 @@ async def startup_event():
         db.close()
         return exit(3)
 
-    # Load test info
-    ret, message = Utils.load_test_info(db, Constants.TEST_INFO_FILEPATH)
-    if not ret:
-        db.close()
-        logging.critical(message)
-        return exit(4)
+    # # Load test info
+    # ret, message = Utils.load_test_info(db, Constants.TEST_INFO_FILEPATH)
+    # if not ret:
+    #     db.close()
+    #     logging.critical(message)
+    #     return exit(4)
 
-    # Load metrics collection info
-    ret, message = Startup.load_metrics_collection_info()
-    if not ret:
-        db.close()
-        logging.critical(message)
-        return exit(5)
+    # # Load metrics collection info
+    # ret, message = Startup.load_metrics_collection_info()
+    # if not ret:
+    #     db.close()
+    #     logging.critical(message)
+    #     return exit(5)
     
     # Load Jenkins Pipeline
     try:

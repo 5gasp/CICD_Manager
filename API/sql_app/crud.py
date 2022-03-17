@@ -11,15 +11,16 @@
 
 import logging
 import random
+from statistics import mode
 import string
 # generic imports
-from os import access
+from os import access, name
 
 from sqlalchemy.orm import Session
 
 # custom imports
 from . import models
-from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
+from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas, test_info as testinfo_schemas
 from aux import auth
 from sql_app.CRUD import agents as agents_crud
 from exceptions.auth import *
@@ -42,7 +43,6 @@ def create_testbed(db: Session, testbed: ci_cd_manager_schemas.Testbed_Base):
     logging.info(f"Created testbed with id {testbed_instance.id}")
     return testbed_instance
 
-
 def create_testbed(db: Session, testbed_id: int, testbed_name: str, testbed_description: str):
     testbed_instance = models.Testbed(id=testbed_id, name=testbed_name, description=testbed_description)
     db.add(testbed_instance)
@@ -50,6 +50,33 @@ def create_testbed(db: Session, testbed_id: int, testbed_name: str, testbed_desc
     db.refresh(testbed_instance)
     logging.info(f"Created testbed with id {testbed_instance.id}")
     return testbed_instance
+
+def create_ltrdata(db: Session, ltr_obj: ci_cd_manager_schemas.LTRData_Base):
+    ltr_data = models.LTRData(
+        location=ltr_obj.location,
+        username=ltr_obj.user,
+        password=ltr_obj.password
+    )
+    db.add(ltr_data)
+    db.commit()
+    db.refresh(ltr_data)
+    return ltr_data
+
+def create_testbed(db: Session, testbed: ci_cd_manager_schemas.Testbed_Create):
+    ltr_obj = create_ltrdata(db,testbed.ltrdata)
+    testbed_instance = models.Testbed(
+    id=testbed.id,
+    name=testbed.name,
+    description=testbed.description,
+    ltrdata_id=ltr_obj.id 
+    )
+    db.add(testbed_instance)
+    db.commit()
+    db.refresh(testbed_instance)
+    logging.info(f"Created testbed with id {testbed_instance.id}")
+    return testbed_instance
+
+
 
 
 def get_testbed_by_id(db: Session, id: str):
@@ -230,6 +257,55 @@ def update_test_status_of_test_instance(db: Session, test_instance_id: int, perf
     logging.info(f"Test Instance Test update : {test_instance_test.as_dict()}")
     return test_instance_test
 
+# ---------------------------------------- #
+# ----------------- Test Information ---------------- #
+# ---------------------------------------- #
+
+def get_test_info_by_testbed_id(db: Session, testbed_id: int):
+    # models.Test_Variables.testvariable_id == models.Test_Information.id
+    test_info_instance = db.query(models.Test_Information).filter(
+        models.Test_Information.testbed_id == testbed_id)
+    return test_info_instance.all()
+
+def is_testinfo_valid(db: Session, test_info_instances: models.Test_Information,
+testinfo_data:testinfo_schemas.TestInformation):
+    return any( [t.id != testinfo_data.id for t in test_info_instances])
+
+def create_testinfo_variables(db: Session, testinfo_data: testinfo_schemas.TestInformation):
+    lst = []
+    for variable in testinfo_data.test_variables:
+        options = [ models.Variable_Options(name=option) for option in variable.possible_options]
+        obj = models.Test_Variables(
+            variable_name=variable.variable_name,
+            description=variable.description,
+            mandatory=variable.mandatory,
+            type=variable.type,
+            possible_options=options
+            )
+        lst.append(obj)
+    return lst
+
+
+def create_test_information(db: Session,testinfo_data: testinfo_schemas.TestInformation):
+    test_info_instances = get_test_info_by_testbed_id(db,testinfo_data.testbed_id)
+    if test_info_instances and not is_testinfo_valid(db,test_info_instances,testinfo_data):
+        return False
+    testinfo_variables = create_testinfo_variables(db,testinfo_data)
+    test_info_instance = models.Test_Information(
+        id=testinfo_data.id,
+        name=testinfo_data.name,
+        testbed_id=testinfo_data.testbed_id,
+        description=testinfo_data.description,
+        ftp_base_location=testinfo_data.ftp_base_location,
+        test_filename=testinfo_data.test_filename,
+        test_type=testinfo_data.test_type,
+        testinfo_variables=testinfo_variables
+    )
+    db.add(test_info_instance)
+    db.commit()
+    db.refresh(test_info_instance)
+    return test_info_instance
+    
 
 
 # ---------------------------------------- #

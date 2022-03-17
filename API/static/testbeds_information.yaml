@@ -10,3 +10,7 @@ testbeds:
   testbed_odins:
     name: Testbed OdinS
     description: Testbed at OdinS, Murcia
+    ltr:
+      location: 10.0.0.0:21
+      user: ftp-user
+      password: ftp-password

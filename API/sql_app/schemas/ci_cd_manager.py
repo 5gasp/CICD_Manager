@@ -38,18 +38,37 @@ class CI_CD_Agent(CI_CD_Agent_Base):
 
 
 # ---------------------------------------- #
+# ---Local Test Repository Info ---------- #
+# ---------------------------------------- #
+class LTRData_Base(BaseModel):
+    location: str
+    user: str
+    password: str 
+
+
+class LTRData(LTRData_Base):
+    id: str
+    class Config:
+        orm_mode = True
+
+# ---------------------------------------- #
 # --------------- Testbeds --------------- #
 # ---------------------------------------- #
 class Testbed_Base(BaseModel):
     name: str
     description: str
 
+class Testbed_Create(Testbed_Base):
+    id: str
+    ltrdata: LTRData_Base = None
 
 class Testbed(Testbed_Base):
     id: str
-
+    ltrdata: LTRData
     class Config:
         orm_mode = True
+
+
 
 
 # ---------------------------------------- #

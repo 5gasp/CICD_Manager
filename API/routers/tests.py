@@ -9,13 +9,14 @@
 # Constains all the endpoints related to the testing of the NetApps
 
 # generic imports
+from distutils.log import error
 from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from sql_app.database import SessionLocal
 from sql_app import crud
 import sql_app.CRUD.agents as CRUD_Agents
-from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
+from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas, test_info as testinfo_schemas
 from fastapi import File, UploadFile
 from sqlalchemy.orm import Session
 import logging
@@ -113,6 +114,22 @@ async def update_test_status(test_status: ci_cd_manager_schemas.Test_Status_Upda
         return Utils.create_response()
     except Exception as e:
         return Utils.create_response(status_code=400, success=False, errors=[f"Couldn't update test status - {e}."]) 
+
+
+@router.post(
+    "/tests/test-information",
+    tags=["tests"],
+    summary="Store Tests Information on DB",
+    description="Store the information of Tests available on the CI/CD Manager",
+)
+async def store_test_information(test_info: testinfo_schemas.TestInformation, db: Session = Depends(get_db)):
+    #TODO: Validate more fields?
+    instance = crud.create_test_information(db,testinfo_data=test_info)
+    if instance:
+        return Utils.create_response(data=instance.as_dict())
+    else:
+        return Utils.create_response(status_code=400,
+         errors=[f"This testbed already contains information about a test with the id {test_info.id}"])
 
 
 
