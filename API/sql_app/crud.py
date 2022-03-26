@@ -51,24 +51,12 @@ def create_testbed(db: Session, testbed_id: int, testbed_name: str, testbed_desc
     logging.info(f"Created testbed with id {testbed_instance.id}")
     return testbed_instance
 
-def create_ltrdata(db: Session, ltr_obj: ci_cd_manager_schemas.LTRData_Base):
-    ltr_data = models.LTRData(
-        location=ltr_obj.location,
-        username=ltr_obj.user,
-        password=ltr_obj.password
-    )
-    db.add(ltr_data)
-    db.commit()
-    db.refresh(ltr_data)
-    return ltr_data
 
 def create_testbed(db: Session, testbed: ci_cd_manager_schemas.Testbed_Create):
-    ltr_obj = create_ltrdata(db,testbed.ltrdata)
     testbed_instance = models.Testbed(
     id=testbed.id,
     name=testbed.name,
-    description=testbed.description,
-    ltrdata_id=ltr_obj.id 
+    description=testbed.description
     )
     db.add(testbed_instance)
     db.commit()
@@ -269,7 +257,7 @@ def get_test_info_by_testbed_id(db: Session, testbed_id: int):
 
 def is_testinfo_valid(db: Session, test_info_instances: models.Test_Information,
 testinfo_data:testinfo_schemas.TestInformation):
-    return any( [t.id != testinfo_data.id for t in test_info_instances])
+    return all( [t.id != testinfo_data.id for t in test_info_instances])
 
 def create_testinfo_variables(db: Session, testinfo_data: testinfo_schemas.TestInformation):
     lst = []
@@ -288,6 +276,7 @@ def create_testinfo_variables(db: Session, testinfo_data: testinfo_schemas.TestI
 
 def create_test_information(db: Session,testinfo_data: testinfo_schemas.TestInformation):
     test_info_instances = get_test_info_by_testbed_id(db,testinfo_data.testbed_id)
+
     if test_info_instances and not is_testinfo_valid(db,test_info_instances,testinfo_data):
         return False
     testinfo_variables = create_testinfo_variables(db,testinfo_data)

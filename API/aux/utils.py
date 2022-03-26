@@ -23,6 +23,7 @@ from sqlalchemy.orm import class_mapper
 import aux.constants as Constants
 from sql_app import crud
 import sql_app.schemas.ci_cd_manager as Schemas 
+import sql_app.schemas.test_info as TestInfoSchemas
 
 # Logger
 logging.basicConfig(
@@ -54,14 +55,8 @@ def load_testbeds_to_db(session, testbed_info_file):
                 t_description = testbed_data["description"]
                 # if testbed has not been created yet
                 if not crud.get_testbed_by_id(session, t_id):
-                    ltrdata = Schemas.LTRData_Base(
-                        location=testbed_data['ltr']['location'],
-                        user=testbed_data['ltr']['user'],
-                        password=testbed_data['ltr']['password']
-                    )
                     testbed_payload = Schemas.Testbed_Create(name=t_name,
-                    description=t_description,id=t_id, ltrdata=ltrdata)
-
+                    description=t_description,id=t_id)
                     crud.create_testbed(session,testbed_payload)
         except Exception as e:
             return False, "Wrong structure: " + str(e)
@@ -70,20 +65,34 @@ def load_testbeds_to_db(session, testbed_info_file):
 
 
 def load_test_info(db, tests_info_file):
+
     with open(tests_info_file) as mfile:
         tests_data = yaml.load(mfile, Loader=yaml.FullLoader)
         Constants.TEST_INFO = tests_data
 
-        if "tests" not in tests_data.keys():
-            return False, "Wrong structure"
+    #     if "tests" not in tests_data.keys():
+    #         return False, "Wrong structure"
 
-        tests_data = tests_data["tests"]
-        if len(set(tests_data.keys())) != len(tests_data.keys()):
-            return False, "Duplicated testbeds"
+    #     tests_data = tests_data["tests"]
+    #     if len(set(tests_data.keys())) != len(tests_data.keys()):
+    #         return False, "Duplicated testbeds"
 
-        for testbed in tests_data:
-            if crud.get_testbed_by_id(db, testbed) is None:
-                return False, "Testbed doesn't exist"
+        for testbed, test_info in tests_data['tests'].items():
+            for test in test_info:
+                data = test_info[test]
+                variables = [ TestInfoSchemas.TestVariables(**var) for var in data['test_variables'] ]
+                test_info_schema = TestInfoSchemas.TestInformation(
+                id=data['id'],
+                name=data['name'], description=data['description'],
+                testbed_id=testbed,
+                ftp_base_location=data['ftp_base_location'],
+                test_filename=data['test_filename'],
+                test_type=data['test_type'],
+                test_variables=variables 
+                )
+                crud.create_test_information(db,test_info_schema)
+    #         if crud.get_testbed_by_id(db, testbed) is None:
+    #             return False, "Testbed doesn't exist"
 
     return True, ""    
 
@@ -147,21 +156,21 @@ def patch_results(token,nods_id,data):
     return True,response
 
 
-###https://stackoverflow.com/questions/23554119/convert-sqlalchemy-orm-result-to-dict
-def object_to_dict(obj, found=None):
-    if found is None:
-        found = set()
-    mapper = class_mapper(obj.__class__)
-    columns = [column.key for column in mapper.columns]
-    get_key_value = lambda c: (c, getattr(obj, c).isoformat()) if isinstance(getattr(obj, c), datetime) else (c, getattr(obj, c))
-    out = dict(map(get_key_value, columns))
-    for name, relation in mapper.relationships.items():
-        if relation not in found:
-            found.add(relation)
-            related_obj = getattr(obj, name)
-            if related_obj is not None:
-                if relation.uselist:
-                    out[name] = [object_to_dict(child, found) for child in related_obj]
-                else:
-                    out[name] = object_to_dict(related_obj, found)
-    return out
+# ###https://stackoverflow.com/questions/23554119/convert-sqlalchemy-orm-result-to-dict
+# def object_to_dict(obj, found=None):
+#     if found is None:
+#         found = set()
+#     mapper = class_mapper(obj.__class__)
+#     columns = [column.key for column in mapper.columns]
+#     get_key_value = lambda c: (c, getattr(obj, c).isoformat()) if isinstance(getattr(obj, c), datetime) else (c, getattr(obj, c))
+#     out = dict(map(get_key_value, columns))
+#     for name, relation in mapper.relationships.items():
+#         if relation not in found:
+#             found.add(relation)
+#             related_obj = getattr(obj, name)
+#             if related_obj is not None:
+#                 if relation.uselist:
+#                     out[name] = [object_to_dict(child, found) for child in related_obj]
+#                 else:
+#                     out[name] = object_to_dict(related_obj, found)
+#     return out

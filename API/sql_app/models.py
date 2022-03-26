@@ -40,16 +40,6 @@ class CI_CD_Agent(Base):
 		dic.pop("communication_token")
 		return dic
 
-class LTRData(Base):
-	__tablename__ = "ltrdata"
-
-	id = Column(Integer, primary_key=True, index=True)
-	location = Column(String)
-	username = Column(String)
-	password = Column(String)
-
-	def as_dict(self):
-		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 class Testbed(Base):
 	__tablename__ = "testbeds"
@@ -57,8 +47,7 @@ class Testbed(Base):
 	id = Column(String, primary_key=True, index=True)
 	name = Column(String, unique=True)
 	description = Column(String)
-	ltrdata_id = Column(Integer, ForeignKey("ltrdata.id"), nullable=False)
-
+	
 	def as_dict(self):
 		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 

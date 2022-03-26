@@ -72,7 +72,6 @@ class Test_Descriptor_Validator:
         self.executed_tests_info = executed_tests_info 
 
         if len(errors) == 0:
-            print(executed_tests_info)
             for test_info in executed_tests_info[0:1]:
                 td_test_defined_parameters = {parameter["key"]: parameter["value"] for parameter in test_info["parameters"]}
                 # check if test exists
@@ -86,7 +85,6 @@ class Test_Descriptor_Validator:
                             if test_variable.variable_name in td_test_defined_parameters or not test_variable.mandatory:
                                 # check if the value respects its possible options (if that's the case)
                                 options = [option.name for option in test_variable.possible_options]
-                                print(options,td_test_defined_parameters[test_variable.variable_name])
                                 if len(test_variable.possible_options) != 0 and td_test_defined_parameters[test_variable.variable_name] not in options:
                                     errors.append(f"The parameter \"{test_variable.variable_name}\", for the test {test_info['name']}, is not according to its possible_options.")
                             else:

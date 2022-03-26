@@ -18,7 +18,6 @@ from sqlalchemy.orm import Session
 from sql_app import crud
 import sql_app.CRUD.agents as CRUD_Agents
 from sql_app.schemas import TMF653 as tmf653_schemas
-from typing import List
 import logging
 import inspect
 import sys
@@ -26,14 +25,12 @@ import os
 import aux.constants as Constants
 import aux.utils as Utils
 from fastapi.responses import FileResponse
-import requests
 import yaml
 import json
 import binascii
 import pydantic
 from testing_descriptors_validator.test_descriptor_validator import Test_Descriptor_Validator
 from fastapi import File, UploadFile
-import re as re
 
 from wrappers.jenkins.wrapper import Jenkins_Wrapper
 
@@ -109,16 +106,14 @@ async def validate_test_descriptor(serviceTest:UploadFile = File(...) , db: Sess
         if not success:
             return Utils.create_response(status_code=400, success=False, message=f"{response}", data=[])
     except Exception as e:
-        print(e)
         return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
          
     logging.info(f"Retrieved the Testing Descriptor  from {attachment_url}")
-    print(descriptors_text)
   
     #4 -> Render Descriptor
     for characteristic in characteristics:
-        if (characteristic['name'] == "network_service_id" ):
-            characteristic['name'] = 'network_service_id_test'
+        # if (characteristic['name'] == "network_service_id" ):
+        #     characteristic['name'] = 'network_service_id_test'
         descriptors_text = descriptors_text.replace(f"{{{{{characteristic['name']}}}}}", f"{characteristic['value']['value']}")
     rendered_descriptor = yaml.safe_load(descriptors_text)
     logging.info(f"Renderered the descriptor")
@@ -132,7 +127,6 @@ async def validate_test_descriptor(serviceTest:UploadFile = File(...) , db: Sess
 
     # # 6 - check if the testbed exists
     testbed_id = rendered_descriptor["test_info"]["testbed_id"]
-    print(testbed_id)
     if crud.get_testbed_by_id(db, testbed_id) is None:
         return Utils.create_response(status_code=400, success=False, errors=["The selected testbed doesn't exist."])
 
@@ -209,13 +203,14 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
         if not success:
             return Utils.create_response(status_code=400, success=False, message=f"{response}", data=[])
     except Exception as e:
-        print(e)
         return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
          
     logging.info(f"Retrieved the Testing Descriptor  from {attachment_url}")
     
     #4 -> Render Descriptor
     for characteristic in characteristics:
+        # if (characteristic['name'] == "network_service_id" ):
+        #     characteristic['name'] = 'network_service_id_test'
         descriptors_text = descriptors_text.replace(f"{{{{{characteristic['name']}}}}}", f"{characteristic['value']['value']}")
     rendered_descriptor = yaml.safe_load(descriptors_text)
     logging.info(f"Renderered the descriptor")
@@ -230,7 +225,6 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
     
     # # 6 - check if the testbed exists
     testbed_id = rendered_descriptor["test_info"]["testbed_id"]
-    print(testbed_id)
     if crud.get_testbed_by_id(db, testbed_id) is None:
         return Utils.create_response(status_code=400, success=False, errors=["The selected testbed doesn't exist."])
 
@@ -299,30 +293,30 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_comm_token"], True)
     
     testbed_id = test_instance.testbed_id
-    ltr_info = Utils.get_ltr_info_for_testbed(testbed_id)
+    #ltr_info = Utils.get_ltr_info_for_testbed(testbed_id)
 
     # # b - ftp_user
-    ret, message = jenkins_wrapper.create_credential("ltr_user", ltr_info["user"], "FTP user for obtaining the tests.")
-    if not ret:
-        return Utils.create_response(status_code=400, success=False, errors=[message])
-    # c - ftp_password
-    ret, message = jenkins_wrapper.create_credential("ltr_password", ltr_info["password"], "FTP password for obtaining the tests.")
-    if not ret:
-        return Utils.create_response(status_code=400, success=False, errors=[message])
+    # ret, message = jenkins_wrapper.create_credential("ltr_user", ltr_info["user"], "FTP user for obtaining the tests.")
+    # if not ret:
+    #     return Utils.create_response(status_code=400, success=False, errors=[message])
+    # # c - ftp_password
+    # ret, message = jenkins_wrapper.create_credential("ltr_password", ltr_info["password"], "FTP password for obtaining the tests.")
+    # if not ret:
+    #     return Utils.create_response(status_code=400, success=False, errors=[message])
 
     # # update communication credential on db
     logging.info(f"credential_secret: {credential_secret}")
     selected_ci_cd_node = CRUD_Agents.update_communication_token(db, selected_ci_cd_node.id, credential_secret)
     
     executed_tests_info = test_descriptor_validator.executed_tests_info
-
     # # create jenkins pipeline script
-    try:
-        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(executed_tests_info, testbed_tests, descriptor_metrics_collection, metrics_collection_information, test_instance.id, test_instance.testbed_id)
-        crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
-    except Exception as e:
-        crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
-        return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
+
+    # try:
+    pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(executed_tests_info, testbed_tests, descriptor_metrics_collection, metrics_collection_information, test_instance.id, test_instance.testbed_id)
+    crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
+    # except Exception as e:
+    #     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
+    #     return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
 
     # # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + '-' + str(test_instance.build)

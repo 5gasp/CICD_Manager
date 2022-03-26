@@ -17,3 +17,13 @@ class TestInformation(BaseModel):
     test_filename: str
     test_type: str
     test_variables: List[TestVariables]
+
+
+class TestInformationUpdate(TestInformation):
+    name : str = None
+    testbed_id: str = None
+    description: str = None
+    ftp_base_location: str = None
+    test_filename: str = None
+    test_type: str = None
+    test_variables: List[TestVariables] = []
