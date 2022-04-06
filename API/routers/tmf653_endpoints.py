@@ -66,7 +66,6 @@ async def validate_test_descriptor(serviceTest:UploadFile = File(...) , db: Sess
     contents = await serviceTest.read()
     try:
         test_descriptor_data = json.loads(contents.decode("utf-8"))
-        #print(test_descriptor_data)
         serviceTestParsed = tmf653_schemas.ServiceTest_Create(**test_descriptor_data)
     except pydantic.ValidationError as e:
         return Utils.create_response(status_code=400, success=False, errors=[f"Payload does not follow TMF653 Standard: {e}"])
@@ -112,10 +111,11 @@ async def validate_test_descriptor(serviceTest:UploadFile = File(...) , db: Sess
   
     #4 -> Render Descriptor
     for characteristic in characteristics:
-        # if (characteristic['name'] == "network_service_id" ):
-        #     characteristic['name'] = 'network_service_id_test'
         descriptors_text = descriptors_text.replace(f"{{{{{characteristic['name']}}}}}", f"{characteristic['value']['value']}")
-    rendered_descriptor = yaml.safe_load(descriptors_text)
+    try:
+        rendered_descriptor = yaml.safe_load(descriptors_text)
+    except Exception as e:
+        return Utils.create_response(status_code=400, success=False, message=f"Invalid Testing Descriptor format", data=[])
     logging.info(f"Renderered the descriptor")
 
     
@@ -209,10 +209,11 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
     
     #4 -> Render Descriptor
     for characteristic in characteristics:
-        # if (characteristic['name'] == "network_service_id" ):
-        #     characteristic['name'] = 'network_service_id_test'
         descriptors_text = descriptors_text.replace(f"{{{{{characteristic['name']}}}}}", f"{characteristic['value']['value']}")
-    rendered_descriptor = yaml.safe_load(descriptors_text)
+    try:
+        rendered_descriptor = yaml.safe_load(descriptors_text)
+    except Exception as e:
+        return Utils.create_response(status_code=400, success=False, message=f"Invalid Testing Descriptor format", data=[])
     logging.info(f"Renderered the descriptor")
 
     

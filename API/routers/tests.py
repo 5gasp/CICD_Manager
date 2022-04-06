@@ -299,15 +299,16 @@ description="After the validation process this endpoint will be used to submit t
 async def publish_test_results(test_results_information: ci_cd_manager_schemas.Test_Results,  db: Session = Depends(get_db)):
     
     # validate communication token
-    try:
-        # get test results
-        tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
-        tests = [t.performed_test for t in tests]
-        print("HERE1")
-        payload = {'characteristic': []}
-        counter = 1
-        test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)
 
+    # get test results
+    tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
+    tests = [t.performed_test for t in tests]
+    print("HERE1")
+    payload = {'characteristic': []}
+    counter = 1
+    test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)
+
+    try:
         for test in tests:
             xml_str = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
             root = ET.fromstring(xml_str)
