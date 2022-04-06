@@ -294,17 +294,7 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_comm_token"], True)
     
     testbed_id = test_instance.testbed_id
-    #ltr_info = Utils.get_ltr_info_for_testbed(testbed_id)
-
-    # # b - ftp_user
-    # ret, message = jenkins_wrapper.create_credential("ltr_user", ltr_info["user"], "FTP user for obtaining the tests.")
-    # if not ret:
-    #     return Utils.create_response(status_code=400, success=False, errors=[message])
-    # # c - ftp_password
-    # ret, message = jenkins_wrapper.create_credential("ltr_password", ltr_info["password"], "FTP password for obtaining the tests.")
-    # if not ret:
-    #     return Utils.create_response(status_code=400, success=False, errors=[message])
-
+    
     # # update communication credential on db
     logging.info(f"credential_secret: {credential_secret}")
     selected_ci_cd_node = CRUD_Agents.update_communication_token(db, selected_ci_cd_node.id, credential_secret)
@@ -312,12 +302,12 @@ async def create_service_test(serviceTest:UploadFile = File(...) , db: Session =
     executed_tests_info = test_descriptor_validator.executed_tests_info
     # # create jenkins pipeline script
 
-    # try:
-    pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(executed_tests_info, testbed_tests, descriptor_metrics_collection, metrics_collection_information, test_instance.id, test_instance.testbed_id)
-    crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
-    # except Exception as e:
-    #     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
-    #     return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
+    try:
+        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(executed_tests_info, testbed_tests, descriptor_metrics_collection, metrics_collection_information, test_instance.id, test_instance.testbed_id)
+        crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
+    except Exception as e:
+        crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
+        return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
 
     # # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + '-' + str(test_instance.build)

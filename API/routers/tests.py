@@ -163,7 +163,7 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
 
     # 4 - validate id all tests exist in the selected testbed
-    testbed_tests = Constants.TEST_INFO['tests'].get(testbed_id)
+    testbed_tests = crud.get_test_info_by_testbed_id(db,testbed_id)
 
     errors = test_descriptor_validator.validate_tests_parameters(testbed_tests)
     if len(errors) != 0:
@@ -224,17 +224,7 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_comm_token"], True)
     
     testbed_id = test_instance.testbed_id
-    ltr_info = Utils.get_ltr_info_for_testbed(testbed_id)
-
-    # b - ftp_user
-    ret, message = jenkins_wrapper.create_credential("ltr_user", ltr_info["user"], "FTP user for obtaining the tests.")
-    if not ret:
-        return Utils.create_response(status_code=400, success=False, errors=[message])
-    # c - ftp_password
-    ret, message = jenkins_wrapper.create_credential("ltr_password", ltr_info["password"], "FTP password for obtaining the tests.")
-    if not ret:
-        return Utils.create_response(status_code=400, success=False, errors=[message])
-
+  
     # update communication credential on db
     logging.info(f"credential_secret: {credential_secret}")
     selected_ci_cd_node = CRUD_Agents.update_communication_token(db, selected_ci_cd_node.id, credential_secret)
@@ -251,7 +241,6 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
     # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + '-' + str(test_instance.build)
-    print(job_name)
     ret, message = jenkins_wrapper.create_new_job(job_name, pipeline_config)
     if not ret:
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], False)
