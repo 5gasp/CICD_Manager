@@ -52,6 +52,9 @@ NODS_USER=None
 NODS_PASSWORD=None
 NODS_HOST=None
 
+#TRVD
+TRVD_HOST=None
+
 # Testbeds
 TESTBEDS_INFO = None
 

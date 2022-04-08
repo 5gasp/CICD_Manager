@@ -51,6 +51,7 @@ def load_config():
         Constants.NODS_HOST = config['NODS']['Host']
         Constants.NODS_USER = config['NODS']['User']
         Constants.NODS_PASSWORD = config['NODS']['Password']
+        Constants.TRVD_HOST = config['TRVD']['Host']
     except Exception as e:
         print(e)
         print("-----")
