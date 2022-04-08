@@ -11,13 +11,16 @@
 # generic imports
 from sql_app.database import SessionLocal
 from sqlalchemy.orm import Session
+import sql_app.schemas.ci_cd_manager as Schemas 
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi import File, UploadFile
 from sql_app import crud
 import logging
 import inspect
 import sys
 import os
+import yaml
 
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -52,3 +55,24 @@ def get_db():
 async def all_testbeds(db: Session = Depends(get_db)):
     data = {"testbeds": [t.as_dict() for t in crud.get_all_testbeds(db)]}
     return Utils.create_response(data=data)
+
+@router.post(
+    "/testbeds",
+    tags=["testbeds"],
+    summary="Create a testbed on DB"
+)
+async def create_testbed(testbedData: Schemas.Testbed_Create,db: Session = Depends(get_db)):
+    testbed_instance = crud.get_testbed_by_id(db=db,id=testbedData.id)
+    errors = []
+
+    if testbed_instance:
+        errors.append(f"A testbed with the id {testbedData.id} already exists")
+    testbed_instance = crud.get_testbed_by_name(db=db,testbed_name=testbedData.name)
+
+    if testbed_instance:
+        errors.append(f"A testbed with the name {testbedData.name} already exists")
+    if errors:
+        return Utils.create_response(status_code=400, success=False,errors=errors)
+
+    testbed_instance = crud.create_testbed(db,testbedData)
+    return Utils.create_response(status_code=201,data=testbed_instance.as_dict(), message="Success creating new testbed")

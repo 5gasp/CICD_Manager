@@ -87,11 +87,13 @@ class Jenkins_Pipeline_Configuration:
         run_tests_commands.append(f"sh 'python3 -m pip install {' '.join(needed_python_modules)}'")
 
         # robot tests
-        tests_to_perform = {}        
+        tests_to_perform = {}      
         for test_info in executed_tests_info:
             test_id = test_info["name"]
-            test_dir = available_tests[test_id]["ftp_base_location"]
-            test_filename = available_tests[test_id]["test_filename"]
+            available_test = [test.as_dict() for test in available_tests if test.id == test_id][0]
+            print(available_test)
+            test_dir = available_test["ftp_base_location"]
+            test_filename = available_test["test_filename"]
             # obtain test
             obtain_tests_commands.add(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ltr_user:$ltr_password@$ltr_location/{test_dir}'")
             # save test location. needed to run the test

@@ -9,13 +9,14 @@
 # Constains all the endpoints related to the testing of the NetApps
 
 # generic imports
+from distutils.log import error
 from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from sql_app.database import SessionLocal
 from sql_app import crud
 import sql_app.CRUD.agents as CRUD_Agents
-from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
+from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas, test_info as testinfo_schemas
 from fastapi import File, UploadFile
 from sqlalchemy.orm import Session
 import logging
@@ -115,6 +116,22 @@ async def update_test_status(test_status: ci_cd_manager_schemas.Test_Status_Upda
         return Utils.create_response(status_code=400, success=False, errors=[f"Couldn't update test status - {e}."]) 
 
 
+@router.post(
+    "/tests/test-information",
+    tags=["tests"],
+    summary="Store Tests Information on DB",
+    description="Store the information of Tests available on the CI/CD Manager",
+)
+async def store_test_information(test_info: testinfo_schemas.TestInformation, db: Session = Depends(get_db)):
+    #TODO: Validate more fields?
+    instance = crud.create_test_information(db,testinfo_data=test_info)
+    if instance:
+        return Utils.create_response(data=instance.as_dict())
+    else:
+        return Utils.create_response(status_code=400,
+         errors=[f"This testbed already contains information about a test with the id {test_info.id}"])
+
+
 
 @router.post(
     "/tests/new", 
@@ -146,7 +163,7 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
 
     # 4 - validate id all tests exist in the selected testbed
-    testbed_tests = Constants.TEST_INFO['tests'].get(testbed_id)
+    testbed_tests = crud.get_test_info_by_testbed_id(db,testbed_id)
 
     errors = test_descriptor_validator.validate_tests_parameters(testbed_tests)
     if len(errors) != 0:
@@ -207,17 +224,7 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_comm_token"], True)
     
     testbed_id = test_instance.testbed_id
-    ltr_info = Utils.get_ltr_info_for_testbed(testbed_id)
-
-    # b - ftp_user
-    ret, message = jenkins_wrapper.create_credential("ltr_user", ltr_info["user"], "FTP user for obtaining the tests.")
-    if not ret:
-        return Utils.create_response(status_code=400, success=False, errors=[message])
-    # c - ftp_password
-    ret, message = jenkins_wrapper.create_credential("ltr_password", ltr_info["password"], "FTP password for obtaining the tests.")
-    if not ret:
-        return Utils.create_response(status_code=400, success=False, errors=[message])
-
+  
     # update communication credential on db
     logging.info(f"credential_secret: {credential_secret}")
     selected_ci_cd_node = CRUD_Agents.update_communication_token(db, selected_ci_cd_node.id, credential_secret)
@@ -234,7 +241,6 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
 
     # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + '-' + str(test_instance.build)
-    print(job_name)
     ret, message = jenkins_wrapper.create_new_job(job_name, pipeline_config)
     if not ret:
         crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], False)
@@ -282,15 +288,16 @@ description="After the validation process this endpoint will be used to submit t
 async def publish_test_results(test_results_information: ci_cd_manager_schemas.Test_Results,  db: Session = Depends(get_db)):
     
     # validate communication token
-    try:
-        # get test results
-        tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
-        tests = [t.performed_test for t in tests]
-        print("HERE1")
-        payload = {'characteristic': []}
-        counter = 1
-        test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)
 
+    # get test results
+    tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
+    tests = [t.performed_test for t in tests]
+    print("HERE1")
+    payload = {'characteristic': []}
+    counter = 1
+    test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)
+
+    try:
         for test in tests:
             xml_str = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
             root = ET.fromstring(xml_str)
@@ -307,7 +314,7 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
             success = failed_tests == 0
             crud.update_test_status_of_test_instance(db, test_results_information.test_id, test, str(start_dt), str(end_dt), success)
             token = test_instance_dic['access_token']
-            url = f'{Constants.CI_CD_MANAGER_URL}/gui/test-output-file?test_id={test_results_information.test_id}&access_token={token}&test_name={test}&filename=log.html'
+            url = f'{Constants.TRVD_HOST}/test_information.html?test_id={test_results_information.test_id}&access_token={token}'
             payload['characteristic'].append({'name': f'testResultsURL{counter}', 'value': {'value': url}  })
             counter+=1
         print(payload)

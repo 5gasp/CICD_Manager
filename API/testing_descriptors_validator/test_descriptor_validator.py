@@ -13,6 +13,7 @@ import sys
 import os
 import inspect
 from cerberus import Validator
+from sql_app import crud
 
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -37,7 +38,6 @@ class Test_Descriptor_Validator:
         test_id = test_info.get("test_id")
         if not test_id:
             return False, f"The test \"{test_name}\" doesn't contain a test_id"
-
         # 2. check if the testbed provides that test
         if test_id not in available_tests:
             return False, f"The test \"{test_name}\" is not supported in this testbed"
@@ -53,7 +53,8 @@ class Test_Descriptor_Validator:
 
         return True, "" 
 
-    
+
+ 
     def validate_tests_parameters(self, testbed_tests):
         errors = []
         try:
@@ -71,20 +72,37 @@ class Test_Descriptor_Validator:
         self.executed_tests_info = executed_tests_info 
 
         if len(errors) == 0:
-            for test_info in executed_tests_info:
+            for test_info in executed_tests_info[0:1]:
                 td_test_defined_parameters = {parameter["key"]: parameter["value"] for parameter in test_info["parameters"]}
                 # check if test exists
-                if test_info["name"] in testbed_tests:
-                    for test_variable in testbed_tests[test_info["name"]]["test_variables"]:
-                        # check if all the test mandatory parameters are defined in the descriptor
-                        if test_variable["variable_name"] in td_test_defined_parameters or not test_variable["mandatory"]:
-                            # check if the value respects its possible options (if that's the case)
-                            if len(test_variable["possible_options"]) != 0 and td_test_defined_parameters[test_variable["variable_name"]] not in test_variable["possible_options"]:
-                                errors.append(f"The parameter \"{test_variable['variable_name']}\", for the test {test_info['name']}, is not according to its possible_options.")
-                        else:
-                            errors.append(f"The parameter \"{test_variable['variable_name']}\" must be defined for the test {test_info['name']}.")
-                else:
+                has_test = False
+                for testbed_test in testbed_tests:
+                    if test_info["name"] == testbed_test.name:
+                        has_test = True
+                    
+                        for test_variable in testbed_test.testinfo_variables:
+                            # check if all the test mandatory parameters are defined in the descriptor
+                            if test_variable.variable_name in td_test_defined_parameters or not test_variable.mandatory:
+                                # check if the value respects its possible options (if that's the case)
+                                options = [option.name for option in test_variable.possible_options]
+                                if len(test_variable.possible_options) != 0 and td_test_defined_parameters[test_variable.variable_name] not in options:
+                                    errors.append(f"The parameter \"{test_variable.variable_name}\", for the test {test_info['name']}, is not according to its possible_options.")
+                            else:
+                                errors.append(f"The parameter \"{test_variable.variable_name}\" must be defined for the test {test_info['name']}.")
+
+                if not has_test:
                     errors.append(f"{test_info['name']} doesn't exist in the chosen testbed.")
+                # if test_info["name"] in testbed_tests:
+                #     for test_variable in testbed_tests[test_info["name"]]["test_variables"]:
+                #         # check if all the test mandatory parameters are defined in the descriptor
+                #         if test_variable["variable_name"] in td_test_defined_parameters or not test_variable["mandatory"]:
+                #             # check if the value respects its possible options (if that's the case)
+                #             if len(test_variable["possible_options"]) != 0 and td_test_defined_parameters[test_variable["variable_name"]] not in test_variable["possible_options"]:
+                #                 errors.append(f"The parameter \"{test_variable['variable_name']}\", for the test {test_info['name']}, is not according to its possible_options.")
+                #         else:
+                #             errors.append(f"The parameter \"{test_variable['variable_name']}\" must be defined for the test {test_info['name']}.")
+                # else:
+                #     errors.append(f"{test_info['name']} doesn't exist in the chosen testbed.")
     
         return errors
 

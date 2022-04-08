@@ -37,19 +37,23 @@ class CI_CD_Agent(CI_CD_Agent_Base):
         orm_mode = True
 
 
+
 # ---------------------------------------- #
 # --------------- Testbeds --------------- #
 # ---------------------------------------- #
 class Testbed_Base(BaseModel):
     name: str
-    description: str
+    description: str = None
 
+class Testbed_Create(Testbed_Base):
+    id: str
 
 class Testbed(Testbed_Base):
     id: str
-
     class Config:
         orm_mode = True
+
+
 
 
 # ---------------------------------------- #

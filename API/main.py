@@ -75,6 +75,8 @@ app = FastAPI(
 )
 
 
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origin_regex="http(s)?://ci-cd-(manager)|(service)\.5gasp\.eu.*",
@@ -143,7 +145,7 @@ async def startup_event():
         db.close()
         return exit(3)
 
-    # Load test info
+    # # Load test info
     ret, message = Utils.load_test_info(db, Constants.TEST_INFO_FILEPATH)
     if not ret:
         db.close()
