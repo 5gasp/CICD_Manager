@@ -73,14 +73,13 @@ app = FastAPI(
     },
     openapi_tags=fast_api_tags_metadata
 )
-#http(s)?://ci-cd-(manager)|(service)\.5gasp\.eu.*
 
 
-origins = ["*"]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origin_regex="http(s)?://ci-cd-(manager)|(service)\.5gasp\.eu.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
