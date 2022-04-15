@@ -314,7 +314,7 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
             success = failed_tests == 0
             crud.update_test_status_of_test_instance(db, test_results_information.test_id, test, str(start_dt), str(end_dt), success)
             token = test_instance_dic['access_token']
-            url = f'{Constants.TRVD_HOST}/test_information.html?test_id={test_results_information.test_id}&access_token={token}'
+            url = f'{Constants.TRVD_HOST}/test-information.html?test_id={test_results_information.test_id}&access_token={token}'
             payload['characteristic'].append({'name': f'testResultsURL{counter}', 'value': {'value': url}  })
             counter+=1
         print(payload)
