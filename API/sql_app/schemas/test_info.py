@@ -2,20 +2,20 @@ from pydantic import BaseModel, Field
 from typing import Any, List
 
 class TestVariables(BaseModel):
-    variable_name: str
-    description: str
+    variable_name: str = Field(...,example= "host1_ip")
+    description: str = Field(...,example= "Login username for Host/VNF 1")
     mandatory: bool = True
-    type: str = "str" 
+    type: str = Field(...,example="str")
     possible_options: List[Any]
 
 class TestInformation(BaseModel):
-    id: str
-    name : str
-    testbed_id: str
-    description: str
-    ftp_base_location: str
-    test_filename: str
-    test_type: str
+    id: str = Field(...,example= "bandwidth")
+    name : str = Field(...,example= "bandwidth")
+    testbed_id: str = Field(...,example= "testbed_xyz")
+    description: str = Field(...,example= "Tests the bandwidth between to VNFs. The results are in bits/sec")
+    ftp_base_location: str = Field(...,example= "tests/bandwidth/")
+    test_filename: str = Field(...,example= "testBandwidth.robot")
+    test_type: str = Field(...,example= "Robot")
     test_variables: List[TestVariables]
 
 

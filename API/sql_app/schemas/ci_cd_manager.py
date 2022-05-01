@@ -12,21 +12,21 @@
 
 # generic imports
 from typing import List
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import datetime
 
 # ---------------------------------------- #
 # -------------- CI/CD Agents ------------- #
 # ---------------------------------------- #
 class CI_CD_Agent_Base(BaseModel):
-    url: str
-    username: str
-    testbed_id: str
+    url: str = Field(..., example="http://my.cicd.agent")
+    username: str = Field(..., example="username")
+    testbed_id: str = Field(..., example="testbed_xyz")
     is_online: bool
 
 
 class CI_CD_Agent_Create(CI_CD_Agent_Base):
-    password: str
+    password: str = Field(..., example="password")
     
 
 class CI_CD_Agent(CI_CD_Agent_Base):
@@ -42,14 +42,14 @@ class CI_CD_Agent(CI_CD_Agent_Base):
 # --------------- Testbeds --------------- #
 # ---------------------------------------- #
 class Testbed_Base(BaseModel):
-    name: str
+    name: str = Field(..., example="XYZ Testbed")
     description: str = None
 
 class Testbed_Create(Testbed_Base):
-    id: str
+    id: str = Field(..., example="testbed_xyz")
 
 class Testbed(Testbed_Base):
-    id: str
+    id: str = Field(..., example="testbed_xyz")
     class Config:
         orm_mode = True
 
@@ -79,8 +79,8 @@ class Test_Instance(Test_Instance_Base):
 # ---------------------------------------- #
 
 class Test_Status_Base(BaseModel):
-    test_id: int
-    state: str
+    test_id: int = Field(..., example=1)
+    state: str = Field(..., example="ENVIRONMENT_SETUP_CI_CD_AGENT")
     success: bool
 
 class Test_Status_Update(Test_Status_Base):
