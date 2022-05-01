@@ -60,7 +60,9 @@ def get_db():
 
 @router.post(
     "/tmp-api/testDescriptorValidation",
-    tags=["TMF-653"]
+    tags=["TMF-653"],
+    summary="Validates a Test Descriptor",
+    description="Given a TMF-653 Payload, the respective Test Descriptor will be rendered and validated"
 )
 async def validate_test_descriptor(serviceTest:UploadFile = File(...) , db: Session = Depends(get_db) ):
     contents = await serviceTest.read()
@@ -150,7 +152,9 @@ async def validate_test_descriptor(serviceTest:UploadFile = File(...) , db: Sess
 
 @router.post(
     "/tmf-api/serviceTestManagement/v4/serviceTest",
-    tags=["TMF-653"] 
+    tags=["TMF-653"],
+    summary="Creates a Service Test",
+    description="Creates a Service Test, given a Valid TMF-653 Payload file, and execute the associated tests" 
 )
 async def create_service_test(serviceTest:UploadFile = File(...) , db: Session = Depends(get_db)):
 

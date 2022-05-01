@@ -24,6 +24,7 @@ from starlette.types import Message
 # custom imports
 import sql_app.CRUD.agents as CRUD_Agents
 import sql_app.CRUD.auth as CRUD_Auth
+from sql_app import crud
 from sql_app.database import SessionLocal
 from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
 from http import HTTPStatus
@@ -76,7 +77,10 @@ def create_agent(agent: ci_cd_manager_schemas.CI_CD_Agent_Create, token: str = D
         ret, message = jenkins_wrapper.connect_to_server(agent.url, agent.username, agent.password)
         if not ret:
             return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=False, errors=["Could not establish a connection with the CI/CD Agent - " + message]) 
+        testbed_instance = crud.get_testbed_by_id(db=db,id=agent.testbed_id)
 
+        if not testbed_instance:
+            return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=False, errors=[f"A testbed with the id {agent.testbed_id} does not exists"]) 
         db_ci_cd_agent = CRUD_Agents.create_ci_cd_agent(db=db, agent=agent)
         return Utils.create_response(status_code=HTTPStatus.CREATED, success=True, message="Created CI/CD Agent", data=db_ci_cd_agent.as_dict_without_password())
     except Exception as e:
