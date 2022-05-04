@@ -63,6 +63,35 @@ def get_db():
     tags=["agents"],
     summary="Register new CI/CD Agent",
     description="This endpoint allows the registering of a new CI/CD Agent.",
+    responses={
+        201: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "Created CI/CD Agent",
+                    "data": ci_cd_manager_schemas.CI_CD_Agent(
+                        url="http://my.cicd.agent",
+                        username="username",
+                        testbed_id="testbed_xyz",
+                        is_online=True,
+                        id=1,
+                        communication_token="abcd1234"
+                        ).dict()}
+                }
+            }
+        },
+        400: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Could not establish a connection with the CI/CD Agent",
+                    "A testbed with the id tesbed_itav does not exist"]}
+                }
+            }
+        }
+    }
 )
 def create_agent(agent: ci_cd_manager_schemas.CI_CD_Agent_Create, token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
     try:

@@ -13,12 +13,12 @@
 
 # generic imports
 from datetime import datetime
+from email import message
 from fastapi.responses import JSONResponse
 import logging
 import yaml
 import requests
-from sqlalchemy.orm import class_mapper
-
+from pydantic import BaseModel
 # custom imports
 import aux.constants as Constants
 from sql_app import crud
@@ -30,6 +30,13 @@ logging.basicConfig(
     format="%(module)-15s:%(levelname)-10s| %(message)s",
     level=logging.INFO
 )
+
+response_dict = {
+    "message": "",
+    "data": [],
+    "errors": [],
+    "sucess": True
+}
 
 def create_response(status_code=200, data=[], errors=[], success=True, message=""):
     return JSONResponse(status_code=status_code, content={"message": message, "success": success, 
@@ -154,23 +161,3 @@ def patch_results(token,nods_id,data):
     response = requests.patch(url=url,headers=headers,json=data)
     print(response.text)
     return True,response
-
-
-# ###https://stackoverflow.com/questions/23554119/convert-sqlalchemy-orm-result-to-dict
-# def object_to_dict(obj, found=None):
-#     if found is None:
-#         found = set()
-#     mapper = class_mapper(obj.__class__)
-#     columns = [column.key for column in mapper.columns]
-#     get_key_value = lambda c: (c, getattr(obj, c).isoformat()) if isinstance(getattr(obj, c), datetime) else (c, getattr(obj, c))
-#     out = dict(map(get_key_value, columns))
-#     for name, relation in mapper.relationships.items():
-#         if relation not in found:
-#             found.add(relation)
-#             related_obj = getattr(obj, name)
-#             if related_obj is not None:
-#                 if relation.uselist:
-#                     out[name] = [object_to_dict(child, found) for child in related_obj]
-#                 else:
-#                     out[name] = object_to_dict(related_obj, found)
-#     return out
