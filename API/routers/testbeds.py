@@ -12,6 +12,7 @@
 from sql_app.database import SessionLocal
 from sqlalchemy.orm import Session
 import sql_app.schemas.ci_cd_manager as Schemas 
+import sql_app.models as Models
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import File, UploadFile
@@ -20,8 +21,6 @@ import logging
 import inspect
 import sys
 import os
-import yaml
-
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
@@ -51,6 +50,16 @@ def get_db():
     tags=["testbeds"],
     summary="Get all testbeds",
     description="Get all the testbeds available.",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "data": Schemas.Testbed(name="ITAv Testbed",id="tesbed_itav").dict()}
+                }
+            }
+        }
+    }
 )
 async def all_testbeds(db: Session = Depends(get_db)):
     data = {"testbeds": [t.as_dict() for t in crud.get_all_testbeds(db)]}
@@ -59,7 +68,29 @@ async def all_testbeds(db: Session = Depends(get_db)):
 @router.post(
     "/testbeds",
     tags=["testbeds"],
-    summary="Create a testbed on DB"
+    summary="Create a testbed on DB",
+    responses={
+        201: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "Success creating new testbed",
+                    "data": Schemas.Testbed(name="ITAv Testbed",id="tesbed_itav").dict()}
+                }
+            }
+        },
+        400: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["A testbed with the id tesbed_itav already exists",
+                    "A testbed with the name ITAv Testbed already exists"]}
+                }
+            }
+        }
+    }
 )
 async def create_testbed(testbedData: Schemas.Testbed_Create,db: Session = Depends(get_db)):
     testbed_instance = crud.get_testbed_by_id(db=db,id=testbedData.id)

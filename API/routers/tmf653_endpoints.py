@@ -62,7 +62,34 @@ def get_db():
     "/tmp-api/testDescriptorValidation",
     tags=["TMF-653"],
     summary="Validates a Test Descriptor",
-    description="Given a TMF-653 Payload, the respective Test Descriptor will be rendered and validated"
+    description="Given a TMF-653 Payload, the respective Test Descriptor will be rendered and validated",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "The test Descriptor has been validated",
+                }
+            }
+        }
+        }
+        ,
+        400: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Payload does not follow TMF653 Standard",
+                    "Unable to parse the submitted file",
+                    "Invalid Testing Descriptor format",
+                    "The selected testbed doesn't exist.",
+                    "Error on validating test parameters"
+                    ]}
+                }
+            }
+        }
+}
 )
 async def validate_test_descriptor(serviceTest:UploadFile = File(...) , db: Session = Depends(get_db) ):
     contents = await serviceTest.read()
@@ -154,21 +181,46 @@ async def validate_test_descriptor(serviceTest:UploadFile = File(...) , db: Sess
     "/tmf-api/serviceTestManagement/v4/serviceTest",
     tags=["TMF-653"],
     summary="Creates a Service Test",
-    description="Creates a Service Test, given a Valid TMF-653 Payload file, and execute the associated tests" 
+    description="Creates a Service Test, given a Valid TMF-653 Payload file, and execute the associated tests",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "A new build job was created",
+                     "data": {
+                            "test_id": 1,
+                            "testbed_id" : "testbed_itav",
+                            "netapp_id": "OBU",
+                            "network_service_id": "vOBU",
+                            "job_name": "testjob", 
+                            "build_number": 1,
+                            "access_token": "12345abcde"}
+                }
+            }
+        }}
+        ,
+        400: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Payload does not follow TMF653 Standard",
+                    "Unable to parse the submitted file",
+                    "Invalid Testing Descriptor format",
+                    "The selected testbed doesn't exist.",
+                    "Error on validating test parameters",
+                    "No CI/CD Agent Available",
+                    "Couldn't create pipeline script"
+                    ]}
+                }
+            }
+        }
+    }
 )
-async def create_service_test(serviceTest:UploadFile = File(...) , db: Session = Depends(get_db)):
+async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Create , db: Session = Depends(get_db)):
 
-    # 1 -> Get data and Validate TMF653 Payload
-
-    contents = await serviceTest.read()
-    try:
-        test_descriptor_data = json.loads(contents.decode("utf-8"))
-        #print(test_descriptor_data)
-        serviceTestParsed = tmf653_schemas.ServiceTest_Create(**test_descriptor_data)
-    except pydantic.ValidationError as e:
-        return Utils.create_response(status_code=400, success=False, errors=[f"Payload does not follow TMF653 Standard: {e}"])
-    except:
-        return Utils.create_response(status_code=400, success=False, errors=["Unable to parse the submitted file"])
 
     # Get Service Test Characteristics
     characteristics = []

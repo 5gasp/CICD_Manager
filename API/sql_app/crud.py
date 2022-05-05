@@ -257,7 +257,7 @@ def get_test_info_by_testbed_id(db: Session, testbed_id: int):
 
 def is_testinfo_valid(db: Session, test_info_instances: models.Test_Information,
 testinfo_data:testinfo_schemas.TestInformation):
-    return all( [t.id != testinfo_data.id for t in test_info_instances])
+    return all( [t.testid != testinfo_data.testid for t in test_info_instances])
 
 def create_testinfo_variables(db: Session, testinfo_data: testinfo_schemas.TestInformation):
     lst = []
@@ -275,13 +275,16 @@ def create_testinfo_variables(db: Session, testinfo_data: testinfo_schemas.TestI
 
 
 def create_test_information(db: Session,testinfo_data: testinfo_schemas.TestInformation):
+    testbed = get_testbed_by_id(db,testinfo_data.testbed_id)
+    if not testbed:
+        return False,"The selected testbed does not exit"
     test_info_instances = get_test_info_by_testbed_id(db,testinfo_data.testbed_id)
-
+    print(test_info_instances)
     if test_info_instances and not is_testinfo_valid(db,test_info_instances,testinfo_data):
-        return False
+        return False, f"This testbed already contains information about a test with the id {testinfo_data.testid}"
     testinfo_variables = create_testinfo_variables(db,testinfo_data)
     test_info_instance = models.Test_Information(
-        id=testinfo_data.id,
+        testid=testinfo_data.testid,
         name=testinfo_data.name,
         testbed_id=testinfo_data.testbed_id,
         description=testinfo_data.description,
@@ -293,7 +296,7 @@ def create_test_information(db: Session,testinfo_data: testinfo_schemas.TestInfo
     db.add(test_info_instance)
     db.commit()
     db.refresh(test_info_instance)
-    return test_info_instance
+    return test_info_instance,""
     
 
 

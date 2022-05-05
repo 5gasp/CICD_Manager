@@ -90,7 +90,8 @@ class Jenkins_Pipeline_Configuration:
         tests_to_perform = {}      
         for test_info in executed_tests_info:
             test_id = test_info["name"]
-            available_test = [test.as_dict() for test in available_tests if test.id == test_id][0]
+            print(available_tests[0].as_dict())
+            available_test = [test.as_dict() for test in available_tests if test.testid == test_id][0]
             print(available_test)
             test_dir = available_test["ftp_base_location"]
             test_filename = available_test["test_filename"]

@@ -9,7 +9,7 @@ class TestVariables(BaseModel):
     possible_options: List[Any]
 
 class TestInformation(BaseModel):
-    id: str = Field(...,example= "bandwidth")
+    testid: str = Field(...,example= "bandwidth")
     name : str = Field(...,example= "bandwidth")
     testbed_id: str = Field(...,example= "testbed_xyz")
     description: str = Field(...,example= "Tests the bandwidth between to VNFs. The results are in bits/sec")

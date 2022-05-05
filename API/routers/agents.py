@@ -63,6 +63,45 @@ def get_db():
     tags=["agents"],
     summary="Register new CI/CD Agent",
     description="This endpoint allows the registering of a new CI/CD Agent.",
+    responses={
+        201: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "Created CI/CD Agent",
+                    "data": ci_cd_manager_schemas.CI_CD_Agent(
+                        url="http://my.cicd.agent",
+                        username="username",
+                        testbed_id="testbed_xyz",
+                        is_online=True,
+                        id=1,
+                        communication_token="abcd1234"
+                        ).dict()}
+                }
+            }
+        },
+        400: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Could not establish a connection with the CI/CD Agent",
+                    "A testbed with the id tesbed_itav does not exist"]}
+                }
+            }
+        },
+        401: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["User does not have permission to perform this action"]}
+                }
+            }
+        }
+    }
 )
 def create_agent(agent: ci_cd_manager_schemas.CI_CD_Agent_Create, token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
     try:
@@ -93,6 +132,27 @@ def create_agent(agent: ci_cd_manager_schemas.CI_CD_Agent_Create, token: str = D
     tags=["agents"],
     summary="Delete CI/CD Agent",
     description="Delete a CI/CD given its Id",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "Deleted CI/CD Agent",
+                }
+            }
+        }
+     },
+        401: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["User does not have permission to perform this action"]}
+                }
+            }
+        }
+    }
 )
 def delete_agent(agent_id: int, token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
     try:
@@ -115,6 +175,35 @@ def delete_agent(agent_id: int, token: str = Depends(auth.oauth2_scheme), db: Se
     tags=["agents"],
     summary="Get all CI/CD Agents",
     description="Using this endpoint is possible to obtain a list of all the CI/CD Agents.",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "Got all CI/CD Nodes",
+                    "data": [ci_cd_manager_schemas.CI_CD_Agent(
+                        url="http://my.cicd.agent",
+                        username="username",
+                        testbed_id="testbed_xyz",
+                        is_online=True,
+                        id=1,
+                        communication_token="abcd1234"
+                        ).dict()]
+                }
+            }
+        }
+     },
+        401: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["User does not have permission to perform this action"]}
+                }
+            }
+        }
+    }
 )
 def get_agents(skip: int = 0, limit: int = 500, token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
     try:

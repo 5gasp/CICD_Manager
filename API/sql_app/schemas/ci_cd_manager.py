@@ -52,7 +52,10 @@ class Testbed(Testbed_Base):
     id: str = Field(..., example="testbed_xyz")
     class Config:
         orm_mode = True
+from pydantic import BaseModel
 
+
+    
 
 
 
