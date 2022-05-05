@@ -89,7 +89,7 @@ def load_test_info(db, tests_info_file):
                 data = test_info[test]
                 variables = [ TestInfoSchemas.TestVariables(**var) for var in data['test_variables'] ]
                 test_info_schema = TestInfoSchemas.TestInformation(
-                id=data['id'],
+                testid=data['id'],
                 name=data['name'], description=data['description'],
                 testbed_id=testbed,
                 ftp_base_location=data['ftp_base_location'],

@@ -105,9 +105,9 @@ class Test_Instance_Tests(Base):
 		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 class Test_Information(Base):
 	__tablename__ = "test_information"
-
-	id = Column(String, primary_key=True, index=True)
-	name = Column(String, unique=True)
+	id  = Column(Integer,primary_key=True, autoincrement=True)
+	testid = Column(String)
+	name = Column(String)
 	testbed_id = Column(String, ForeignKey("testbeds.id"), nullable=False)
 	description = Column(String)
 	ftp_base_location = Column(String)
@@ -125,7 +125,7 @@ class Test_Variables(Base):
 	description = Column(String)
 	mandatory = Column(Boolean, default=True)
 	type = Column(String)
-	testinformation_id = Column(String, ForeignKey('test_information.id'))
+	testinformation_id = Column(Integer, ForeignKey('test_information.id'))
 	test_information = relationship("Test_Information",back_populates="testinfo_variables")
 	possible_options = relationship("Variable_Options",back_populates='testvariable')
 	def as_dict(self):

@@ -124,12 +124,12 @@ async def update_test_status(test_status: ci_cd_manager_schemas.Test_Status_Upda
 )
 async def store_test_information(test_info: testinfo_schemas.TestInformation, db: Session = Depends(get_db)):
     #TODO: Validate more fields?
-    instance = crud.create_test_information(db,testinfo_data=test_info)
+    instance,msg = crud.create_test_information(db,testinfo_data=test_info)
     if instance:
         return Utils.create_response(data=instance.as_dict())
     else:
         return Utils.create_response(status_code=400,
-         errors=[f"This testbed already contains information about a test with the id {test_info.id}"])
+         errors=[msg])
 
 
 
