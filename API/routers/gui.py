@@ -22,7 +22,11 @@ import logging
 import inspect
 import sys
 import os
+import datetime
 from urllib.request import urlopen
+
+from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas
+from sql_app.schemas import test_info as test_info_schemas
 
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -58,6 +62,45 @@ def get_db():
     tags=["gui"],
     summary="Get Testing Process Status",
     description="Gets all the stages of the testing process and their status.",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "data": ci_cd_manager_schemas.Test_Status(
+                        test_id=1,
+                        state="ENVIRONMENT_SETUP_CI_CD_AGENT",
+                        success=True,
+                        id=1,
+                        timestamp=datetime.datetime.now()
+                    ).dict()}
+                }
+            }
+        },
+        403: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Invalid credentials."]
+                    }
+                }
+            }
+        },
+        400: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Couldn't retrieve the tests status."]
+                    }
+                }
+            }
+        }
+    }
 )
 async def get_testing_process_status(test_id: int, access_token: str, db: Session = Depends(get_db)):
     try:
@@ -75,7 +118,20 @@ async def get_testing_process_status(test_id: int, access_token: str, db: Sessio
     tags=["gui"],
     summary="Get testing process console log",
     description="While running the testing pipeline on the CI/CD Agent, a console log is created. This endpoint retrieves it.",
-    response_class=PlainTextResponse
+    response_class=PlainTextResponse,
+    responses={
+        403: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Invalid credentials."]
+                    }
+                }
+            }
+        }
+    }
 )
 async def get_testing_console_log(test_id: int, access_token: str, db: Session = Depends(get_db)):
     # get test instance information
@@ -92,6 +148,46 @@ async def get_testing_console_log(test_id: int, access_token: str, db: Session =
     tags=["gui"],
     summary="Get test base information",
     description="Get test base information (NetApp id, Testbed, Starting Time, ...)",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "data": test_info_schemas.TestBaseInformation(
+                        test_id="test_1",  
+                        netapp_id="netapp_1",
+                        network_service_id="net_service_1",
+                        testbed_id="testbed_1",
+                        started_at="yyyy-mm-dd",
+                        test_status="Status"
+                    ).dict()}
+                }
+            }
+        },
+        403: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Invalid credentials."]
+                    }
+                }
+            }
+        },
+        400: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Couldn't retrieve the test base information."]
+                    }
+                }
+            }
+        }
+    }
 )
 async def get_test_base_information(test_id: int, access_token: str, db: Session = Depends(get_db)):
     print("access_token", access_token)
@@ -111,6 +207,47 @@ async def get_test_base_information(test_id: int, access_token: str, db: Session
     tags=["gui"],
     summary="Get the performed Robot Tests",
     description="Get the performed Robot Tests and their results.",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "data": test_info_schemas.TestResults(
+                        id=1,  
+                        test_instance=1,
+                        description="Tests the bandwidth between to VNFs. The results are in bits/sec",
+                        performed_test="test_1",
+                        start_time="timestamp",
+                        end_time="timestamp",
+                        success=True
+                    ).dict()}
+                }
+            }
+        },
+        403: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Invalid credentials."]
+                    }
+                }
+            }
+        },
+        400: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Couldn't retrieve the test performed."]
+                    }
+                }
+            }
+        }
+    }
 )
 async def get_tests_performed(test_id: int, access_token: str, db: Session = Depends(get_db)):
     try:
