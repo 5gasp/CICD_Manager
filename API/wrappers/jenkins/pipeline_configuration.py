@@ -119,9 +119,9 @@ class Jenkins_Pipeline_Configuration:
             f"ltr_user = credentials('ltr_user')",
             f"ltr_password = credentials('ltr_password')",
             f"ltr_location = credentials('ltr_location')",
-            f"results_ftp_location = '{Constants.FTP_RESULTS_URL}'",
-            f"results_ftp_user = '{Constants.FTP_RESULTS_USER}'",
-            f"results_ftp_password = '{Constants.FTP_RESULTS_PASSWORD}'",
+            f"results_ftp_location = credentials('results_ftp_location')",
+            f"results_ftp_user = credentials('results_ftp_user')",
+            f"results_ftp_password = credentials('results_ftp_password')",
         ]
 
         publish_results_commands = [
