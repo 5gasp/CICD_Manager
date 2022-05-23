@@ -1,0 +1,53 @@
+test_info:
+  description: Infrastructure tests for XYZ NetApp
+  netapp_id: {{netapp_id}}
+  network_service_id: {{network_service_id}}
+  testbed_id: {{testbed_id}}
+test_phases:
+  execution:
+  - batch_id: 1
+    executions:
+    - execution_id: 1
+      name: bandwidth test
+      testcase_ids:
+      - 1
+    scope: infrastructure
+  setup:
+    deployments:
+    - deployment_id: 1
+      descriptor: xyz_vnf1_vnfd
+      id: none
+      name: xyz_d1
+      parameters:
+      - key: ip_dest
+        value: 1.1.1.1
+    - deployment_id: 2
+      descriptor: xyz_vnf2_vnfd
+      id: none
+      name: xyz_vnf2
+      parameters:
+      - key: ip_source
+        value: 2.2.2.2
+    testcases:
+    - description: Test the bandwidth between the OBU and vOBU
+      name: bandwidth
+      parameters:
+      - key: host1_ip
+        value: {{testcase1.host1_ip}}
+      - key: host1_username
+        value: {{testcase1.host1_username}}
+      - key: host1_password
+        value: {{testcase1.host1_password}}
+      - key: host2_ip
+        value: {{testcase1.host2_ip}}
+      - key: host2_username
+        value: {{testcase1.host2_username}}
+      - key: host2_password
+        value: {{testcase1.host2_password}}
+      - key: threshold
+        value: {{testcase1.threshold}}
+      - key: comparator
+        value: {{testcase1.comparator}}
+      scope: infrastructure
+      testcase_id: 1
+      type: predefined

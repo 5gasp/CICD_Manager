@@ -1,0 +1,25 @@
+{
+    "name": "NODS integration test",
+    "characteristic": [
+        {
+            "name": "testSpecRef",
+            "value": {
+                "value": "685baabd-aa97-4276-bd69-897e3c144a28"
+            }
+        },
+        {
+            "name": "NODS_ServiceTest_ID",
+            "value": {
+                "value": "d134c083-cd8e-40fd-aee7-701e34d1a656"
+            }
+        }   
+    ],
+    "testSpecification": {
+        "uuid": "f7fc6adc-ef82-45c8-b903-d599340bf45b",
+        "id": "685baabd-aa97-4276-bd69-897e3c144a28"
+    },
+    "relatedService": {
+        "uuid": "a64507f5-fe4e-4391-8ab3-e6d7984a9fd9",
+        "id": "ae88dc70-25ce-45e2-a8f5-90b6ce0bdb3d"
+    }
+}
