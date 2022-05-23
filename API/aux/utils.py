@@ -35,7 +35,7 @@ response_dict = {
     "message": "",
     "data": [],
     "errors": [],
-    "sucess": True
+    "success": True
 }
 
 def create_response(status_code=200, data=[], errors=[], success=True, message=""):

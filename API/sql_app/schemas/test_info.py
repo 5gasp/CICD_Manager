@@ -27,3 +27,20 @@ class TestInformationUpdate(TestInformation):
     test_filename: str = None
     test_type: str = None
     test_variables: List[TestVariables] = []
+
+class TestBaseInformation(BaseModel):
+    test_id: str  
+    netapp_id: str
+    network_service_id: str
+    testbed_id: str
+    started_at: str
+    test_status: str
+
+class TestResults(BaseModel):
+    id: int    
+    test_instance: int
+    description: str
+    performed_test: str
+    start_time: str
+    end_time: str
+    success = bool

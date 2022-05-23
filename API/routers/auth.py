@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from http.client import responses
 from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException, status
@@ -46,7 +47,37 @@ def get_db():
 app = FastAPI()
 
 
-@router.post("/users/login")
+@router.post(
+    "/users/login",
+    tags=["auth"],
+    summary="Login and get the authentication token",
+    description="This endpoint allows the user to login and get the token.",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "data": AuthSchemas.Token(
+                        access_token="token_example",
+                        token_type="Bearer Token"
+                    ).dict()}
+                }
+            }
+        },
+        401: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Invalid credentials."]
+                    }
+                }
+            }
+        }
+    }
+)
 def login_for_access_token(form_data: AuthSchemas.UserLogin, db: Session = Depends(get_db)):
     try:
         user = CRUD_Auth.authenticate_user(db, form_data.username, form_data.password)
@@ -60,7 +91,38 @@ def login_for_access_token(form_data: AuthSchemas.UserLogin, db: Session = Depen
     return Utils.create_response(status_code=200, success=True, data={"access_token": access_token, "token_type": "Bearer Token"})  
 
 
-@router.get("/users/me/")
+@router.get(
+    "/users/me/",
+    tags=["auth"],
+    summary="Get user information",
+    description="This endpoint allows the user to get his own information.",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "data": AuthSchemas.UserInfo(
+                        username="username",
+                        is_active="True",
+                        roles="Role"
+                    ).dict()}
+                }
+            }
+        },
+        401: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["User not found."]
+                    }
+                }
+            }
+        }
+    }
+)
 def get_my_information(token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
     try:
         username = auth.get_current_user(token)
@@ -71,7 +133,40 @@ def get_my_information(token: str = Depends(auth.oauth2_scheme), db: Session = D
     return Utils.create_response(status_code=200, success=True, data={"user_info": user_info})  
 
 
-@router.post("/users/register/")
+@router.post(
+    "/users/register/",
+    tags=["auth"],
+    summary="Register user",
+    description="This endpoint allows the user to register using credentials.",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "data": AuthSchemas.UserInfo(
+                        username="username",
+                        is_active="True",
+                        roles="Role"
+                    ).dict()}
+                }
+            }
+        },
+        401: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Not enough privileges for user <username> to perform the operation <operation>.", 
+                                "Not enough privileges."]
+                    }
+                }
+            }
+        }
+    }
+    
+)
 def register_new_user(new_user: AuthSchemas.UserRegister, token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)):
     try:
         login_username = auth.get_current_user(token)
@@ -88,7 +183,34 @@ def register_new_user(new_user: AuthSchemas.UserRegister, token: str = Depends(a
 
 
 
-@router.patch("/users/update-password/")
+@router.patch(
+    "/users/update-password/",
+    tags=["auth"],
+    summary="Update Password",
+    description="This endpoint allows the user to update his password.",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "Password Updated With Success"
+                    }
+                }
+            }
+        },
+        403: {
+            "content": {
+                "application/json": {
+                    "example": {**Utils.response_dict,
+                    "message": "",
+                    "success": False,
+                    "errors": ["Password update failed."]
+                    }
+                }
+            }
+        }
+    }
+)
 def update_password(password_data: AuthSchemas.NewPassword, token: str = Depends(auth.oauth2_scheme) , db: Session = Depends(get_db)):
     try:
         username = auth.get_current_user(token)

@@ -30,3 +30,8 @@ class Token(BaseModel):
 
 class NewPassword(BaseModel):
     new_password: str
+
+class UserInfo(BaseModel):
+    username: str
+    is_active: str
+    roles: str
