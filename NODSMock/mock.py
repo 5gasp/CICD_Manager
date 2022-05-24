@@ -3,16 +3,15 @@
 # @Date:   23-05-2022 10:46:25
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 23-05-2022 15:15:26
+# @Last Modified time: 24-05-2022 09:33:10
 # @Description: 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 import json
 import copy
-from ruamel.yaml import YAML
 import yaml
-
-
+import requests
+from constants import CI_CD_MANAGER_URL
 app = FastAPI()
 
 
@@ -33,7 +32,6 @@ def add_characteristic(payload, name, value):
             }
         }
     )
-
 
 @app.post("/new-test")
 async def new_test():
@@ -70,23 +68,39 @@ async def new_test():
                 param["value"]
             )
             
+
+    print("Tiggering a new validation process.")
+    try:
+        response = requests.post(
+            url=f"{CI_CD_MANAGER_URL}/tmf-api/serviceTestManagement/v4/serviceTest",
+            json=base_payload,
+            timeout=3
+        )
+    except Exception as e:
+        pass
+    #print("Status Code:", response.status_code)
+    #print("Response Text",response.text)
+    
     return True
 
 
 @app.post("/auth/realms/openslice/protocol/openid-connect/token")
 async def auth():
+    print("Performing authentication.")
     with open('static/nods_payloads/auth_response.json') as json_file:
         return JSONResponse(content=json.load(json_file))
 
 
-@app.post("/tmf-api/serviceTestManagement/v4/serviceTestSpecification/{id}")
+@app.get("/tmf-api/serviceTestManagement/v4/serviceTestSpecification/{id}")
 async def service_test_specification(id):
+    print("Getting service test specification.")
     with open('static/nods_payloads/service_test_specification.json') as json_file:
         return JSONResponse(content=json.load(json_file))
 
 
 @app.get("/tmf-api/serviceTestManagement/v4/serviceTestSpecification/{service_test_specification_uuid}/attachment/{attachement_id}/{attachment_name}")
 async def service_test_specification(service_test_specification_uuid, attachement_id, attachment_name):
+    print("Getting testing descriptor as an attachment.")
     TESTING_DESCRIPTOR_TO_PARSE = copy.deepcopy(TESTING_DESCRIPTOR)
     
     TESTING_DESCRIPTOR_TO_PARSE["test_info"]["netapp_id"] = '{{netapp_id}}'
@@ -104,3 +118,9 @@ async def service_test_specification(service_test_specification_uuid, attachemen
 
     return FileResponse('static/testing_descriptor_to_parse.yaml', media_type='application/octet-stream', filename="testing_descriptor_to_parse.yaml")
     
+@app.patch("/tmf-api/serviceTestManagement/v4/serviceTest/{nods_id}")
+async def patchresult(nods_id, request: Request):
+    print("Patching Results.")
+    body = await request.json()
+    print(body)
+    return True

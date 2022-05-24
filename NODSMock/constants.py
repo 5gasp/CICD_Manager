@@ -1,0 +1,1 @@
+CI_CD_MANAGER_URL = "http://10.0.13.22:8000"
