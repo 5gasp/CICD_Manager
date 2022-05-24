@@ -1,12 +1,11 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
-# Author: Rafael Direito (rdireito@av.it.pt)
-# Date: 1st july 2021
-# Last Update: 16th november 2021
+# @Author: Rafael Direito
+# @Date:   22-05-2022 10:25:05
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 24-05-2022 11:17:36
+# @Description: 
 
-# Description:
-# Constains all the endpoints related to the CI/CD Agents
 
 # generic imports
 from fastapi import APIRouter
@@ -18,6 +17,7 @@ import logging
 import inspect
 import sys
 import os
+import binascii
 
 from starlette.types import Message
 
@@ -121,10 +121,23 @@ def create_agent(agent: ci_cd_manager_schemas.CI_CD_Agent_Create, token: str = D
         if not testbed_instance:
             return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=False, errors=[f"A testbed with the id {agent.testbed_id} does not exists"]) 
         db_ci_cd_agent = CRUD_Agents.create_ci_cd_agent(db=db, agent=agent)
+        
+        # create jenkins  credentials
+        credential_id = "communication_token"
+        credential_secret = binascii.b2a_hex(os.urandom(16)).decode('ascii')
+        credential_description = "Token used for communication with the CI/CD Manager"
+        ret, message = jenkins_wrapper.create_credential(
+            credential_id, credential_secret, credential_description)
+        if not ret:
+            return Utils.create_response(status_code=400, success=False, errors=[message])
+
+        # update communication credential on db
+        CRUD_Agents.update_communication_token(db, db_ci_cd_agent.id, credential_secret)
+        
         return Utils.create_response(status_code=HTTPStatus.CREATED, success=True, message="Created CI/CD Agent", data=db_ci_cd_agent.as_dict_without_password())
     except Exception as e:
         logging.error(e)
-        return Utils.create_response(status_code=e.status_code, success=False, errors=[e.message]) 
+        return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=False, errors=[str(e)]) 
 
 
 @router.delete(
@@ -166,7 +179,7 @@ def delete_agent(agent_id: int, token: str = Depends(auth.oauth2_scheme), db: Se
         return Utils.create_response(status_code=HTTPStatus.OK, success=True, message="Deleted CI/CD Agent")
     except Exception as e:
         logging.error(e)
-        return Utils.create_response(status_code=e.status_code, success=False, errors=[e.message]) 
+        return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=False, errors=[e])
 
 
 @router.get(

@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
-# Author: Rafael Direito (rdireito@av.it.pt)
-# Date:  7th june 2021
-# Last Update: 12th july 2021
-
-# Description:
-# Contains all the CRUD operations over the Database
+# @Author: Rafael Direito
+# @Date:   22-05-2022 10:25:05
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 24-05-2022 11:05:06
+# @Description: Contains all the CRUD operations over the Database
 
 
 import logging
