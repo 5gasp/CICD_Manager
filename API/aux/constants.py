@@ -3,12 +3,13 @@
 # @Date:   22-05-2022 10:25:05
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 25-05-2022 10:52:32
+# @Last Modified time: 25-05-2022 13:11:37
 # @Description: Contains several constant variables needed in the workflow of the
 # CI/CD Manager
 
 # DEVELOPER DEFINED TESTS
 DEVELOPER_DEFINED_TEST_TEMP_STORAGE_DIR = "warehouse/developer-defined-tests"
+DEVELOPER_DEFINED_TEST_BASE_FTP_DIR = "developer-defined-tests"
 
 # AUTH
 SECRET_KEY = "99cb3e97787cf81a7f418c42b96a06f77ce25ddbb2f7f83a53cf3474896624f9"

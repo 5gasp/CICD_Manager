@@ -3,17 +3,8 @@
 # @Date:   22-05-2022 10:25:05
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 25-05-2022 11:28:29
-# @Description: 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-#
-# Author: Daniel Gomes (dagomes@av.it.pt)
-# Date: 1st july 2021
-# Last Update: 12th july 2021
-
-# Description:
-# Constains all the endpoints related to the CI/CD Agents
+# @Last Modified time: 25-05-2022 14:54:34
+# @Description: Constains all the endpoints related to the CI/CD Agents
 
 # generic imports
 from wsgiref import headers
@@ -25,7 +16,7 @@ from sqlalchemy.orm import Session
 from sql_app import crud
 import sql_app.CRUD.agents as CRUD_Agents
 from sql_app.schemas import TMF653 as tmf653_schemas
-import tarfile
+import  test_helpers.developer_defined as dev_defined_test_helpers
 import logging
 import inspect
 import sys
@@ -231,42 +222,13 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
         logging.info(f"Found {len(developer_defined_tests)} developer defined tests")
         logging.info("Developer Defined Tests:" + str(developer_defined_tests))
     
-        developer_defined_test_paths = []
-        
-        for developer_defined_test_name in developer_defined_tests:
-            url_to_download = attachments.get(f"{developer_defined_test_name}.tar.gz")
-            if url_to_download:
-                # Get Compressed Test Files
-                r = requests.get(
-                    f"{Constants.NODS_HOST}/tmf-api{url_to_download}",
-                    allow_redirects=True
-                )
-                compressed_test_file_location = os.path.join(
-                    Constants.DEVELOPER_DEFINED_TEST_TEMP_STORAGE_DIR,
-                    f"{nods_id}-{developer_defined_test_name}.tar.gz"
-                )
-                open(compressed_test_file_location ,'wb').write(r.content)
-                
-                # Decompress the Test Files
-                compressed_test_file= tarfile.open(compressed_test_file_location)
-                x = compressed_test_file.extractall(
-                    compressed_test_file_location.replace(".tar.gz", "")
-                )
-                compressed_test_file.close()
-                print(x)
-                developer_defined_test_paths.append(
-                    compressed_test_file_location.replace(".tar.gz", "")
-                )
-                
-                # Remove the compressed files
-                os.remove(compressed_test_file_location)
-                
-        
+        try:
+            dev_defined_test_helpers.load_developer_defined_tests(
+                developer_defined_tests, attachments, nods_id)
+        except Exception as e:
+            return Utils.create_response(status_code=400, success=False, 
+                message=f"Unable to Obtain the Developer Defined Tests from NODS -{e}",
+                data=[])
 
-                
-                
-
-    
-
-    return Utils.create_response(status_code=200, success=True, message=f"IXXXX", data=[])
+    #return Utils.create_response(status_code=200, success=True, message=f"IXXXX", data=[])
     return TestRouters.new_test(rendered_descriptor, nods_id, db)
