@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+# @Author: Rafael Direito
+# @Date:   24-05-2022 10:49:25
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 25-05-2022 09:58:52
+# @Description: 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
@@ -140,117 +147,117 @@ async def store_test_information(test_info: testinfo_schemas.TestInformation, db
     description="Given a file with a test descriptor, create a new test.",
 )
 async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depends(get_db)):
-    
-    
-    # 1 - get data from the uploaded descriptor
+    # Get data from the uploaded descriptor
     contents = await test_descriptor.read()
     try:
         test_descriptor_data = yaml.safe_load(contents.decode("utf-8"))
     except:
         return Utils.create_response(status_code=400, success=False, errors=["Unable to parse the submitted file. It must be a YAML."])
 
-    # 2 - validate the structure of the testing descriptor
-    test_descriptor_validator =  Test_Descriptor_Validator(test_descriptor_data)
+    return new_test(test_descriptor_data, db)
+    
+    
+def new_test(test_descriptor_data, db):
+    #  validate the structure of the testing descriptor
+    test_descriptor_validator = Test_Descriptor_Validator(test_descriptor_data)
     structural_validation_errors = test_descriptor_validator.validate_structure()
     if len(structural_validation_errors) != 0:
         return Utils.create_response(status_code=400, success=False, errors=structural_validation_errors)
 
-    
-    # 3 - check if the testbed exists
+    # check if the testbed exists
     testbed_id = test_descriptor_data["test_info"]["testbed_id"]
     if crud.get_testbed_by_id(db, testbed_id) is None:
         return Utils.create_response(status_code=400, success=False, errors=["The selected testbed doesn't exist."])
 
-
-    # 4 - validate id all tests exist in the selected testbed
-    testbed_tests = crud.get_test_info_by_testbed_id(db,testbed_id)
+    # validate id all tests exist in the selected testbed
+    testbed_tests = crud.get_test_info_by_testbed_id(db, testbed_id)
 
     errors = test_descriptor_validator.validate_tests_parameters(testbed_tests)
     if len(errors) != 0:
         return Utils.create_response(status_code=400, success=False, errors=errors, message="Error on validating test parameters")
 
-
-    # 5 - validate metrics collection information
+    # validate metrics collection information
     metrics_collection_information = Constants.METRICS_COLLECTION_INFO
-    is_ok = test_descriptor_validator.validate_metrics_collection_process(metrics_collection_information)
+    is_ok = test_descriptor_validator.validate_metrics_collection_process(
+        metrics_collection_information)
     if not is_ok:
         return Utils.create_response(status_code=400, success=False, errors=errors, message="Badly defined parameters for the metrics collection process")
-   
+
     descriptor_metrics_collection = None
     if "metrics_collection" in test_descriptor_data["test_phases"]["setup"]:
-        descriptor_metrics_collection = test_descriptor_data["test_phases"]["setup"]["metrics_collection"]
+        descriptor_metrics_collection = test_descriptor_data[
+            "test_phases"]["setup"]["metrics_collection"]
 
-    # 6 - register the test in database
+    # register the test in database
     netapp_id = test_descriptor_data["test_info"]["netapp_id"]
     network_service_id = test_descriptor_data["test_info"]["network_service_id"]
 
-    # 6.a register new test
-    test_instance = crud.create_test_instance(db, netapp_id, network_service_id, testbed_id)
+    # register new test
+    test_instance = crud.create_test_instance(
+        db, netapp_id, network_service_id, testbed_id)
 
-    # 6.b update test status
-    crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_on_manager"], True)
-
+    # update test status
+    crud.create_test_status(
+        db, test_instance.id, Constants.TEST_STATUS["submitted_on_manager"], True)
 
     # Check if the CI/CD Node for this test is already registered
-    
-    testbeds_ci_cd_agents = CRUD_Agents.get_ci_cd_agents_by_testbed(db, testbed_id)
+    testbeds_ci_cd_agents = CRUD_Agents.get_ci_cd_agents_by_testbed(
+        db, testbed_id)
     available_agents_jobs = []
     for ci_cd_agent in testbeds_ci_cd_agents:
         jenkins_wrapper = Jenkins_Wrapper()
-        ret, message = jenkins_wrapper.connect_to_server(ci_cd_agent.url, ci_cd_agent.username, ci_cd_agent.password)
+        ret, message = jenkins_wrapper.connect_to_server(
+            ci_cd_agent.url, ci_cd_agent.username, ci_cd_agent.password)
         if ret:
-            active_jobs = [job['color'] for job in jenkins_wrapper.get_jobs()[1]].count('blue_anime')
-            available_agents_jobs.append((jenkins_wrapper, ci_cd_agent, active_jobs))
-    
-    if len(available_agents_jobs) == 0:
-         return Utils.create_response(status_code=400, success=False, errors=["No CI/CD Agent Available"])
+            active_jobs = [job['color'] for job in jenkins_wrapper.get_jobs()[
+                1]].count('blue_anime')
+            available_agents_jobs.append(
+                (jenkins_wrapper, ci_cd_agent, active_jobs))
 
-    selected_ci_cd_agent_info = sorted(available_agents_jobs, key=lambda e: e[2])[0]
+    if len(available_agents_jobs) == 0:
+        return Utils.create_response(status_code=400, success=False, errors=["No CI/CD Agent Available"])
+
+    selected_ci_cd_agent_info = sorted(
+        available_agents_jobs, key=lambda e: e[2])[0]
     jenkins_wrapper = selected_ci_cd_agent_info[0]
     selected_ci_cd_node = selected_ci_cd_agent_info[1]
-    
-    crud.update_test_instance_ci_cd_agent(db, test_instance.id , selected_ci_cd_node.id)
-    crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["ci_cd_agent_auth"], True)
 
-    # create jenkins  credentials
-    # a - communication token
-    credential_id = "communication_token"
-    credential_secret = binascii.b2a_hex(os.urandom(16)).decode('ascii')
-    credential_description = "Token used for communication with the CI/CD Manager" 
-    ret, message = jenkins_wrapper.create_credential(credential_id, credential_secret, credential_description)
-    if not ret:
-        crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_comm_token"], False)
-        return Utils.create_response(status_code=400, success=False, errors=[message])
-    crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_comm_token"], True)
-    
-    testbed_id = test_instance.testbed_id
-  
-    # update communication credential on db
-    logging.info(f"credential_secret: {credential_secret}")
-    selected_ci_cd_node = CRUD_Agents.update_communication_token(db, selected_ci_cd_node.id, credential_secret)
-    
+    crud.update_test_instance_ci_cd_agent(
+        db, test_instance.id, selected_ci_cd_node.id)
+    crud.create_test_status(db, test_instance.id,
+                            Constants.TEST_STATUS["ci_cd_agent_auth"], True)
+
     executed_tests_info = test_descriptor_validator.executed_tests_info
 
     # create jenkins pipeline script
     try:
-        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(executed_tests_info, testbed_tests, descriptor_metrics_collection, metrics_collection_information, test_instance.id, test_instance.testbed_id)
-        crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
+        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(
+            executed_tests_info, testbed_tests, descriptor_metrics_collection, metrics_collection_information, test_instance.id, test_instance.testbed_id)
+        crud.create_test_status(
+            db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
     except Exception as e:
-        crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
+        logging.error("Couldn't create pipeline script: " + str(e))
+        crud.create_test_status(
+            db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
 
     # submit pipeline scripts
-    job_name = netapp_id + '-' + network_service_id + '-' + str(test_instance.build)
+    job_name = netapp_id + '-' + network_service_id + \
+        '-' + str(test_instance.build)
     ret, message = jenkins_wrapper.create_new_job(job_name, pipeline_config)
     if not ret:
-        crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], False)
+        crud.create_test_status(
+            db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], False)
         return Utils.create_response(status_code=400, success=False, errors=[message])
-    crud.create_test_status(db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], True)
+    crud.create_test_status(
+        db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], True)
     jenkins_job_name = message
 
     for executed_test in executed_tests_info:
-        test_instance_test = crud.create_test_instance_test(db, test_instance.id, f"{executed_test['name']}-test-id-{executed_test['testcase_id']}", executed_test["description"])
-        logging.info(f"Registered test '{test_instance_test.performed_test}' for test instance {test_instance.id}.")
+        test_instance_test = crud.create_test_instance_test(
+            db, test_instance.id, f"{executed_test['name']}-test-id-{executed_test['testcase_id']}", executed_test["description"])
+        logging.info(
+            f"Registered test '{test_instance_test.performed_test}' for test instance {test_instance.id}.")
 
     # run jenkins job
     ret, message = jenkins_wrapper.run_job(jenkins_job_name)
@@ -265,19 +272,18 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     job_build_number = message
 
     # Update extra information
-    crud.update_test_instance_extra_info(db, test_instance.id, str({"job_name": job_name, "build_number": job_build_number}))
+    crud.update_test_instance_extra_info(db, test_instance.id, str(
+        {"job_name": job_name, "build_number": job_build_number}))
 
     return Utils.create_response(success=True, message=f"A new build job was created", data={
         "test_id": test_instance.id,
-        "testbed_id" : test_instance.testbed_id,
+        "testbed_id": test_instance.testbed_id,
         "netapp_id": netapp_id,
         "network_service_id": network_service_id,
-        "job_name": jenkins_job_name, 
+        "job_name": jenkins_job_name,
         "build_number": job_build_number,
         "access_token": test_instance.access_token
-        })
-
-
+    })
 
 @router.post(
 "/tests/publish-test-results",
