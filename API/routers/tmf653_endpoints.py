@@ -3,7 +3,7 @@
 # @Date:   22-05-2022 10:25:05
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 25-05-2022 10:07:13
+# @Last Modified time: 25-05-2022 11:28:29
 # @Description: 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -25,18 +25,20 @@ from sqlalchemy.orm import Session
 from sql_app import crud
 import sql_app.CRUD.agents as CRUD_Agents
 from sql_app.schemas import TMF653 as tmf653_schemas
+import tarfile
 import logging
 import inspect
 import sys
 import os
 import aux.constants as Constants
 import aux.utils as Utils
-from fastapi.responses import FileResponse
+import requests
 import yaml
 import json
 import re
 import binascii
 import pydantic
+import yaml
 from testing_descriptors_validator.test_descriptor_validator import Test_Descriptor_Validator
 from fastapi import File, UploadFile
 
@@ -162,8 +164,6 @@ async def validate_test_descriptor(test_descriptor:UploadFile = File(...) , db: 
     }
 )
 async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Create , db: Session = Depends(get_db)):
-
-
     # Get Service Test Characteristics
     characteristics = []
     nods_id = None
@@ -192,10 +192,15 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
         return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
 
     logging.info("Retrieved Service Test Specification")
-    #3 ->  Get the attachment (testing descriptor)
-   
+    
+    
+    #3 ->  Get the attachments (testing descriptor)
+    attachments = {attachment['name']: attachment['url']
+        for attachment 
+        in response['attachment']
+    }
     try:
-        attachment_url = response['attachment'][0]["url"]
+        attachment_url = attachments["testing-descriptor.yaml"]
         success, response = Utils.get_serviceTestDescriptor(token=token,url=attachment_url)
         descriptors_text = response.text
         if not success:
@@ -212,6 +217,56 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
         rendered_descriptor = yaml.safe_load(descriptors_text)
     except Exception as e:
         return Utils.create_response(status_code=400, success=False, message=f"Invalid Testing Descriptor format", data=[])
-    logging.info(f"Renderered the descriptor")
+    logging.info(f"Rendered the descriptor")
+    
+    
+    # 5 -> Get the developer defined tests
+    developer_defined_tests = [testcase["name"] 
+        for testcase 
+        in rendered_descriptor['test_phases']['setup']['testcases'] 
+        if testcase["type"] == 'developer-defined'
+    ]
+    
+    if len(developer_defined_tests) > 0:
+        logging.info(f"Found {len(developer_defined_tests)} developer defined tests")
+        logging.info("Developer Defined Tests:" + str(developer_defined_tests))
+    
+        developer_defined_test_paths = []
+        
+        for developer_defined_test_name in developer_defined_tests:
+            url_to_download = attachments.get(f"{developer_defined_test_name}.tar.gz")
+            if url_to_download:
+                # Get Compressed Test Files
+                r = requests.get(
+                    f"{Constants.NODS_HOST}/tmf-api{url_to_download}",
+                    allow_redirects=True
+                )
+                compressed_test_file_location = os.path.join(
+                    Constants.DEVELOPER_DEFINED_TEST_TEMP_STORAGE_DIR,
+                    f"{nods_id}-{developer_defined_test_name}.tar.gz"
+                )
+                open(compressed_test_file_location ,'wb').write(r.content)
+                
+                # Decompress the Test Files
+                compressed_test_file= tarfile.open(compressed_test_file_location)
+                x = compressed_test_file.extractall(
+                    compressed_test_file_location.replace(".tar.gz", "")
+                )
+                compressed_test_file.close()
+                print(x)
+                developer_defined_test_paths.append(
+                    compressed_test_file_location.replace(".tar.gz", "")
+                )
+                
+                # Remove the compressed files
+                os.remove(compressed_test_file_location)
+                
+        
 
-    return TestRouters.new_test(rendered_descriptor, db)
+                
+                
+
+    
+
+    return Utils.create_response(status_code=200, success=True, message=f"IXXXX", data=[])
+    return TestRouters.new_test(rendered_descriptor, nods_id, db)

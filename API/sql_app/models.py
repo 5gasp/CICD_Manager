@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+# @Author: Rafael Direito
+# @Date:   22-05-2022 10:25:05
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 25-05-2022 10:09:53
+# @Description: 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
@@ -103,6 +110,7 @@ class Test_Instance_Tests(Base):
 
 	def as_dict(self):
 		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 class Test_Information(Base):
 	__tablename__ = "test_information"
 	id  = Column(Integer,primary_key=True, autoincrement=True)

@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+# @Author: Rafael Direito
+# @Date:   22-05-2022 10:25:05
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 25-05-2022 10:57:17
+# @Description: 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
@@ -111,7 +118,9 @@ async def startup_event():
     if not ret:
         logging.critical(message)
         return exit(1)
-
+    
+    # Create directory to temporarily store the developer-defined-tests
+    Startup.create_dir_to_store_developer_defined_tests()
     # Connect to Database
     MODELS_INITIALIZED = False
     for i in range(10):
@@ -166,3 +175,5 @@ async def startup_event():
         logging.critical(3)
         db.close()
         return exit(6)
+    
+    

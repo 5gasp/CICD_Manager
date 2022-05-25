@@ -3,7 +3,7 @@
 # @Date:   24-05-2022 10:49:25
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 25-05-2022 09:58:52
+# @Last Modified time: 25-05-2022 10:17:58
 # @Description: 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -19,6 +19,7 @@
 from distutils.log import error
 from fastapi import APIRouter
 from fastapi import Depends
+from pydantic import NoneIsAllowedError
 from sqlalchemy.orm import Session
 from sql_app.database import SessionLocal
 from sql_app import crud
@@ -154,10 +155,10 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     except:
         return Utils.create_response(status_code=400, success=False, errors=["Unable to parse the submitted file. It must be a YAML."])
 
-    return new_test(test_descriptor_data, db)
+    return new_test(test_descriptor_data, None, db)
     
     
-def new_test(test_descriptor_data, db):
+def new_test(test_descriptor_data, nods_id, db):
     #  validate the structure of the testing descriptor
     test_descriptor_validator = Test_Descriptor_Validator(test_descriptor_data)
     structural_validation_errors = test_descriptor_validator.validate_structure()
@@ -194,7 +195,7 @@ def new_test(test_descriptor_data, db):
 
     # register new test
     test_instance = crud.create_test_instance(
-        db, netapp_id, network_service_id, testbed_id)
+        db, netapp_id, network_service_id, testbed_id, nods_id=nods_id)
 
     # update test status
     crud.create_test_status(

@@ -1,14 +1,14 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
-# Author: Rafael Direito (rdireito@av.it.pt)
-# Date: 7th june 2021
-# Last Update: 10th june 2021
-
-#
-# Description:
-# Contains several constant variables needed in the workflow of the
+# @Author: Rafael Direito
+# @Date:   22-05-2022 10:25:05
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 25-05-2022 10:52:32
+# @Description: Contains several constant variables needed in the workflow of the
 # CI/CD Manager
+
+# DEVELOPER DEFINED TESTS
+DEVELOPER_DEFINED_TEST_TEMP_STORAGE_DIR = "warehouse/developer-defined-tests"
 
 # AUTH
 SECRET_KEY = "99cb3e97787cf81a7f418c42b96a06f77ce25ddbb2f7f83a53cf3474896624f9"
