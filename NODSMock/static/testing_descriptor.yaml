@@ -1,7 +1,7 @@
 # @Author: Rafael Direito
 # @Date:   23-05-2022 11:01:09
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 25-05-2022 10:33:20
+# @Last Modified time: 26-05-2022 10:16:08
 
 test_info:
   netapp_id: netapp1
@@ -54,7 +54,7 @@ test_phases:
         type: developer-defined
         scope: infrastructure
         name: bandwidth
-        description: Test the bandwidth between the OBU and vOBU
+        description: My developer defined bandwidth test
         parameters:
           - key: host1_ip
             value: 10.0.13.180
@@ -79,3 +79,6 @@ test_phases:
         - execution_id: 1
           name: bandwidth test
           testcase_ids: [1]
+        - execution_id: 2
+          name: bandwidth developer defined test
+          testcase_ids: [2]

@@ -11,6 +11,10 @@ test_phases:
       name: bandwidth test
       testcase_ids:
       - 1
+    - execution_id: 2
+      name: bandwidth developer defined test
+      testcase_ids:
+      - 2
     scope: infrastructure
   setup:
     deployments:
@@ -51,7 +55,7 @@ test_phases:
       scope: infrastructure
       testcase_id: 1
       type: predefined
-    - description: Test the bandwidth between the OBU and vOBU
+    - description: My developer defined bandwidth test
       name: bandwidth
       parameters:
       - key: host1_ip
