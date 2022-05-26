@@ -3,7 +3,7 @@
 # @Date:   22-05-2022 10:25:05
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 25-05-2022 13:11:37
+# @Last Modified time: 26-05-2022 10:29:27
 # @Description: Contains several constant variables needed in the workflow of the
 # CI/CD Manager
 

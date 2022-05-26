@@ -3,7 +3,7 @@
 # @Date:   22-05-2022 10:25:05
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 24-05-2022 11:17:36
+# @Last Modified time: 26-05-2022 08:56:45
 # @Description: 
 
 
@@ -134,7 +134,10 @@ def create_agent(agent: ci_cd_manager_schemas.CI_CD_Agent_Create, token: str = D
         # update communication credential on db
         CRUD_Agents.update_communication_token(db, db_ci_cd_agent.id, credential_secret)
         
-        return Utils.create_response(status_code=HTTPStatus.CREATED, success=True, message="Created CI/CD Agent", data=db_ci_cd_agent.as_dict_without_password())
+        ret = db_ci_cd_agent.as_dict_without_password()
+        ret["communication_token"] = credential_secret
+        
+        return Utils.create_response(status_code=HTTPStatus.CREATED, success=True, message="Created CI/CD Agent", data=ret)
     except Exception as e:
         logging.error(e)
         return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=False, errors=[str(e)]) 

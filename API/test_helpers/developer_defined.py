@@ -3,7 +3,7 @@
 # @Date:   25-05-2022 11:40:26
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 25-05-2022 14:49:27
+# @Last Modified time: 26-05-2022 13:52:28
 # @Description: 
 
 import logging
@@ -13,17 +13,25 @@ import requests
 import tarfile
 from ftplib import FTP
 import os
+import urllib
 
 def load_developer_defined_tests(developer_defined_tests: list[str], 
-    attachments: dict, nods_id: str) -> None:
+    attachments: dict, nods_id: str) -> list[str]:
     """Loads the developer defined tests to the CI/CD Manager's FTP Server
 
     Args:
-        developer_defined_tests (list[str]): list of the developer defined tests filepaths
+        developer_defined_tests (list[str]): list of the developer defined tests 
+        filepaths
         attachments (dict): list of the serviceTestSpecification attachments
         nods_id (str): id of the serviceTestSpecification in NODS
+
+    Returns:
+        dic: dict of the developer defined tests filepaths, in the ftp server,
+        indexed by name
     """
-    # Get the Developer Defined Tests to the local warehouse directory
+    # Get the Developer Defined Tests to the local warehouse directory and then
+    # move them to the FTP Server
+    loaded_tests_ftp_filepath = {}
     for developer_defined_test_name in developer_defined_tests:
         url_to_download = attachments.get(
             f"{developer_defined_test_name}.tar.gz")
@@ -33,9 +41,10 @@ def load_developer_defined_tests(developer_defined_tests: list[str],
                 url_to_download,
                 nods_id
             )
-            move_developer_defined_test_to_ftp(compressed_test_file_location)
+            ftp_test_full_path = move_test_to_ftp(compressed_test_file_location)
+            loaded_tests_ftp_filepath[developer_defined_test_name] = ftp_test_full_path
     
-
+    return loaded_tests_ftp_filepath
 
 
 def get_developer_defined_test_to_local_dir( developer_defined_test_name: str, 
@@ -51,10 +60,12 @@ def get_developer_defined_test_to_local_dir( developer_defined_test_name: str,
         str: local path to the downloaded developer defined test
     """
     # Get Compressed Test Files
+    
     r = requests.get(
         f"{Constants.NODS_HOST}/tmf-api{url_to_download}",
         allow_redirects=True
     )
+
     compressed_test_file_location = os.path.join(
         Constants.DEVELOPER_DEFINED_TEST_TEMP_STORAGE_DIR,
         f"{nods_id}-{developer_defined_test_name}.tar.gz"
@@ -64,7 +75,7 @@ def get_developer_defined_test_to_local_dir( developer_defined_test_name: str,
     return compressed_test_file_location
 
 
-def move_developer_defined_test_to_ftp(developer_defined_test_path: str) -> None:
+def move_test_to_ftp(developer_defined_test_path: str) -> None:    
     """Copies a developer defined test to the FTP server
 
     Args:
@@ -96,11 +107,34 @@ def move_developer_defined_test_to_ftp(developer_defined_test_path: str) -> None
         # delete old version of the test
         ftp_session.delete(ftp_test_full_path)
         
-        logging.info("Removed old version of the developer defined test\
-        - {developer_defined_test_path}")
+        logging.info(f"Removed old version of the developer defined test\
+        ({developer_defined_test_path}) from the FTP server")
         
-    # store new version of the tes
-    ftp_session.storbinary(
+    # store new version of the test
+    ret_store = ftp_session.storbinary(
         'STOR ' + ftp_test_full_path, open(developer_defined_test_path, 'rb')
     )
-    logging.info("Created new version of the developer defined test - {developer_defined_test_path}")
+    
+    # if this is successful we can remove the local copy of the test
+    if "complete" in ret_store.lower():
+        os.remove(developer_defined_test_path)
+        logging.info(f"Removed old version of the developer defined test\
+        ({developer_defined_test_path}) from the local warehouse")
+    
+    logging.info("Created new version of the developer defined test - "\
+        "{developer_defined_test_path}")
+    
+    return ftp_test_full_path
+
+
+def download_test_from_ftp(developer_defined_test_path: str) -> bytes:
+    ftp_location = Constants.FTP_RESULTS_URL.split(":")[0] \
+        if ":" in Constants.FTP_RESULTS_URL else Constants.FTP_RESULTS_URL
+        
+    url = f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}" \
+        f"@{ftp_location}/{developer_defined_test_path}"
+        
+    r = urllib.request.urlopen(url)
+    test_content = r.read()
+    
+    return test_content

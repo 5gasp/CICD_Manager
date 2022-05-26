@@ -3,28 +3,22 @@
 # @Date:   24-05-2022 10:49:25
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 25-05-2022 10:17:58
-# @Description: 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-#
-# Author: Rafael Direito (rdireito@av.it.pt)
-# Date: 1st july 2021
-# Last Update: 12th july 2021
+# @Last Modified time: 26-05-2022 14:48:17
+# @Description: Constains all the endpoints related to the testing of the NetApps
 
-# Description:
-# Constains all the endpoints related to the testing of the NetApps
 
 # generic imports
 from distutils.log import error
 from fastapi import APIRouter
 from fastapi import Depends
 from pydantic import NoneIsAllowedError
+from fastapi.responses import JSONResponse, StreamingResponse, Response
 from sqlalchemy.orm import Session
 from sql_app.database import SessionLocal
 from sql_app import crud
 import sql_app.CRUD.agents as CRUD_Agents
 from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas, test_info as testinfo_schemas
+import test_helpers.developer_defined as dev_defined_test_helpers
 from fastapi import File, UploadFile
 from sqlalchemy.orm import Session
 import logging
@@ -155,10 +149,10 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     except:
         return Utils.create_response(status_code=400, success=False, errors=["Unable to parse the submitted file. It must be a YAML."])
 
-    return new_test(test_descriptor_data, None, db)
+    return new_test(test_descriptor_data, None, None, db)
     
     
-def new_test(test_descriptor_data, nods_id, db):
+def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
     #  validate the structure of the testing descriptor
     test_descriptor_validator = Test_Descriptor_Validator(test_descriptor_data)
     structural_validation_errors = test_descriptor_validator.validate_structure()
@@ -196,6 +190,7 @@ def new_test(test_descriptor_data, nods_id, db):
     # register new test
     test_instance = crud.create_test_instance(
         db, netapp_id, network_service_id, testbed_id, nods_id=nods_id)
+    
 
     # update test status
     crud.create_test_status(
@@ -228,12 +223,58 @@ def new_test(test_descriptor_data, nods_id, db):
     crud.create_test_status(db, test_instance.id,
                             Constants.TEST_STATUS["ci_cd_agent_auth"], True)
 
+
     executed_tests_info = test_descriptor_validator.executed_tests_info
+
+    # register pre-defined tests
+    for executed_test in executed_tests_info:
+        if executed_test["type"] == "predefined":
+            test_instance_test = crud.create_test_instance_test(
+                db, 
+                test_instance.id, 
+                f"{executed_test['name']}-test-id-{executed_test['testcase_id']}", 
+                executed_test["description"]
+                )
+            logging.info(
+                f"Registered test '{test_instance_test.performed_test}' for " \
+                "test instance {test_instance.id}."
+            )
+
+    # register developer defined tests
+    developer_defined_tests_for_pipeline = {}
+    logging.info(developer_defined_tests.items())
+    for test_name, location in developer_defined_tests.items():
+        logging.info(test_name + " - " + str(location))
+        test_instance_test = crud.create_test_instance_test(
+            db=db,
+            test_instance_id=test_instance.id,
+            performed_test=f"dev-defined-{test_name}-test-id-{executed_test['testcase_id']}",
+            description=executed_test["description"],
+            is_developer_defined=True,
+            developer_defined_test_filepath=location
+        )
+        logging.info(f"Registered test '{test_instance_test.performed_test}'" \
+        f"for test instance {test_instance.id}.")
+        
+        developer_defined_tests_for_pipeline[test_name] = {
+            "id": test_name,
+            "full_name": f"dev-defined-{test_name}-test-id-{executed_test['testcase_id']}",
+            "location": location,
+            "test_instance_id": test_instance.id
+        }
+    
 
     # create jenkins pipeline script
     try:
         pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(
-            executed_tests_info, testbed_tests, descriptor_metrics_collection, metrics_collection_information, test_instance.id, test_instance.testbed_id)
+            executed_tests_info, 
+            developer_defined_tests_for_pipeline,
+            testbed_tests, 
+            descriptor_metrics_collection, 
+            metrics_collection_information, 
+            test_instance.id, 
+            test_instance.testbed_id
+        )
         crud.create_test_status(
             db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
     except Exception as e:
@@ -241,7 +282,7 @@ def new_test(test_descriptor_data, nods_id, db):
         crud.create_test_status(
             db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
-
+     
     # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + \
         '-' + str(test_instance.build)
@@ -253,13 +294,7 @@ def new_test(test_descriptor_data, nods_id, db):
     crud.create_test_status(
         db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], True)
     jenkins_job_name = message
-
-    for executed_test in executed_tests_info:
-        test_instance_test = crud.create_test_instance_test(
-            db, test_instance.id, f"{executed_test['name']}-test-id-{executed_test['testcase_id']}", executed_test["description"])
-        logging.info(
-            f"Registered test '{test_instance_test.performed_test}' for test instance {test_instance.id}.")
-
+    
     # run jenkins job
     ret, message = jenkins_wrapper.run_job(jenkins_job_name)
     if not ret:
@@ -294,8 +329,6 @@ description="After the validation process this endpoint will be used to submit t
 )
 async def publish_test_results(test_results_information: ci_cd_manager_schemas.Test_Results,  db: Session = Depends(get_db)):
     
-    # validate communication token
-
     # get test results
     tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
     tests = [t.performed_test for t in tests]
@@ -306,7 +339,10 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
 
     try:
         for test in tests:
-            xml_str = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
+            print("-------", test)
+            ftp_url = Constants.FTP_RESULTS_URL.split(":")[0] if ":" in Constants.FTP_RESULTS_URL else Constants.FTP_RESULTS_URL
+            xml_str = urlopen(
+                f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{ftp_url}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
             root = ET.fromstring(xml_str)
             failed_tests = int(root.findall("statistics")[0].find('total').find('stat').attrib['fail'])
             
@@ -404,3 +440,70 @@ async def get_test_status(test_id: int, access_token: str, db: Session = Depends
         "test_base_info": test_base_info,
         "tests_performed": tests_performed,
     })
+
+
+@router.get(
+    "/tests/developer-defined",
+    tags=["tests"],
+    summary="",
+    description="",
+)
+async def get_developer_defined_tests(
+        test_instance_test: ci_cd_manager_schemas.Test_Results,  
+        db: Session = Depends(get_db)
+    ) -> JSONResponse:
+    
+    test_instance_id = test_instance_test.test_instance_id
+    communication_token = test_instance_test.communication_token
+    
+    
+    data = crud.get_developer_defined_tests_for_test_instance(
+        db, test_instance_id, communication_token
+    )
+    
+    return Utils.create_response(data=data)
+
+
+@router.get(
+    "/tests/developer-defined",
+    tags=["tests"],
+    summary="",
+    description="",
+)
+async def get_developer_defined_tests(
+    test_instance_test: ci_cd_manager_schemas.Test_Instance_Test_Base,
+    db: Session = Depends(get_db)
+) -> JSONResponse:
+
+    test_instance_id = test_instance_test.test_instance_id
+    communication_token = test_instance_test.communication_token
+
+    data = crud.get_developer_defined_tests_for_test_instance(
+        db, test_instance_id, communication_token
+    )
+
+    return Utils.create_response(data=data)
+
+
+@router.get(
+    "/tests/download-developer-defined",
+    tags=["tests"],
+    summary="",
+    description="",
+)
+async def download_developer_defined_test(
+    test_instance_test: ci_cd_manager_schemas.Test_Instance_Test_Download,
+    db: Session = Depends(get_db)
+    ) -> JSONResponse:
+
+    test_instance_id = test_instance_test.test_instance_id
+    communication_token = test_instance_test.communication_token
+    developer_defined_test_name = test_instance_test.developer_defined_test_name
+
+    file_location = crud.get_developer_defined_test_for_test_instance(
+        db, test_instance_id, communication_token, developer_defined_test_name
+    )
+    test_content = dev_defined_test_helpers.download_test_from_ftp(file_location)
+    
+    
+    return Response(test_content, media_type="application/tar+gzip")

@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+# @Author: Rafael Direito
+# @Date:   14-10-2021 11:30:17
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 26-05-2022 10:29:39
+# @Description: 
 import os
 import inspect
 

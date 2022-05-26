@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+# @Author: Rafael Direito
+# @Date:   22-05-2022 10:25:05
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 26-05-2022 14:42:55
+# @Description: 
 # generic imports
 from requests.auth import HTTPBasicAuth
 import requests
@@ -28,9 +35,10 @@ logging.basicConfig(
 
 class Jenkins_Pipeline_Configuration:
     
-    def __init__(self, jenkins_script_str, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information,  test_instance_id, testbed_id):
+    def __init__(self, jenkins_script_str, executed_tests_info, developer_defined_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information,  test_instance_id, testbed_id):
         self.jenkins_script_str = jenkins_script_str
         self.executed_tests_info = executed_tests_info
+        self.developer_defined_tests_info = developer_defined_tests_info
         self.available_tests = available_tests
         self.descriptor_metrics_collection = descriptor_metrics_collection
         self.metrics_collection_information = metrics_collection_information
@@ -44,7 +52,7 @@ class Jenkins_Pipeline_Configuration:
         self.add_environment_setup_to_jenkins_pipeline_script()
         self.add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self.metrics_collection_information)
         self.add_metrics_colllection_mechanism_to_jenkins_pipeline_script(self.descriptor_metrics_collection, self.metrics_collection_information)
-        self.add_obtain_and_perform_tests_to_jenkins_pipeline_script(self.executed_tests_info, self.available_tests)
+        self.add_obtain_and_perform_tests_to_jenkins_pipeline_script(self.executed_tests_info, self.developer_defined_tests_info, self.available_tests)
         self.add_publish_results_to_jenkins_pipeline_script()
         self.add_cleanup_environment_commands_to_jenkins_pipeline_script()
 
@@ -68,7 +76,7 @@ class Jenkins_Pipeline_Configuration:
         return self.__update_jenkins_script("<setup_environment>", setup_environment_commands)
 
 
-    def add_obtain_and_perform_tests_to_jenkins_pipeline_script(self, executed_tests_info, available_tests):
+    def add_obtain_and_perform_tests_to_jenkins_pipeline_script(self, executed_tests_info, developer_defined_tests_info, available_tests):
         needed_python_modules =[
             "robotframework==4.1.1",
             "paramiko==2.7.2",
@@ -81,24 +89,48 @@ class Jenkins_Pipeline_Configuration:
         ]
 
         run_tests_commands = []
-        obtain_tests_commands = set()
+        obtain_tests_commands = list()
+        obtain_tests_commands.append(f"sh 'mkdir -p ~/test_repository/\"$JOB_NAME\"/developer-defined-tests'")
 
         # add needed python modules
         run_tests_commands.append(f"sh 'python3 -m pip install {' '.join(needed_python_modules)}'")
 
         # robot tests
-        tests_to_perform = {}      
+        test_to_perform = None
         for test_info in executed_tests_info:
             test_id = test_info["name"]
-            print(available_tests[0].as_dict())
-            available_test = [test.as_dict() for test in available_tests if test.testid == test_id][0]
-            print(available_test)
-            test_dir = available_test["ftp_base_location"]
-            test_filename = available_test["test_filename"]
-            # obtain test
-            obtain_tests_commands.add(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ltr_user:$ltr_password@$ltr_location/{test_dir}'")
-            # save test location. needed to run the test
-            tests_to_perform[test_id] = str(os.path.join("~/test_repository/\"$JOB_NAME\"", test_dir, test_filename))
+            
+            # DEVELOPER DEFINED TESTS
+            if test_info["type"] == "developer-defined":
+                obtain_tests_commands.append(
+                    f"sh 'curl --location --request GET " \
+                    f"{Constants.CI_CD_MANAGER_URL}/tests/download-developer-defined " \
+                    f"--header \"Content-Type: application/json\" " \
+                    f"--data-raw \\\'{{\"communication_token\": \"\\\'\"$comm_token\"\\\'\", "
+                    f"\"test_instance_id\": {developer_defined_tests_info[test_id]['test_instance_id']}, " \
+                    f"\"developer_defined_test_name\": \"{developer_defined_tests_info[test_id]['full_name']}\"}}\\\'" \
+                    f" --output ~/test_repository/\"$JOB_NAME\"/developer-defined-tests/{test_id}.tar.gz'"
+                )
+                obtain_tests_commands.append(
+                    f"sh 'cd ~/test_repository/\"$JOB_NAME\"/developer-defined-tests/ ; tar -xvf "
+                    f"{test_id}.tar.gz ; mv {test_id} {developer_defined_tests_info[test_id]['full_name']}'"
+                )
+                tests_to_perform = f"~/test_repository/\"$JOB_NAME\"/developer-defined-tests/{developer_defined_tests_info[test_id]['full_name']}"
+                test_to_execute = developer_defined_tests_info[test_id]['full_name']
+        
+            #PRE-DEFINED TESTS
+            elif test_info["type"] == "predefined":
+                available_test = [test.as_dict() for test in available_tests if test.testid == test_id][0]
+                test_dir = available_test["ftp_base_location"]
+                test_filename = available_test["test_filename"]
+                # obtain test
+                obtain_tests_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ltr_user:$ltr_password@$ltr_location/{test_dir}'")
+                # save test location. needed to run the test
+                tests_to_perform = str(os.path.join(
+                    "~/test_repository/\"$JOB_NAME\"", test_dir, test_filename))
+                test_to_execute = f"{test_id}-test-id-{test_info['testcase_id']}"
+            
+            # GLOBAL PROCESS
             # save env to export
             export_variables_commands = []
             for parameter in test_info["parameters"]:
@@ -107,7 +139,10 @@ class Jenkins_Pipeline_Configuration:
                 export_variables_commands.append(f"export {key}={value}")
                 
             export_variables_commands_str = " ; ".join(export_variables_commands)
-            run_tests_commands.append(f"sh '{ export_variables_commands_str} ; python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{test_id}-test-id-{test_info['testcase_id']} {tests_to_perform[test_id]} || true'")
+            
+            run_tests_commands.append(
+                f"sh '{ export_variables_commands_str} ; python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{test_to_execute} {tests_to_perform} || true'")
+        
         # fill jenkins pipeline script
         self.__update_jenkins_script("<obtain_tests_environment>", environment_obtain_tests)
         self.__update_jenkins_script("<obtain_tests>", obtain_tests_commands)
@@ -137,8 +172,8 @@ class Jenkins_Pipeline_Configuration:
     
     def add_cleanup_environment_commands_to_jenkins_pipeline_script(self):
         cleanup_environment_commands = [
-            "sh 'rm -rf ~/test_repository/\"$JOB_NAME\"'",
-            "sh 'rm -rf ~/test_results/\"$JOB_NAME\"'",
+            #"sh 'rm -rf ~/test_repository/\"$JOB_NAME\"'",
+            #"sh 'rm -rf ~/test_results/\"$JOB_NAME\"'",
         ]
 
         return self.__update_jenkins_script("<cleanup_environment>", cleanup_environment_commands)

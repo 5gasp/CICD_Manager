@@ -3,7 +3,7 @@
 # @Date:   22-05-2022 10:25:05
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 25-05-2022 10:09:53
+# @Last Modified time: 25-05-2022 17:11:06
 # @Description: 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -18,6 +18,7 @@
 
 
 # generic imports
+from email.policy import default
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy import Column, Integer, DateTime, Enum
 from sqlalchemy.orm import relationship
@@ -98,18 +99,21 @@ class Test_Status(Base):
 
 
 class Test_Instance_Tests(Base):
-	__tablename__ = "test_instance_tests"
+    __tablename__ = "test_instance_tests"   
+    
+    id = Column(Integer, primary_key=True, index=True)    
+    test_instance = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
+    description = Column(String)
+    performed_test = Column(String, nullable=False)
+    is_developer_defined = Column(Boolean, default=False)
+    developer_defined_test_filepath = Column(String, default=None)
+    start_time = Column(String)
+    end_time = Column(String)
+    success = Column(Boolean)
 
-	id = Column(Integer, primary_key=True, index=True)    
-	test_instance = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
-	description = Column(String)
-	performed_test = Column(String, nullable=False)
-	start_time = Column(String)
-	end_time = Column(String)
-	success = Column(Boolean)
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-	def as_dict(self):
-		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 class Test_Information(Base):
 	__tablename__ = "test_information"

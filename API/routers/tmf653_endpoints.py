@@ -3,7 +3,7 @@
 # @Date:   22-05-2022 10:25:05
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 25-05-2022 14:54:34
+# @Last Modified time: 26-05-2022 10:21:57
 # @Description: Constains all the endpoints related to the CI/CD Agents
 
 # generic imports
@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from sql_app import crud
 import sql_app.CRUD.agents as CRUD_Agents
 from sql_app.schemas import TMF653 as tmf653_schemas
-import  test_helpers.developer_defined as dev_defined_test_helpers
+import test_helpers.developer_defined as dev_defined_test_helpers
 import logging
 import inspect
 import sys
@@ -218,12 +218,13 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
         if testcase["type"] == 'developer-defined'
     ]
     
+    loaded_tests_dict = None
     if len(developer_defined_tests) > 0:
         logging.info(f"Found {len(developer_defined_tests)} developer defined tests")
         logging.info("Developer Defined Tests:" + str(developer_defined_tests))
     
         try:
-            dev_defined_test_helpers.load_developer_defined_tests(
+            loaded_tests_dict = dev_defined_test_helpers.load_developer_defined_tests(
                 developer_defined_tests, attachments, nods_id)
         except Exception as e:
             return Utils.create_response(status_code=400, success=False, 
@@ -231,4 +232,4 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
                 data=[])
 
     #return Utils.create_response(status_code=200, success=True, message=f"IXXXX", data=[])
-    return TestRouters.new_test(rendered_descriptor, nods_id, db)
+    return TestRouters.new_test(rendered_descriptor, nods_id, loaded_tests_dict, db)
