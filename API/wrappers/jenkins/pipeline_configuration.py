@@ -3,7 +3,7 @@
 # @Date:   22-05-2022 10:25:05
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 26-05-2022 14:42:55
+# @Last Modified time: 30-05-2022 11:56:18
 # @Description: 
 # generic imports
 from requests.auth import HTTPBasicAuth
@@ -35,10 +35,9 @@ logging.basicConfig(
 
 class Jenkins_Pipeline_Configuration:
     
-    def __init__(self, jenkins_script_str, executed_tests_info, developer_defined_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information,  test_instance_id, testbed_id):
+    def __init__(self, jenkins_script_str, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information,  test_instance_id, testbed_id):
         self.jenkins_script_str = jenkins_script_str
         self.executed_tests_info = executed_tests_info
-        self.developer_defined_tests_info = developer_defined_tests_info
         self.available_tests = available_tests
         self.descriptor_metrics_collection = descriptor_metrics_collection
         self.metrics_collection_information = metrics_collection_information
@@ -51,8 +50,8 @@ class Jenkins_Pipeline_Configuration:
         # fill the pipeline script
         self.add_environment_setup_to_jenkins_pipeline_script()
         self.add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self.metrics_collection_information)
-        self.add_metrics_colllection_mechanism_to_jenkins_pipeline_script(self.descriptor_metrics_collection, self.metrics_collection_information)
-        self.add_obtain_and_perform_tests_to_jenkins_pipeline_script(self.executed_tests_info, self.developer_defined_tests_info, self.available_tests)
+        self.add_metrics_collection_mechanism_to_jenkins_pipeline_script(self.descriptor_metrics_collection, self.metrics_collection_information)
+        self.add_obtain_and_perform_tests_to_jenkins_pipeline_script(self.executed_tests_info, self.available_tests)
         self.add_publish_results_to_jenkins_pipeline_script()
         self.add_cleanup_environment_commands_to_jenkins_pipeline_script()
 
@@ -76,7 +75,7 @@ class Jenkins_Pipeline_Configuration:
         return self.__update_jenkins_script("<setup_environment>", setup_environment_commands)
 
 
-    def add_obtain_and_perform_tests_to_jenkins_pipeline_script(self, executed_tests_info, developer_defined_tests_info, available_tests):
+    def add_obtain_and_perform_tests_to_jenkins_pipeline_script(self, executed_tests_info, available_tests):
         needed_python_modules =[
             "robotframework==4.1.1",
             "paramiko==2.7.2",
@@ -107,16 +106,15 @@ class Jenkins_Pipeline_Configuration:
                     f"{Constants.CI_CD_MANAGER_URL}/tests/download-developer-defined " \
                     f"--header \"Content-Type: application/json\" " \
                     f"--data-raw \\\'{{\"communication_token\": \"\\\'\"$comm_token\"\\\'\", "
-                    f"\"test_instance_id\": {developer_defined_tests_info[test_id]['test_instance_id']}, " \
-                    f"\"developer_defined_test_name\": \"{developer_defined_tests_info[test_id]['full_name']}\"}}\\\'" \
+                    f"\"test_instance_id\": {test_info['test_instance_id']}, "
+                    f"\"developer_defined_test_name\": \"{test_info['full_name']}\"}}\\\'"
                     f" --output ~/test_repository/\"$JOB_NAME\"/developer-defined-tests/{test_id}.tar.gz'"
                 )
                 obtain_tests_commands.append(
                     f"sh 'cd ~/test_repository/\"$JOB_NAME\"/developer-defined-tests/ ; tar -xvf "
-                    f"{test_id}.tar.gz ; mv {test_id} {developer_defined_tests_info[test_id]['full_name']}'"
+                    f"{test_id}.tar.gz ; mv {test_id} {test_info['full_name']}'"
                 )
-                tests_to_perform = f"~/test_repository/\"$JOB_NAME\"/developer-defined-tests/{developer_defined_tests_info[test_id]['full_name']}"
-                test_to_execute = developer_defined_tests_info[test_id]['full_name']
+                tests_to_perform = f"~/test_repository/\"$JOB_NAME\"/developer-defined-tests/{test_info['full_name']}"
         
             #PRE-DEFINED TESTS
             elif test_info["type"] == "predefined":
@@ -126,12 +124,11 @@ class Jenkins_Pipeline_Configuration:
                 # obtain test
                 obtain_tests_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ltr_user:$ltr_password@$ltr_location/{test_dir}'")
                 # save test location. needed to run the test
-                tests_to_perform = str(os.path.join(
-                    "~/test_repository/\"$JOB_NAME\"", test_dir, test_filename))
-                test_to_execute = f"{test_id}-test-id-{test_info['testcase_id']}"
+                tests_to_perform = str(os.path.join("~/test_repository/\"$JOB_NAME\"", test_dir, test_filename))
+            
+            test_to_execute = test_info['full_name']
             
             # GLOBAL PROCESS
-            # save env to export
             export_variables_commands = []
             for parameter in test_info["parameters"]:
                 key = f"{test_id}_{parameter['key']}"
@@ -143,6 +140,12 @@ class Jenkins_Pipeline_Configuration:
             run_tests_commands.append(
                 f"sh '{ export_variables_commands_str} ; python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{test_to_execute} {tests_to_perform} || true'")
         
+        
+        # Todo
+        print(executed_tests_info)
+        print("obtain_tests_commands")
+        for t in obtain_tests_commands:
+            print(t)
         # fill jenkins pipeline script
         self.__update_jenkins_script("<obtain_tests_environment>", environment_obtain_tests)
         self.__update_jenkins_script("<obtain_tests>", obtain_tests_commands)
@@ -193,7 +196,7 @@ class Jenkins_Pipeline_Configuration:
         self.__update_jenkins_script("<obtain_metrics_environment>", obtain_metrics_environment)
 
 
-    def add_metrics_colllection_mechanism_to_jenkins_pipeline_script(self, descriptor_metrics_collection, metrics_collection_information):
+    def add_metrics_collection_mechanism_to_jenkins_pipeline_script(self, descriptor_metrics_collection, metrics_collection_information):
 
         if not descriptor_metrics_collection:
             self.__update_jenkins_script("<start_metrics_collection>", ["sh 'echo \"No metrics to collect\"'"])

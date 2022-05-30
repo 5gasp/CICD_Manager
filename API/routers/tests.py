@@ -3,7 +3,7 @@
 # @Date:   24-05-2022 10:49:25
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 26-05-2022 14:48:17
+# @Last Modified time: 30-05-2022 12:02:00
 # @Description: Constains all the endpoints related to the testing of the NetApps
 
 
@@ -226,49 +226,47 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
 
     executed_tests_info = test_descriptor_validator.executed_tests_info
 
-    # register pre-defined tests
+    # register tests in database and prepare them to be added to the pipeline script
     for executed_test in executed_tests_info:
+        performed_test = None
+        is_developer_defined = False
+        developer_defined_test_filepath = None
         if executed_test["type"] == "predefined":
-            test_instance_test = crud.create_test_instance_test(
-                db, 
-                test_instance.id, 
-                f"{executed_test['name']}-test-id-{executed_test['testcase_id']}", 
-                executed_test["description"]
-                )
-            logging.info(
-                f"Registered test '{test_instance_test.performed_test}' for " \
-                "test instance {test_instance.id}."
-            )
-
-    # register developer defined tests
-    developer_defined_tests_for_pipeline = {}
-    logging.info(developer_defined_tests.items())
-    for test_name, location in developer_defined_tests.items():
-        logging.info(test_name + " - " + str(location))
+            # db required info
+            performed_test = f"{executed_test['name']}-test-id-{executed_test['testcase_id']}"
+            # add extra parameters
+            executed_test["full_name"] = f"{executed_test['name']}-test-id-{executed_test['testcase_id']}"
+            
+        elif executed_test["type"] == "developer-defined":
+            # db required info
+            performed_test = f"dev-defined-{executed_test['name']}-test-id-{executed_test['testcase_id']}"
+            is_developer_defined = True
+            developer_defined_test_filepath = developer_defined_tests[executed_test['name']]
+            # add extra parameters
+            executed_test["location"] = developer_defined_tests[executed_test['name']]
+            executed_test["test_instance_id"] = test_instance.id
+            executed_test["full_name"] = f"dev-defined-{executed_test['name']}-test-id-{executed_test['testcase_id']}"
+        
         test_instance_test = crud.create_test_instance_test(
             db=db,
             test_instance_id=test_instance.id,
-            performed_test=f"dev-defined-{test_name}-test-id-{executed_test['testcase_id']}",
+            performed_test=performed_test,
             description=executed_test["description"],
-            is_developer_defined=True,
-            developer_defined_test_filepath=location
+            is_developer_defined=is_developer_defined,
+            developer_defined_test_filepath=developer_defined_test_filepath
         )
-        logging.info(f"Registered test '{test_instance_test.performed_test}'" \
-        f"for test instance {test_instance.id}.")
         
-        developer_defined_tests_for_pipeline[test_name] = {
-            "id": test_name,
-            "full_name": f"dev-defined-{test_name}-test-id-{executed_test['testcase_id']}",
-            "location": location,
-            "test_instance_id": test_instance.id
-        }
-    
-
+        logging.info(
+                f"Registered {executed_test['type']} test " \
+                f"'{test_instance_test.performed_test}' for test instance "\
+                f" {test_instance.id}."
+            )
+  
     # create jenkins pipeline script
     try:
         pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(
             executed_tests_info, 
-            developer_defined_tests_for_pipeline,
+            #developer_defined_tests_for_pipeline,
             testbed_tests, 
             descriptor_metrics_collection, 
             metrics_collection_information, 
@@ -282,6 +280,7 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
         crud.create_test_status(
             db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
+     
      
     # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + \
