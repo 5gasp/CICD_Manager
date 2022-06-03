@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
-# Author: Daniel Gomes (dagomes@av.it.pt),
-# Date: 19th october 2021
-# Last Update: 19th october 2021
-
-# Description:
-# Contains several functions that should be invoked on startup
+# @Author: Daniel Gomes (dagomes@av.it.pt),
+# @Date:   22-05-2022 10:25:05
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 25-05-2022 10:57:34
+# @Description: Contains several functions that should be invoked on startup
 
 # custom imports
 import aux.constants as Constants
@@ -87,3 +85,10 @@ def create_default_admin(db):
         username = Constants.DEFAULT_ADMIN_CREDENTIALS['username'], 
         password = Constants.DEFAULT_ADMIN_CREDENTIALS['password'],
         roles = Constants.USER_ROLES)
+    
+def create_dir_to_store_developer_defined_tests():
+    ddt_dir = Constants.DEVELOPER_DEFINED_TEST_TEMP_STORAGE_DIR
+    if not os.path.exists(ddt_dir):
+        os.makedirs(ddt_dir)
+    logging.info(f"Directory to store developer defined tests: {ddt_dir}")
+     

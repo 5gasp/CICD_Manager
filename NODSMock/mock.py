@@ -3,7 +3,7 @@
 # @Date:   23-05-2022 10:46:25
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 24-05-2022 09:33:10
+# @Last Modified time: 26-05-2022 10:15:25
 # @Description: 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
@@ -100,24 +100,30 @@ async def service_test_specification(id):
 
 @app.get("/tmf-api/serviceTestManagement/v4/serviceTestSpecification/{service_test_specification_uuid}/attachment/{attachement_id}/{attachment_name}")
 async def service_test_specification(service_test_specification_uuid, attachement_id, attachment_name):
-    print("Getting testing descriptor as an attachment.")
-    TESTING_DESCRIPTOR_TO_PARSE = copy.deepcopy(TESTING_DESCRIPTOR)
     
-    TESTING_DESCRIPTOR_TO_PARSE["test_info"]["netapp_id"] = '{{netapp_id}}'
-    TESTING_DESCRIPTOR_TO_PARSE["test_info"]["network_service_id"] = "{{network_service_id}}"
-    TESTING_DESCRIPTOR_TO_PARSE["test_info"]["testbed_id"] = "{{testbed_id}}"
-    
-    for testcase in TESTING_DESCRIPTOR_TO_PARSE["test_phases"]["setup"]["testcases"]:
-        testcase_id = "testcase" + str(testcase["testcase_id"])
-        for param in testcase["parameters"]:
-            param["value"] = '{{' + testcase_id + "." + param["key"] + "}}"
-            
-    f = open('static/testing_descriptor_to_parse.yaml', 'w')
-    f.write(yaml.dump(TESTING_DESCRIPTOR_TO_PARSE).replace("'", ""))
-    f.close()
+    if attachment_name == "testing-descriptor.yaml":
+        print("Getting testing descriptor as an attachment.")
+        TESTING_DESCRIPTOR_TO_PARSE = copy.deepcopy(TESTING_DESCRIPTOR)
+        
+        TESTING_DESCRIPTOR_TO_PARSE["test_info"]["netapp_id"] = '{{netapp_id}}'
+        TESTING_DESCRIPTOR_TO_PARSE["test_info"]["network_service_id"] = "{{network_service_id}}"
+        TESTING_DESCRIPTOR_TO_PARSE["test_info"]["testbed_id"] = "{{testbed_id}}"
+        
+        for testcase in TESTING_DESCRIPTOR_TO_PARSE["test_phases"]["setup"]["testcases"]:
+            testcase_id = "testcase" + str(testcase["testcase_id"])
+            for param in testcase["parameters"]:
+                param["value"] = '{{' + testcase_id + "." + param["key"] + "}}"
+                
+        f = open('static/testing_descriptor_to_parse.yaml', 'w')
+        f.write(yaml.dump(TESTING_DESCRIPTOR_TO_PARSE).replace("'", ""))
+        f.close()
 
-    return FileResponse('static/testing_descriptor_to_parse.yaml', media_type='application/octet-stream', filename="testing_descriptor_to_parse.yaml")
+        return FileResponse('static/testing_descriptor_to_parse.yaml', media_type='application/octet-stream', filename="testing_descriptor_to_parse.yaml")
     
+    if attachment_name == "bandwidth.tar.gz":
+        return FileResponse('static/bandwidth.tar.gz')
+
+        
 @app.patch("/tmf-api/serviceTestManagement/v4/serviceTest/{nods_id}")
 async def patchresult(nods_id, request: Request):
     print("Patching Results.")

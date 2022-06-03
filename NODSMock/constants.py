@@ -1,1 +1,1 @@
-CI_CD_MANAGER_URL = "http://10.0.13.22:8000"
+CI_CD_MANAGER_URL = "http://127.0.0.1:8000"

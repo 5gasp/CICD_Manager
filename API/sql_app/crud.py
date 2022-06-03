@@ -3,7 +3,7 @@
 # @Date:   22-05-2022 10:25:05
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 24-05-2022 11:05:06
+# @Last Modified time: 26-05-2022 14:44:00
 # @Description: Contains all the CRUD operations over the Database
 
 
@@ -204,8 +204,17 @@ def get_all_test_status_for_test_given_id(db: Session, test_id: int, access_toke
 # ---------- Test Instance Tests --------- #
 # ---------------------------------------- #
 
-def create_test_instance_test(db: Session, test_instance_id: int, performed_test: str, description: str, performed_test_results_location: str = None):
-    test_instance_test = models.Test_Instance_Tests(test_instance=test_instance_id, performed_test=performed_test, description=description)
+def create_test_instance_test(db: Session, test_instance_id: int, 
+    performed_test: str, description: str, performed_test_results_location: str = None, 
+    is_developer_defined=False, developer_defined_test_filepath = None):
+    
+    test_instance_test = models.Test_Instance_Tests(
+        test_instance=test_instance_id,
+        performed_test=performed_test,
+        description=description,
+        is_developer_defined=is_developer_defined,
+        developer_defined_test_filepath=developer_defined_test_filepath
+    )
     if performed_test_results_location:
         test_instance_test.performed_test_results_location = performed_test_results_location
     db.add(test_instance_test)
@@ -243,8 +252,34 @@ def update_test_status_of_test_instance(db: Session, test_instance_id: int, perf
     logging.info(f"Test Instance Test update : {test_instance_test.as_dict()}")
     return test_instance_test
 
+
+def get_developer_defined_tests_for_test_instance(db: Session, 
+    test_instance_id: int, communication_token: str = None):
+    
+    if not is_communication_token_for_test_valid(db, test_instance_id, communication_token):
+        raise Exception("Communication Tokens don't match")
+    test_instance_tests = db.query(models.Test_Instance_Tests).filter(
+            models.Test_Instance_Tests.test_instance == test_instance_id,
+            models.Test_Instance_Tests.is_developer_defined == True
+        ).all()
+    return test_instance_tests
+
+
+def get_developer_defined_test_for_test_instance(db: Session, 
+    test_instance_id: int, communication_token: str, test_name: str):
+    
+    if not is_communication_token_for_test_valid(db, test_instance_id, communication_token):
+        raise Exception("Communication Tokens don't match")
+    test_instance_test = db.query(models.Test_Instance_Tests).filter(
+            models.Test_Instance_Tests.test_instance == test_instance_id,
+        models.Test_Instance_Tests.performed_test == test_name,
+            
+        ).first()
+    print(test_instance_test.performed_test)
+    return test_instance_test.developer_defined_test_filepath
+    
 # ---------------------------------------- #
-# ----------------- Test Information ---------------- #
+# ------------ Test Information ---------- #
 # ---------------------------------------- #
 
 def get_test_info_by_testbed_id(db: Session, testbed_id: int):
@@ -306,7 +341,7 @@ def is_communication_token_for_test_valid(db: Session, test_instance_id: int, co
     # 1 get the CI/CD Agent for the test instance
     db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first()
     db_ci_cd_node = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.id == db_test_instance.ci_cd_node_id).first()
-    print(db_test_instance.as_dict())
+   
     # 2 -check if the communication token is ok
     if db_ci_cd_node.communication_token != communication_token:
         return False

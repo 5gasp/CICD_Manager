@@ -11,6 +11,10 @@ test_phases:
       name: bandwidth test
       testcase_ids:
       - 1
+    - execution_id: 2
+      name: bandwidth developer defined test
+      testcase_ids:
+      - 2
     scope: infrastructure
   setup:
     deployments:
@@ -51,3 +55,25 @@ test_phases:
       scope: infrastructure
       testcase_id: 1
       type: predefined
+    - description: My developer defined bandwidth test
+      name: bandwidth
+      parameters:
+      - key: host1_ip
+        value: {{testcase2.host1_ip}}
+      - key: host1_username
+        value: {{testcase2.host1_username}}
+      - key: host1_password
+        value: {{testcase2.host1_password}}
+      - key: host2_ip
+        value: {{testcase2.host2_ip}}
+      - key: host2_username
+        value: {{testcase2.host2_username}}
+      - key: host2_password
+        value: {{testcase2.host2_password}}
+      - key: threshold
+        value: {{testcase2.threshold}}
+      - key: comparator
+        value: {{testcase2.comparator}}
+      scope: infrastructure
+      testcase_id: 2
+      type: developer-defined

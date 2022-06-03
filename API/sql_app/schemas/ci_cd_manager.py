@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+# @Author: Rafael Direito
+# @Date:   22-05-2022 10:25:05
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 26-05-2022 09:21:02
+# @Description: 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
@@ -55,7 +62,18 @@ class Testbed(Testbed_Base):
 from pydantic import BaseModel
 
 
+# ---------------------------------------- #
+# ---------- Test Instance Test ---------- #
+# ---------------------------------------- #
+
+class Test_Instance_Test_Base(BaseModel):
+    communication_token: str
+    test_instance_id: str
     
+
+class Test_Instance_Test_Download(Test_Instance_Test_Base):
+    developer_defined_test_name: str
+
 
 
 

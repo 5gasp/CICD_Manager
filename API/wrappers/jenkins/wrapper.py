@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+# @Author: Rafael Direito
+# @Date:   07-06-2021 13:55:48
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 30-05-2022 11:53:25
+# @Description: 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
@@ -193,9 +200,9 @@ class Jenkins_Wrapper:
         
         return True, ""
 
-
     def create_jenkins_pipeline_script(self, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information, test_instance_id, testbed_id):
-        jenkins_script_str = copy.copy(JenkinsConstants.JENKINS_BASE_PIPELINE_SCRIPT)
+        jenkins_script_str = copy.copy(
+            JenkinsConstants.JENKINS_BASE_PIPELINE_SCRIPT)
         pipeline_configuration = JenkinsPipelineConfiguration.Jenkins_Pipeline_Configuration(jenkins_script_str, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information, test_instance_id, testbed_id)
         conf = pipeline_configuration.create_jenkins_pipeline_script()
         return conf
