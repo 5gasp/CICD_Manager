@@ -1,0 +1,52 @@
+{
+  "ns-id-1":{
+    "vnf-id-1": {
+      "vdu-id-1": {
+        "interface-id-1": {
+          "name": "eth0",
+          "ip-address": "10.0.13.99",
+          "mac-address"	:	"fa:16:3e:91:73:7a",
+          "type": "PARAVIRT"
+        }, 
+        "interface-id-2": {
+          "name": "eth1",
+          "ip-address": "",
+          "mac-address"	: "",
+          "type": ""
+        }
+      }
+    },
+    "vnf-id-2": {
+      "vdu-id-1": {
+        "interface-id-1": {
+          "name": "eth0",
+          "ip-address": "10.0.13.12",
+          "mac-address"	:	"fa:16:3e:cd:9a:3d",
+          "type": "PARAVIRT"
+        }, 
+        "interface-id-2": {
+          "name": "eth1",
+          "ip-address": "",
+          "mac-address"	: "",
+          "type": ""
+        }
+      }
+    },
+    "vnf-id-3": {
+      "vdu-id-1": {
+        "interface-id-1": {
+          "name": "eth0",
+          "ip-address": "10.0.13.224",
+          "mac-address"	:	"fa:16:3e:c2:92:27",
+          "type": "PARAVIRT"
+        }, 
+        "interface-id-2": {
+          "name": "eth1",
+          "ip-address": "",
+          "mac-address"	: "",
+          "type": ""
+        }
+      }
+    }
+  }
+}
