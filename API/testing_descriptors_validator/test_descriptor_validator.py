@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+# @Author: Rafael Direito
+# @Date:   22-05-2022 10:25:05
+# @Email:  rdireito@av.it.pt
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 09-06-2022 16:52:33
+# @Description: 
 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -70,7 +77,7 @@ class Test_Descriptor_Validator:
             errors.append(e)
         
         self.executed_tests_info = executed_tests_info 
-
+        
         if len(errors) == 0:
             for test_info in executed_tests_info[0:1]:
                 td_test_defined_parameters = {parameter["key"]: parameter["value"] for parameter in test_info["parameters"]}
@@ -89,7 +96,9 @@ class Test_Descriptor_Validator:
                                     errors.append(f"The parameter \"{test_variable.variable_name}\", for the test {test_info['name']}, is not according to its possible_options.")
                             else:
                                 errors.append(f"The parameter \"{test_variable.variable_name}\" must be defined for the test {test_info['name']}.")
-
+                    elif test_info["type"] == "developer-defined":
+                        has_test = True
+                        
                 if not has_test:
                     errors.append(f"{test_info['name']} doesn't exist in the chosen testbed.")
                 # if test_info["name"] in testbed_tests:

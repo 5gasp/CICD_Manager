@@ -3,7 +3,7 @@
 # @Date:   25-05-2022 11:40:26
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 26-05-2022 13:52:28
+# @Last Modified time: 09-06-2022 16:45:26
 # @Description: 
 
 import logging
@@ -122,7 +122,7 @@ def move_test_to_ftp(developer_defined_test_path: str) -> None:
         ({developer_defined_test_path}) from the local warehouse")
     
     logging.info("Created new version of the developer defined test - "\
-        "{developer_defined_test_path}")
+        f"{developer_defined_test_path}")
     
     return ftp_test_full_path
 
