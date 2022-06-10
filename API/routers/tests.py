@@ -3,7 +3,7 @@
 # @Date:   24-05-2022 10:49:25
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 30-05-2022 12:02:00
+# @Last Modified time: 09-06-2022 16:46:42
 # @Description: Constains all the endpoints related to the testing of the NetApps
 
 
@@ -162,13 +162,16 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
     # check if the testbed exists
     testbed_id = test_descriptor_data["test_info"]["testbed_id"]
     if crud.get_testbed_by_id(db, testbed_id) is None:
+        logging.error("The selected testbed doesn't exist.")
         return Utils.create_response(status_code=400, success=False, errors=["The selected testbed doesn't exist."])
 
     # validate id all tests exist in the selected testbed
     testbed_tests = crud.get_test_info_by_testbed_id(db, testbed_id)
 
+
     errors = test_descriptor_validator.validate_tests_parameters(testbed_tests)
     if len(errors) != 0:
+        logging.error(f"Error on validating test parameters - {errors}")
         return Utils.create_response(status_code=400, success=False, errors=errors, message="Error on validating test parameters")
 
     # validate metrics collection information
@@ -176,6 +179,7 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
     is_ok = test_descriptor_validator.validate_metrics_collection_process(
         metrics_collection_information)
     if not is_ok:
+        logging.error(f"Error on validating metrics collection process - {errors}")
         return Utils.create_response(status_code=400, success=False, errors=errors, message="Badly defined parameters for the metrics collection process")
 
     descriptor_metrics_collection = None
@@ -183,6 +187,7 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
         descriptor_metrics_collection = test_descriptor_data[
             "test_phases"]["setup"]["metrics_collection"]
 
+    print("HERE")
     # register the test in database
     netapp_id = test_descriptor_data["test_info"]["netapp_id"]
     network_service_id = test_descriptor_data["test_info"]["network_service_id"]
@@ -191,7 +196,7 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
     test_instance = crud.create_test_instance(
         db, netapp_id, network_service_id, testbed_id, nods_id=nods_id)
     
-
+    print("HERE")
     # update test status
     crud.create_test_status(
         db, test_instance.id, Constants.TEST_STATUS["submitted_on_manager"], True)
@@ -210,6 +215,7 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
             available_agents_jobs.append(
                 (jenkins_wrapper, ci_cd_agent, active_jobs))
 
+    print("HERE")
     if len(available_agents_jobs) == 0:
         return Utils.create_response(status_code=400, success=False, errors=["No CI/CD Agent Available"])
 

@@ -3,7 +3,7 @@
 # @Date:   22-05-2022 10:25:05
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 26-05-2022 10:21:57
+# @Last Modified time: 09-06-2022 16:29:26
 # @Description: Constains all the endpoints related to the CI/CD Agents
 
 # generic imports
@@ -155,6 +155,7 @@ async def validate_test_descriptor(test_descriptor:UploadFile = File(...) , db: 
     }
 )
 async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Create , db: Session = Depends(get_db)):
+    
     # Get Service Test Characteristics
     characteristics = []
     nods_id = None
