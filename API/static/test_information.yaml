@@ -1,3 +1,7 @@
+# @Author: Rafael Direito
+# @Date:   01-06-2021 17:43:43
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 10-06-2022 10:52:25
 ---
 tests:
   testbed_itav:
@@ -49,7 +53,56 @@ tests:
         mandatory: true
         possible_options: []
         type: float
-        
+
+    bandwidth2:
+      id: bandwidth2
+      name: bandwidth2
+      description: Tests the bandwidth between to VNFs. The results are in bits/sec
+      ftp_base_location: tests/bandwidth2/
+      test_filename: testBandwidth2.robot
+      test_type: Robot
+      test_variables:
+      - variable_name: host1_ip
+        description: IP of Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_username
+        description: Login username for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_password
+        description: Login password for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_ip
+        description: IP of Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_username
+        description: Login username for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_password
+        description: Login password for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: comparator
+        description: Comparator to be used while validating the bandwidth
+        mandatory: true
+        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        type: str
+      - variable_name: threshold
+        description: Threshold in mbits per second
+        mandatory: true
+        possible_options: []
+        type: float
+
     transmission_speed:
       id: transmission_speed
       name: transmission speed
