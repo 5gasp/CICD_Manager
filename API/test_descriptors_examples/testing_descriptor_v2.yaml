@@ -1,7 +1,7 @@
 # @Author: Rafael Direito
 # @Date:   24-05-2022 10:49:25
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 2022-10-27 11:31:31
+# @Last Modified time: 2022-10-27 11:36:13
 test_info:
   netapp_id: OBU 
   network_service_id: vOBU
@@ -121,7 +121,7 @@ test_phases:
     #metrics_collection:
     #  - metrics_collection_id: 1
     #    parameters:
-    #        - key: host
+    #        - key: hostAPI/test_descriptors_examples/testing_descriptor_v2.yaml
     #          value: 10.0.30.55
     #        - key: host_username
     #          value: ubuntu
