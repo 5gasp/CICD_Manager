@@ -3,7 +3,7 @@
 # @Date:   23-05-2022 10:46:25
 # @Email:  rdireito@av.it.pt
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 09-06-2022 16:28:03
+# @Last Modified time: 2022-10-27 16:53:14
 # @Description: 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
@@ -18,13 +18,9 @@ import requests
 import shutil
 import base64
 import constants as Constants
-
+import json
 
 app = FastAPI()
-
-
-
-
 
     
 def add_characteristic(payload, name, value):
@@ -76,7 +72,6 @@ async def new_test(
     netapp_artifacts: UploadFile = File(...),
     ):
 
-    
     onboarding_id = Constants.ONBOARDED_NETAPPS_COUNT
     Constants.ONBOARDED_NETAPPS_COUNT += 1
     
@@ -171,6 +166,7 @@ async def new_test(
     )        
             
     print("Tiggering a new validation process.")
+    #print(json.dumps(base_payload, sort_keys=True, indent=4))
     try:
         response = requests.post(
             url=f"{Constants.CI_CD_MANAGER_URL}/tmf-api/serviceTestManagement/v4/serviceTest",
@@ -248,17 +244,18 @@ async def service_test_specification(service_test_specification_id, attachement_
             testcase_id = "testcase" + str(testcase["testcase_id"])
             for param in testcase["parameters"]:
                 param["value"] = '{{' + testcase_id + "." + param["key"] + "}}"
-                
+        print(testing_descriptor_content)
         td_to_parse_path = f'static/onboarded_artifacts/{service_test_specification_id}/testing_descriptor_to_parse.yaml'
         f = open(td_to_parse_path, 'w')
         f.write(yaml.dump(testing_descriptor_content).replace("'", ""))
         f.close()
+        
 
         return FileResponse(td_to_parse_path, media_type='application/octet-stream', filename="testing_descriptor_to_parse.yaml")
     
     else:
         
-        filepath = td_to_parse_path = f'static/onboarded_artifacts/{service_test_specification_id}/tests/{attachment_name}'
+        filepath = td_to_parse_path = f'static/onboarded_artifacts/{service_test_specification_id}/{attachment_name}'
         return FileResponse(filepath)
 
         
