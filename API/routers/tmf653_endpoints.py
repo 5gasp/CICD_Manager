@@ -192,7 +192,8 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
         in response['attachment']
     }
     try:
-        attachment_url = attachments["testing-descriptor.yaml"]
+        valid_testing_descriptor_filename = [ attachment_name for attachment_name in attachments.keys() if "yaml" in attachment_name][0]
+        attachment_url = attachments[valid_testing_descriptor_filename]
         success, response = Utils.get_serviceTestDescriptor(token=token,url=attachment_url)
         descriptors_text = response.text
         if not success:
