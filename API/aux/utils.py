@@ -136,6 +136,7 @@ def get_serviceTestSpecification(token,_id):
     auth_url = f'{Constants.NODS_HOST}/tmf-api/serviceTestManagement/v4/serviceTestSpecification/{_id}'
     headers = {'Authorization': f'Bearer {token}'}
     try:
+        logging.info(f"ID: {_id}")
         response = requests.get(url=auth_url,headers=headers)
         if response.status_code != 200:
             raise Exception(response.content)
@@ -144,8 +145,10 @@ def get_serviceTestSpecification(token,_id):
     return True, response.json()
 
 def get_serviceTestDescriptor(token,url):
-    headers = {'Authorization': f'Bearer ' + token}
+    logging.info(f"Starting with URL : {url}")
+    headers = {'Authorization': f'Bearer {token}'}
     url =  f'{Constants.NODS_HOST}/tmf-api{url}'
+    logging.info(f"get_serviceTestDescriptor URL: {url}")
     response = requests.get(url=url,headers=headers)
     try:
         if response.status_code != 200:
@@ -153,6 +156,24 @@ def get_serviceTestDescriptor(token,url):
     except Exception as e:
         return False, f"Unable to get ServiceTest Descriptor. Reason: {e}"
     return True,response
+
+def get_attachment(token,url_to_download):
+    attachment_url = f"{Constants.NODS_HOST}/tmf-api{url_to_download}"
+    logging.info(f"Attachment's URL : {attachment_url}")
+    headers = {'Authorization': f'Bearer {token}'}
+    logging.info(f"Getting Attachment with URL : {attachment_url}")
+    response = requests.get(
+        url = attachment_url,
+        headers=headers,
+        allow_redirects=True
+    )
+    logging.info(f"Response's status code : {response.status_code}")
+    try:
+        if response.status_code != 200:
+            raise Exception(response.content)
+    except Exception as e:
+        return False, f"Unable to get Attachment. Reason: {e}"
+    return response
 
 def patch_results(token,nods_id,data):
     headers = {'Authorization': f'Bearer ' + token,'Content-Type': 'application/json'}

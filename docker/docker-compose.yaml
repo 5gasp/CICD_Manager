@@ -18,8 +18,8 @@ services:
       - "47400-47470:47400-47470"
     environment:
       - FTP_USER=ftp-user
-      - FTP_PASS=ftp-password
-      - PASV_ADDRESS=172.16.10.240
+      - FTP_PASS=kXCPs96SfPPFSyLB
+      - PASV_ADDRESS=10.0.12.86
     volumes:
       - ./docker_data/ftp:/home/vsftpd
 

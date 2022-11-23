@@ -6,6 +6,7 @@
 # @Last Modified time: 09-06-2022 16:45:26
 # @Description: 
 
+import aux.utils as Utils
 import logging
 from uuid import UUID
 import aux.constants as Constants
@@ -15,7 +16,7 @@ from ftplib import FTP
 import os
 import urllib
 
-def load_developer_defined_tests(developer_defined_tests: list[str], 
+def load_developer_defined_tests(nods_token, developer_defined_tests: list[str], 
     attachments: dict, nods_id: str) -> list[str]:
     """Loads the developer defined tests to the CI/CD Manager's FTP Server
 
@@ -37,17 +38,19 @@ def load_developer_defined_tests(developer_defined_tests: list[str],
             f"{developer_defined_test_name}.tar.gz")
         if url_to_download:
             compressed_test_file_location = get_developer_defined_test_to_local_dir(
+                nods_token,
                 developer_defined_test_name,
                 url_to_download,
                 nods_id
             )
+            logging.info(f"Got the Developer Defined Test '{developer_defined_test_name}'!")
             ftp_test_full_path = move_test_to_ftp(compressed_test_file_location)
             loaded_tests_ftp_filepath[developer_defined_test_name] = ftp_test_full_path
     
     return loaded_tests_ftp_filepath
 
 
-def get_developer_defined_test_to_local_dir( developer_defined_test_name: str, 
+def get_developer_defined_test_to_local_dir(nods_token, developer_defined_test_name: str, 
     url_to_download: str, nods_id: UUID) -> str:
     """Downloads the developer defined test to the warehouse local directory
 
@@ -61,10 +64,12 @@ def get_developer_defined_test_to_local_dir( developer_defined_test_name: str,
     """
     # Get Compressed Test Files
     
-    r = requests.get(
-        f"{Constants.NODS_HOST}/tmf-api{url_to_download}",
-        allow_redirects=True
-    )
+    #r = requests.get(
+    #    f"{Constants.NODS_HOST}/tmf-api{url_to_download}",
+    #    allow_redirects=True
+    #)
+    
+    r = Utils.get_attachment(nods_token, url_to_download)
 
     compressed_test_file_location = os.path.join(
         Constants.DEVELOPER_DEFINED_TEST_TEMP_STORAGE_DIR,
@@ -133,7 +138,8 @@ def download_test_from_ftp(developer_defined_test_path: str) -> bytes:
         
     url = f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}" \
         f"@{ftp_location}/{developer_defined_test_path}"
-        
+
+    logging.info(f"Will Obtain Developer Defined Test from '{ftp_location}/{developer_defined_test_path}'.")
     r = urllib.request.urlopen(url)
     test_content = r.read()
     

@@ -99,6 +99,8 @@ async def validate_test_descriptor(test_descriptor:UploadFile = File(...) , db: 
     contents = re.sub(r"(\{\{[^}]+}\})","test",contents)    
     try:
         test_descriptor_data = yaml.safe_load(contents)
+        logging.info("Testing descriptor data:")
+        logging.info(test_descriptor_data)
     except Exception as e:
         print(e)
         return Utils.create_response(status_code=400, success=False, errors=["Unable to parse the submitted file. It must be a YAML."])
@@ -169,6 +171,11 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
             'valueType': characteristic.valueType,
             'value': characteristic.value
         })
+
+    logging.info("serviceTestParsed:")
+    logging.info(serviceTestParsed)
+    logging.info(str(serviceTestParsed))
+    logging.info(serviceTestParsed.__dict__)
     #2  ->Get the Service Test Specification Id
     service_test_specification_id = serviceTestParsed.testSpecification.id
     service_test_specification_href = serviceTestParsed.testSpecification.href
@@ -182,6 +189,9 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
             return Utils.create_response(status_code=400, success=False, message=f"{response}", data=[])
     except Exception as e:
         return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
+    
+    logging.info("Service Test Specification:")
+    logging.info(response)
 
     logging.info("Retrieved Service Test Specification")
     
@@ -226,7 +236,7 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
     
         try:
             loaded_tests_dict = dev_defined_test_helpers.load_developer_defined_tests(
-                developer_defined_tests, attachments, nods_id)
+                token, developer_defined_tests, attachments, nods_id)
         except Exception as e:
             return Utils.create_response(status_code=400, success=False, 
                 message=f"Unable to Obtain the Developer Defined Tests from NODS -{e}",
