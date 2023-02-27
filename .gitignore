@@ -147,4 +147,6 @@ Thumbs.db
 # profiling data
 .prof
 
-*/*.ini
+#5GASP
+config.ini
+docker/docker_data/*
