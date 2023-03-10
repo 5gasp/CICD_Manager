@@ -15,9 +15,10 @@ import tarfile
 from ftplib import FTP
 import os
 import urllib
+from typing import List
 
-def load_developer_defined_tests(nods_token, developer_defined_tests: list[str], 
-    attachments: dict, nods_id: str) -> list[str]:
+def load_developer_defined_tests(nods_token, developer_defined_tests: List[str], 
+    attachments: dict, nods_id: str) -> List[str]:
     """Loads the developer defined tests to the CI/CD Manager's FTP Server
 
     Args:
@@ -103,7 +104,7 @@ def move_test_to_ftp(developer_defined_test_path: str) -> None:
         Constants.DEVELOPER_DEFINED_TEST_BASE_FTP_DIR,
         os.path.basename(developer_defined_test_path)
     )
-    
+        
     if os.path.basename(developer_defined_test_path) in [
         f.split("/")[-1] 
         for f 
@@ -130,6 +131,7 @@ def move_test_to_ftp(developer_defined_test_path: str) -> None:
         f"{developer_defined_test_path}")
     
     return ftp_test_full_path
+    #return os.path.dirname(ftp_test_full_path)
 
 
 def download_test_from_ftp(developer_defined_test_path: str) -> bytes:

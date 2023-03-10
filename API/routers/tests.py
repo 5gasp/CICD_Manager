@@ -19,6 +19,7 @@ from sql_app import crud
 import sql_app.CRUD.agents as CRUD_Agents
 from sql_app.schemas import ci_cd_manager as ci_cd_manager_schemas, test_info as testinfo_schemas
 import test_helpers.developer_defined as dev_defined_test_helpers
+from test_helpers import testing_artifacts as testing_artifacts_helper
 from fastapi import File, UploadFile
 from sqlalchemy.orm import Session
 import logging
@@ -149,15 +150,23 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     except:
         return Utils.create_response(status_code=400, success=False, errors=["Unable to parse the submitted file. It must be a YAML."])
 
-    return new_test(test_descriptor_data, None, None, db)
+    return new_test(test_descriptor_data, None, None, None, db)
     
     
-def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
+def new_test(test_descriptor_data, nods_id, developer_defined_tests, 
+             testing_artifacts_location, db):
+    
     #  validate the structure of the testing descriptor
+
     test_descriptor_validator = Test_Descriptor_Validator(test_descriptor_data)
     structural_validation_errors = test_descriptor_validator.validate_structure()
+    
     if len(structural_validation_errors) != 0:
+        logging.error(f"Testing Descriptor has the following errors: {structural_validation_errors}")
         return Utils.create_response(status_code=400, success=False, errors=structural_validation_errors)
+    
+    logging.info(f"Testing Descriptor was validated with success!")
+    
 
     # check if the testbed exists
     testbed_id = test_descriptor_data["test_info"]["testbed_id"]
@@ -167,6 +176,7 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
 
     # validate id all tests exist in the selected testbed
     testbed_tests = crud.get_test_info_by_testbed_id(db, testbed_id)
+    logging.info(f"All tests exist for testbed!")
 
 
     errors = test_descriptor_validator.validate_tests_parameters(testbed_tests)
@@ -187,21 +197,35 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
         descriptor_metrics_collection = test_descriptor_data[
             "test_phases"]["setup"]["metrics_collection"]
 
-    print("HERE")
+        
     # register the test in database
+    logging.info(f"Will register the tests in the database...")
     netapp_id = test_descriptor_data["test_info"]["netapp_id"]
     network_service_id = test_descriptor_data["test_info"]["network_service_id"]
 
     # register new test
     test_instance = crud.create_test_instance(
         db, netapp_id, network_service_id, testbed_id, nods_id=nods_id)
+    logging.info(f"All tests were registered in the database...")
     
-    print("HERE")
+    
+    
+    # Register Testing Artifacts
+    # Todo
+    testing_artifact_location_db = crud.create_testing_artifact(db, 
+        test_instance.id, testing_artifacts_location)
+    
+
     # update test status
     crud.create_test_status(
-        db, test_instance.id, Constants.TEST_STATUS["submitted_on_manager"], True)
+        db, 
+        test_instance.id, 
+        Constants.TEST_STATUS["submitted_on_manager"], 
+        True
+    )
 
     # Check if the CI/CD Node for this test is already registered
+    logging.info(f"Will gather the testbed's CI/CD Agent...")
     testbeds_ci_cd_agents = CRUD_Agents.get_ci_cd_agents_by_testbed(
         db, testbed_id)
     available_agents_jobs = []
@@ -214,10 +238,12 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
                 1]].count('blue_anime')
             available_agents_jobs.append(
                 (jenkins_wrapper, ci_cd_agent, active_jobs))
-
-    print("HERE")
+    
     if len(available_agents_jobs) == 0:
-        return Utils.create_response(status_code=400, success=False, errors=["No CI/CD Agent Available"])
+        return Utils.create_response(status_code=400, success=False, 
+                                     errors=["No CI/CD Agent Available"])
+    
+    logging.info(f"Testbed's CI/CD Agent has been selected!")
 
     selected_ci_cd_agent_info = sorted(
         available_agents_jobs, key=lambda e: e[2])[0]
@@ -267,7 +293,7 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
                 f"'{test_instance_test.performed_test}' for test instance "\
                 f" {test_instance.id}."
             )
-  
+    logging.info(f"Will create Jenkins Pipeline Script!")
     # create jenkins pipeline script
     try:
         pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(
@@ -287,10 +313,16 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
             db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
      
-     
+    logging.info(f"Will submit Jenkins Pipeline!")
+    
+    # TOdo
+    print(pipeline_config)
+    #return
+    
     # submit pipeline scripts
     job_name = netapp_id + '-' + network_service_id + \
         '-' + str(test_instance.build)
+    
     ret, message = jenkins_wrapper.create_new_job(job_name, pipeline_config)
     if not ret:
         crud.create_test_status(
@@ -300,12 +332,14 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
         db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], True)
     jenkins_job_name = message
     
+    logging.info("Trying to run Jenkins Job...")
     # run jenkins job
     ret, message = jenkins_wrapper.run_job(jenkins_job_name)
     if not ret:
         return Utils.create_response(status_code=400, success=False, errors=[message])
     build_id = message
 
+    logging.info(f"Jenkins Job was dispatched for the CI/CD Agent")
     # get jenkins job build number
     ret, message = jenkins_wrapper.get_last_build_number(job_name)
     if not ret:
@@ -315,7 +349,9 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests, db):
     # Update extra information
     crud.update_test_instance_extra_info(db, test_instance.id, str(
         {"job_name": job_name, "build_number": job_build_number}))
-
+    
+    logging.info(f"Got extra info from Jenkins Job.")
+    
     return Utils.create_response(success=True, message=f"A new build job was created", data={
         "test_id": test_instance.id,
         "testbed_id": test_instance.testbed_id,
@@ -337,14 +373,13 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
     # get test results
     tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
     tests = [t.performed_test for t in tests]
-    print("HERE1")
     payload = {'characteristic': []}
     counter = 1
     test_instance_dic = crud.get_test_instances_by_id(db, test_results_information.test_id)
 
     try:
         for test in tests:
-            print("-------", test)
+            print("Test:", test)
             ftp_url = Constants.FTP_RESULTS_URL.split(":")[0] if ":" in Constants.FTP_RESULTS_URL else Constants.FTP_RESULTS_URL
             xml_str = urlopen(
                 f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{ftp_url}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
@@ -365,6 +400,7 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
             url = f'{Constants.TRVD_HOST}/test-information.html?test_id={test_results_information.test_id}&access_token={token}'
             payload['characteristic'].append({'name': f'testResultsURL{counter}', 'value': {'value': url}  })
             counter+=1
+        
         print(payload)
 
         # get test console log
@@ -508,7 +544,63 @@ async def download_developer_defined_test(
     file_location = crud.get_developer_defined_test_for_test_instance(
         db, test_instance_id, communication_token, developer_defined_test_name
     )
+    print(file_location)
     test_content = dev_defined_test_helpers.download_test_from_ftp(file_location)
     
     
     return Response(test_content, media_type="application/tar+gzip")
+
+
+
+
+@router.get(
+    "/tests/testing-artifacts",
+    tags=["tests"],
+    summary="Get the report of test process",
+    description="The developers can use this endpoint to gather the report of a test",
+)
+async def get_test_status(test_id: int, artifact: str,
+                        access_token: str, db: Session = Depends(get_db)):
+    
+    if test_id is None or  artifact is None:
+        return Utils.create_response(
+            status_code=400, 
+            success=False, 
+            errors=["Not enough data to get the testing artifact"]
+        ) 
+ 
+    if access_token is None:
+        return Utils.create_response(
+            status_code=403, 
+            success=False, 
+            errors=["Communication token was not provided."]
+        ) 
+    
+    try:
+        # Get the testing artifacts ftp_base_path
+        testing_artifact_base_path = crud.get_testing_artifact_base_path(
+            db,
+            test_id,
+            access_token
+        )
+        
+        logging.info("Got the ftp_testing_artifact_base_path: "\
+                    f"{testing_artifact_base_path}")
+        
+        
+        testing_artifact_content, mime_type = testing_artifacts_helper.\
+            get_testing_artifact_from_ftp(
+                testing_artifact_base_path,
+                artifact
+            )
+                
+        return Response(testing_artifact_content, media_type=mime_type)
+    
+    except Exception as e:
+        logging.error(e)
+        return Utils.create_response(
+            status_code=400, 
+            success=False, 
+            errors=[f"Couldn't retrieve the testing artifact. Exception {e}"]
+        ) 
+

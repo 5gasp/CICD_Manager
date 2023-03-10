@@ -86,9 +86,17 @@ def create_default_admin(db):
         password = Constants.DEFAULT_ADMIN_CREDENTIALS['password'],
         roles = Constants.USER_ROLES)
     
+
 def create_dir_to_store_developer_defined_tests():
     ddt_dir = Constants.DEVELOPER_DEFINED_TEST_TEMP_STORAGE_DIR
     if not os.path.exists(ddt_dir):
         os.makedirs(ddt_dir)
     logging.info(f"Directory to store developer defined tests: {ddt_dir}")
+    
+
+def create_dir_to_store_testing_artifacst():
+    ddt_dir = Constants.TESTING_ARTIFACTS_FTP_TEMP_STORAGE_DIR
+    if not os.path.exists(ddt_dir):
+        os.makedirs(ddt_dir)
+    logging.info(f"Directory to testing artifacts: {ddt_dir}")
      

@@ -49,6 +49,7 @@ class Jenkins_Pipeline_Configuration:
     
         # fill the pipeline script
         self.add_environment_setup_to_jenkins_pipeline_script()
+        self.add_obtain_testing_artifacts_to_jenkins_pipeline_script()
         self.add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self.metrics_collection_information)
         self.add_metrics_collection_mechanism_to_jenkins_pipeline_script(self.descriptor_metrics_collection, self.metrics_collection_information)
         self.add_obtain_and_perform_tests_to_jenkins_pipeline_script(self.executed_tests_info, self.available_tests)
@@ -69,6 +70,7 @@ class Jenkins_Pipeline_Configuration:
     def add_environment_setup_to_jenkins_pipeline_script(self):
         setup_environment_commands = [
             "sh 'mkdir -p ~/test_repository/\"$JOB_NAME\"'",
+            "sh 'mkdir -p ~/test_artifacts/\"$JOB_NAME\"'",
             "sh 'mkdir -p ~/test_results/\"$JOB_NAME\"'",
             "sh 'mkdir -p ~/test_logs/\"$JOB_NAME\"'"
         ]
@@ -141,16 +143,25 @@ class Jenkins_Pipeline_Configuration:
                 f"sh '{ export_variables_commands_str} ; python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{test_to_execute} {tests_to_perform} || true'")
         
         
-        # Todo
-        print(executed_tests_info)
-        print("obtain_tests_commands")
-        for t in obtain_tests_commands:
-            print(t)
         # fill jenkins pipeline script
         self.__update_jenkins_script("<obtain_tests_environment>", environment_obtain_tests)
         self.__update_jenkins_script("<obtain_tests>", obtain_tests_commands)
         self.__update_jenkins_script("<perform_tests>", run_tests_commands)
+    
+    
+    def add_obtain_testing_artifacts_to_jenkins_pipeline_script(self):
+        obtain_testing_artifacts = [
+            "sh '"\
+            "curl --location --request GET \"" \
+            f"{Constants.CI_CD_MANAGER_URL}/tests/testing-artifacts?test_id="\
+            "${test_id}&amp;artifact=deployment-info.json&amp;access_token="\
+            "${comm_token}\" --output ~/test_artifacts/${JOB_NAME}/deployment-info.json '"
+        ]
         
+        self.__update_jenkins_script(
+            "<obtain_testing_artifacts>",
+            obtain_testing_artifacts
+        )
 
     def add_publish_results_to_jenkins_pipeline_script(self):
         publish_results_environment = [
@@ -161,7 +172,6 @@ class Jenkins_Pipeline_Configuration:
             f"results_ftp_user = credentials('results_ftp_user')",
             f"results_ftp_password = credentials('results_ftp_password')",
         ]
-
         publish_results_commands = [
             """sh '''
             #!/bin/bash
@@ -175,8 +185,9 @@ class Jenkins_Pipeline_Configuration:
     
     def add_cleanup_environment_commands_to_jenkins_pipeline_script(self):
         cleanup_environment_commands = [
-            #"sh 'rm -rf ~/test_repository/\"$JOB_NAME\"'",
-            #"sh 'rm -rf ~/test_results/\"$JOB_NAME\"'",
+            "sh 'rm -rf ~/test_repository/\"$JOB_NAME\"'",
+            "sh 'rm -rf ~/test_artifacts/\"$JOB_NAME\"'",
+            "sh 'rm -rf ~/test_results/\"$JOB_NAME\"'",
         ]
 
         return self.__update_jenkins_script("<cleanup_environment>", cleanup_environment_commands)

@@ -45,7 +45,7 @@ class CI_CD_Agent(Base):
 	def as_dict_without_password(self):
 		dic = {c.name: getattr(self, c.name) for c in self.__table__.columns}
 		dic.pop("password")
-		dic.pop("communication_token")
+		# dic.pop("communication_token")
 		return dic
 
 
@@ -58,8 +58,6 @@ class Testbed(Base):
 	
 	def as_dict(self):
 		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-
 
 
 
@@ -96,6 +94,19 @@ class Test_Status(Base):
 		dic =  {c.name: getattr(self, c.name) for c in self.__table__.columns}
 		dic["timestamp"] = self.timestamp.isoformat()
 		return dic
+
+
+class Testing_Artifact(Base):
+	__tablename__ = "testing_artifact"
+
+	id = Column(Integer, primary_key=True, index=True)
+	test_instance_id = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
+	ftp_base_path = Column(String, nullable=False)
+
+
+	def as_dict(self):
+		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 
 class Test_Instance_Tests(Base):

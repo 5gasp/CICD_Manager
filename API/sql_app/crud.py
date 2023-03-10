@@ -276,6 +276,7 @@ def get_developer_defined_test_for_test_instance(db: Session,
             
         ).first()
     print(test_instance_test.performed_test)
+    print(test_instance_test.developer_defined_test_filepath)
     return test_instance_test.developer_defined_test_filepath
     
 # ---------------------------------------- #
@@ -332,6 +333,57 @@ def create_test_information(db: Session,testinfo_data: testinfo_schemas.TestInfo
     return test_info_instance,""
     
 
+# ---------------------------------------- #
+# ----------- Testing Artifact------------ #
+# ---------------------------------------- #
+
+
+def create_testing_artifact(db: Session, test_instance_id: int, 
+                            ftp_base_path: str):
+    
+    testing_artifact_db = db.query(models.Testing_Artifact).filter(
+        models.Testing_Artifact.test_instance_id == test_instance_id).first()
+    
+    if testing_artifact_db is not None:
+        update_testing_artifact(db, test_instance_id, ftp_base_path)
+  
+    testing_artifact_db = models.Testing_Artifact(
+        test_instance_id=test_instance_id,
+        ftp_base_path=ftp_base_path,
+    )
+    
+    db.add(testing_artifact_db)
+    db.commit()
+    db.refresh(testing_artifact_db)
+    logging.info(f"Testing Artifacts Created : {testing_artifact_db.as_dict()}")
+    return testing_artifact_db
+
+
+def update_testing_artifact(db: Session, test_instance_id: int, 
+                            ftp_base_path: str):
+    
+    testing_artifact_db = db.query(models.Testing_Artifact).filter(
+        models.Testing_Artifact.test_instance_id == test_instance_id).first()
+    
+    testing_artifact_db.ftp_base_path = ftp_base_path    
+    db.commit()
+    db.refresh(testing_artifact_db)
+    logging.info(f"Testing Artifacts Updated : {testing_artifact_db.as_dict()}")
+    return testing_artifact_db
+
+
+def get_testing_artifact_base_path(db: Session, 
+    test_instance_id: int, communication_token: str = None):
+    
+    if not is_communication_token_for_test_valid(db, test_instance_id, communication_token):
+        raise Exception("Communication Tokens don't match")
+    
+    testing_artifact_db = db.query(models.Testing_Artifact).filter(
+        models.Testing_Artifact.test_instance_id == test_instance_id).first()
+    
+    return testing_artifact_db.ftp_base_path
+
+
 
 # ---------------------------------------- #
 # ----------------- Utils ---------------- #
@@ -341,7 +393,7 @@ def is_communication_token_for_test_valid(db: Session, test_instance_id: int, co
     # 1 get the CI/CD Agent for the test instance
     db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first()
     db_ci_cd_node = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.id == db_test_instance.ci_cd_node_id).first()
-   
+    
     # 2 -check if the communication token is ok
     if db_ci_cd_node.communication_token != communication_token:
         return False

@@ -17,6 +17,9 @@ from sql_app import crud
 import sql_app.CRUD.agents as CRUD_Agents
 from sql_app.schemas import TMF653 as tmf653_schemas
 import test_helpers.developer_defined as dev_defined_test_helpers
+from test_helpers import test_descriptor_render
+from test_helpers import testing_artifacts as testing_artifacts_helper
+
 import logging
 import inspect
 import sys
@@ -159,23 +162,21 @@ async def validate_test_descriptor(test_descriptor:UploadFile = File(...) , db: 
 async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Create , db: Session = Depends(get_db)):
     
     # Get Service Test Characteristics
-    characteristics = []
+    characteristics = {}
     nods_id = None
     for characteristic in serviceTestParsed.characteristic:
         # NODS_ID to later on patch data on NODS
         if characteristic.name == "NODS_ServiceTest_ID":
             nods_id=characteristic.value['value']
-        characteristics.append({
+        characteristics[characteristic.name] = { 
             'id': characteristic.id, 
             'name': characteristic.name, 
             'valueType': characteristic.valueType,
             'value': characteristic.value
-        })
+        }
 
-    logging.info("serviceTestParsed:")
-    logging.info(serviceTestParsed)
-    logging.info(str(serviceTestParsed))
-    logging.info(serviceTestParsed.__dict__)
+    logging.info("serviceTestParsed:", serviceTestParsed.__dict__)
+
     #2  ->Get the Service Test Specification Id
     service_test_specification_id = serviceTestParsed.testSpecification.id
     service_test_specification_href = serviceTestParsed.testSpecification.href
@@ -207,22 +208,41 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
         success, response = Utils.get_serviceTestDescriptor(token=token,url=attachment_url)
         descriptors_text = response.text
         if not success:
+            logging.errors("There was an error obtianining the Service Test "\
+                f"Descritptor {response}")
             return Utils.create_response(status_code=400, success=False, message=f"{response}", data=[])
     except Exception as e:
         return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
          
-    logging.info(f"Retrieved the Testing Descriptor  from {attachment_url}")
+    logging.info(f"Retrieved the Testing Descriptor from {attachment_url}")
     
-    #4 -> Render Descriptor
-    for characteristic in characteristics:
-        descriptors_text = descriptors_text.replace(f"{{{{{characteristic['name']}}}}}", f"{characteristic['value']['value']}")
-    try:
-        rendered_descriptor = yaml.safe_load(descriptors_text)
+    
+    # 4 -> Render Descriptor
+    
+    # 4.1 -> Get deployment information
+    logging.info("Gathering Deployment Information")
+    
+    characteristics_render = test_descriptor_render.CharacteristicsRender(
+        characteristics=characteristics,
+        testing_descriptor_text=descriptors_text
+    )
+    rendered_descriptor = None
+    testing_artifacts_location = None
+    try:        
+        # Get deployment info and store it in FTP
+        testing_artifacts_location = \
+            testing_artifacts_helper.store_deployment_information_in_ftp(
+                deployment_info=characteristics_render.deployment_information,
+                nods_id=nods_id
+            )
+        # Render Testing Descriptors Tags
+        rendered_descriptor = characteristics_render\
+            .get_rendered_testing_descritptor()
     except Exception as e:
-        return Utils.create_response(status_code=400, success=False, message=f"Invalid Testing Descriptor format", data=[])
+        return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
+
     logging.info(f"Rendered the descriptor")
-    
-    
+
     # 5 -> Get the developer defined tests
     developer_defined_tests = [testcase["name"] 
         for testcase 
@@ -242,6 +262,5 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
             return Utils.create_response(status_code=400, success=False, 
                 message=f"Unable to Obtain the Developer Defined Tests from NODS -{e}",
                 data=[])
-
     #return Utils.create_response(status_code=200, success=True, message=f"IXXXX", data=[])
-    return TestRouters.new_test(rendered_descriptor, nods_id, loaded_tests_dict, db)
+    return TestRouters.new_test(rendered_descriptor, nods_id, loaded_tests_dict, testing_artifacts_location, db)

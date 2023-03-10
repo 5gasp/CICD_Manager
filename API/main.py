@@ -121,6 +121,8 @@ async def startup_event():
     
     # Create directory to temporarily store the developer-defined-tests
     Startup.create_dir_to_store_developer_defined_tests()
+    # Create directory to temporarily store the testing artifacts
+    Startup.create_dir_to_store_testing_artifacst()
     # Connect to Database
     MODELS_INITIALIZED = False
     for i in range(10):

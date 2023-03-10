@@ -10,3 +10,4 @@ cerberus==1.3.4
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 PyYAML==6.0
+ftputil==5.0.4

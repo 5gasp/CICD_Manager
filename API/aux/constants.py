@@ -11,6 +11,12 @@
 DEVELOPER_DEFINED_TEST_TEMP_STORAGE_DIR = "warehouse/developer-defined-tests"
 DEVELOPER_DEFINED_TEST_BASE_FTP_DIR = "developer-defined-tests"
 
+# TESTING ARTIFACTS
+TESTING_ARTIFACTS_FTP_ROOT_PATH = "/testing_artifacts"
+TESTING_ARTIFACTS_FTP_TEMP_STORAGE_DIR = "warehouse/testing-artifacts"
+DEPLOYMENT_INFO_FNAME = "deployment-info.json"
+
+
 # AUTH
 SECRET_KEY = "99cb3e97787cf81a7f418c42b96a06f77ce25ddbb2f7f83a53cf3474896624f9"
 ALGORITHM = "HS256"
@@ -77,4 +83,7 @@ TEST_STATUS ={
     "ci_cd_agent_cleaned_test_environment": "CLEANED_TEST_ENVIRONMENT",
     "test_ended": "TEST_ENDED",
     "obtained_metrics_collection_files": "OBTAINED_METRICS_COLLECTION_FILES",
+    "obtained_testing_artifacts_files": "OBTAINED_TESTING_ARTIFACTS_FILES"
 }
+
+TMF_SERVICE_TEST_DEPLOYMENT_INFO_KEY = "deployment_information"

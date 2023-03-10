@@ -37,6 +37,25 @@ pipeline {
                 }
             }
         }
+        stage('Obtain all testing artifacts') {
+            environment {
+                comm_token = credentials('communication_token')
+                test_id = <test_id>
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                    <obtain_testing_artifacts>
+                }
+            }
+            post {
+                failure {
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":false, "state": "OBTAINED_TESTING_ARTIFACTS_FILES"}\\' <ci_cd_manager_url_test_status_url>'
+                }
+                success {
+                    sh 'curl --retry 5 --header "Content-Type: application/json" --request POST --data \\'{"communication_token":"\\'"$comm_token"\\'","test_id":"\\'"$test_id"\\'", "success":true, "state": "OBTAINED_TESTING_ARTIFACTS_FILES"}\\'  <ci_cd_manager_url_test_status_url>'
+                }
+            }
+        }
         stage('Obtain metrics collection files') {
             environment {
                 <obtain_metrics_environment>

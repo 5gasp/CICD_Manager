@@ -83,6 +83,11 @@ class Test_Descriptor_Validator:
                 td_test_defined_parameters = {parameter["key"]: parameter["value"] for parameter in test_info["parameters"]}
                 # check if test exists
                 has_test = False
+                # Hotfix
+                if test_info["type"] != "predefined":
+                    has_test = True
+                    continue
+                # End of hotfix
                 for testbed_test in testbed_tests:
                     if test_info["name"] == testbed_test.name:
                         has_test = True
