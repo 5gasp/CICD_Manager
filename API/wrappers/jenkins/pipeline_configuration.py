@@ -175,7 +175,7 @@ class Jenkins_Pipeline_Configuration:
             f"{Constants.CI_CD_MANAGER_URL}/tests/testing-artifacts?"\
             "artifact=most-common-usernames.txt\" "\
             "--output ~/test_artifacts/${JOB_NAME}"\
-            "/most-common-usernames.txt.txt '"
+            "/most-common-usernames.txt '"
         ]
         self.__update_jenkins_script(
             "<obtain_testing_artifacts>",
