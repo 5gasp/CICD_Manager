@@ -13,6 +13,7 @@ DEVELOPER_DEFINED_TEST_BASE_FTP_DIR = "developer-defined-tests"
 
 # TESTING ARTIFACTS
 TESTING_ARTIFACTS_FTP_ROOT_PATH = "/testing_artifacts"
+DEFAULT_5GASP_TESTING_ARTIFACTS_FTP_ROOT_PATH = "/testing_artifacts/5gasp_default"
 TESTING_ARTIFACTS_FTP_TEMP_STORAGE_DIR = "warehouse/testing-artifacts"
 DEPLOYMENT_INFO_FNAME = "deployment-info.json"
 

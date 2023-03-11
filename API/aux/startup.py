@@ -16,6 +16,7 @@ import logging
 import yaml
 import os
 import inspect
+import ftputil
 
 # Logger
 logging.basicConfig(
@@ -99,4 +100,90 @@ def create_dir_to_store_testing_artifacst():
     if not os.path.exists(ddt_dir):
         os.makedirs(ddt_dir)
     logging.info(f"Directory to testing artifacts: {ddt_dir}")
-     
+
+
+def create_dir_to_store_developer_defined_tests_ftp():
+    try:
+        # Check if base dir exists
+        ftp_host = Constants.FTP_RESULTS_URL.split(":")[0]
+        with ftputil.FTPHost(ftp_host, Constants.FTP_RESULTS_USER, 
+                             Constants.FTP_RESULTS_PASSWORD) as ftp_host:
+
+            # If the root directory does not exist, create it
+            if not ftp_host.path.isdir(
+                    Constants.DEVELOPER_DEFINED_TEST_BASE_FTP_DIR
+                ):
+                logging.info("Root directory for the developer defined tests "\
+                    "does not exist. Creating it...")
+            
+                ftp_host.mkdir(Constants.DEVELOPER_DEFINED_TEST_BASE_FTP_DIR)
+                
+                logging.info("Developer Defined Tests directory was created!")
+            else:
+                logging.info("Developer Defined Tests directory was already "\
+                    "created!")
+    
+    except Exception as e:
+        raise Exception("Impossible to create FTP Developer Defined Tests "\
+            f"directory: {e}"
+        )
+
+
+def create_dir_to_store_testing_artifacts_ftp():
+    try:
+        # Check if base dir exists
+        ftp_host = Constants.FTP_RESULTS_URL.split(":")[0]
+        with ftputil.FTPHost(ftp_host, Constants.FTP_RESULTS_USER, 
+                             Constants.FTP_RESULTS_PASSWORD) as ftp_host:
+
+            # If the root directory does not exist, create it
+            if not ftp_host.path.isdir(
+                    Constants.TESTING_ARTIFACTS_FTP_ROOT_PATH
+                ):
+                logging.info("Root directory for the testing artifacts "\
+                    "does not exist. Creating it...")
+            
+                ftp_host.mkdir(Constants.TESTING_ARTIFACTS_FTP_ROOT_PATH)
+                
+                logging.info("Testing artifacts directory was created!")
+            else:
+                logging.info("Testing artifacts directory was already "\
+                    "created!"
+                )
+    
+    except Exception as e:
+        raise Exception("Impossible to create testing artifacts "\
+            f"directory: {e}"
+        )
+
+
+def create_dir_to_store_5gasp_default_testing_artifacts_ftp():
+    try:
+        # Check if base dir exists
+        ftp_host = Constants.FTP_RESULTS_URL.split(":")[0]
+        with ftputil.FTPHost(ftp_host, Constants.FTP_RESULTS_USER, 
+                             Constants.FTP_RESULTS_PASSWORD) as ftp_host:
+
+            # If the root directory does not exist, create it
+            if not ftp_host.path.isdir(
+                    Constants.DEFAULT_5GASP_TESTING_ARTIFACTS_FTP_ROOT_PATH
+                ):
+                logging.info("Root directory for the defautl testing "\
+                    "artifacts does not exist. Creating it...")
+            
+                ftp_host.mkdir(
+                    Constants.DEFAULT_5GASP_TESTING_ARTIFACTS_FTP_ROOT_PATH
+                )
+                
+                logging.info("Testing artifacts default directory was "\
+                    "created!"
+                )
+            else: 
+                logging.info("Testing artifacts default directory was "\
+                    "already created!"
+                )
+    
+    except Exception as e:
+        raise Exception("Impossible to create testing artifacts default"\
+            f"directory: {e}"
+        )

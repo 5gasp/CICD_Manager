@@ -178,4 +178,13 @@ async def startup_event():
         db.close()
         return exit(6)
     
+    # Create FTP dirs
+    try:
+        Startup.create_dir_to_store_developer_defined_tests_ftp()
+        Startup.create_dir_to_store_testing_artifacts_ftp()
+        Startup.create_dir_to_store_5gasp_default_testing_artifacts_ftp()
+    except Exception as e:
+        logging.critical(3)
+        db.close()
+        return exit(7)
     

@@ -87,7 +87,13 @@ def load_test_info(db, tests_info_file):
         for testbed, test_info in tests_data['tests'].items():
             for test in test_info:
                 data = test_info[test]
-                variables = [ TestInfoSchemas.TestVariables(**var) for var in data['test_variables'] ]
+                variables = []
+                if "test_variables" in data:
+                    variables = [
+                        TestInfoSchemas.TestVariables(**var) 
+                        for var 
+                        in data['test_variables']
+                    ]                    
                 test_info_schema = TestInfoSchemas.TestInformation(
                 testid=data['id'],
                 name=data['name'], description=data['description'],

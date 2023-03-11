@@ -99,6 +99,7 @@ class Jenkins_Pipeline_Configuration:
         # robot tests
         test_to_perform = None
         for test_info in executed_tests_info:
+            print(test_info)
             test_id = test_info["name"]
             
             # DEVELOPER DEFINED TESTS
@@ -131,16 +132,17 @@ class Jenkins_Pipeline_Configuration:
             test_to_execute = test_info['full_name']
             
             # GLOBAL PROCESS
-            export_variables_commands = []
-            for parameter in test_info["parameters"]:
-                key = f"{test_id}_{parameter['key']}"
-                value = parameter['value']
-                export_variables_commands.append(f"export {key}={value}")
-                
-            export_variables_commands_str = " ; ".join(export_variables_commands)
+            export_variables_commands_str = ""
+            if "parameters" in test_info:
+                export_variables_commands = []
+                for parameter in test_info["parameters"]:
+                    key = f"{test_id}_{parameter['key']}"
+                    value = parameter['value']
+                    export_variables_commands.append(f"export {key}={value}")
+                export_variables_commands_str = " ; ".join(export_variables_commands) + " ;"
             
             run_tests_commands.append(
-                f"sh '{ export_variables_commands_str} ; python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{test_to_execute} {tests_to_perform} || true'")
+                f"sh '{export_variables_commands_str} cd {os.path.dirname(tests_to_perform)}; python3 -m venv venv; . venv/bin/activate; pip install --upgrade pip; pip install -r requirements.txt || pip install robotframework==6.0.2 ;  python -m robot.run -d ~/test_results/\"$JOB_NAME\"/{test_to_execute} {tests_to_perform} || true'")
         
         
         # fill jenkins pipeline script
@@ -151,13 +153,30 @@ class Jenkins_Pipeline_Configuration:
     
     def add_obtain_testing_artifacts_to_jenkins_pipeline_script(self):
         obtain_testing_artifacts = [
+            # Deployment information
             "sh '"\
             "curl --location --request GET \"" \
             f"{Constants.CI_CD_MANAGER_URL}/tests/testing-artifacts?test_id="\
             "${test_id}&amp;artifact=deployment-info.json&amp;access_token="\
-            "${comm_token}\" --output ~/test_artifacts/${JOB_NAME}/deployment-info.json '"
+            "${comm_token}\" --output ~/test_artifacts/${JOB_NAME}"\
+            "/deployment-info.json '",
+            
+            # Most Common Password
+            "sh '"\
+            "curl --location --request GET \"" \
+            f"{Constants.CI_CD_MANAGER_URL}/tests/testing-artifacts?"\
+            "artifact=1000-most-common-passwords.txt\" "\
+            "--output ~/test_artifacts/${JOB_NAME}"\
+            "/1000-most-common-passwords.txt '",
+            
+            # Most Common Usernames
+            "sh '"\
+            "curl --location --request GET \"" \
+            f"{Constants.CI_CD_MANAGER_URL}/tests/testing-artifacts?"\
+            "artifact=most-common-usernames.txt\" "\
+            "--output ~/test_artifacts/${JOB_NAME}"\
+            "/most-common-usernames.txt.txt '"
         ]
-        
         self.__update_jenkins_script(
             "<obtain_testing_artifacts>",
             obtain_testing_artifacts
@@ -242,7 +261,7 @@ class Jenkins_Pipeline_Configuration:
             export_variables_commands.append(f"export INFLUX_DB_NAME={Constants.MR_DB}")
             # envs to one line
             export_variables_commands_str = " ; ".join(export_variables_commands)
-            execute_metrics_collection_commands.append(f"sh '{ export_variables_commands_str} ; python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{metrics_collection_id} {metrics_to_collect[metrics_collection_id]}'")
+            execute_metrics_collection_commands.append(f"sh '{ export_variables_commands_str} ;  python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{metrics_collection_id} {metrics_to_collect[metrics_collection_id]}'")
         
         
         self.__update_jenkins_script("<start_metrics_collection>", execute_metrics_collection_commands)

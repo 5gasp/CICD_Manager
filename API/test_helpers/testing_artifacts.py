@@ -90,9 +90,6 @@ def store_deployment_information_in_ftp(deployment_info, nods_id):
                 nods_id)
             )
             
-            
-            
-            
             return f"{Constants.TESTING_ARTIFACTS_FTP_ROOT_PATH}/"\
                 f"{nods_id}"
 
@@ -121,6 +118,45 @@ def get_testing_artifact_from_ftp(ftp_base_path, artifact):
             
         logging.info(f"Will Obtain the following testing artifact: {ftp_location}"\
             f"/{artifact}'. MIMe type: {mime_type}")
+            
+        # Read File content
+        r = urllib.request.urlopen(url)
+        testing_artifact_content = r.read()
+        
+        return testing_artifact_content, mime_type
+        
+    except Exception as e:
+        raise Exception(f"Impossible to obtain the testing artifact from the "\
+                f"FTP Server. Exception: {e}"
+            )
+
+def get_default_testing_artifact_from_ftp(artifact):
+    try:
+        ftp_location = Constants.FTP_RESULTS_URL.split(":")[0] \
+            if ":" in Constants.FTP_RESULTS_URL else Constants.FTP_RESULTS_URL
+        
+        # check if client is not trying to access forbidden contents
+        if os.path.basename(artifact) != artifact:
+            raise Exception("You are trying to access forbidden files...")
+        
+        
+        url = f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}" \
+            f"@{ftp_location}"\
+            f"{Constants.DEFAULT_5GASP_TESTING_ARTIFACTS_FTP_ROOT_PATH}"\
+            f"/{artifact}"
+
+        # Todo -> Fix this mess later
+        mime_type = None
+        if artifact.endswith(".json"):
+            mime_type = "application/json"
+        elif artifact.endswith(".gzip"):
+            mime_type = "application/tar+gzip"
+        else:
+            mime_type = "text/plain"
+            
+        logging.info(f"Will Obtain the following testing artifact: {ftp_location}"\
+            f"/{Constants.DEFAULT_5GASP_TESTING_ARTIFACTS_FTP_ROOT_PATH}'. "\
+            f" MIMe type: {mime_type}")
             
         # Read File content
         r = urllib.request.urlopen(url)

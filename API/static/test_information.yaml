@@ -223,3 +223,46 @@ tests:
         mandatory: true
         possible_options: []
         type: str
+    
+    openstack_port_security:
+      id: openstack_port_security
+      name: Openstack Port Security
+      description: Validates the if all Openstack Interfaces have Port Security enabled
+      ftp_base_location: tests/openstack_port_security/
+      test_filename: testOpenstackPortSecurity.robot
+      test_type: Robot
+
+    ssh_audit:
+      id: ssh_audit
+      name: SSH Audit
+      description: Audits VNF's SSH Server
+      ftp_base_location: tests/ssh_audit/
+      test_filename: testSshAudit.robot
+      test_type: Robot
+      test_variables:
+      - variable_name: ssh_host
+        description: Host of the target VNF
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: ssh_port
+        description: Port where the SSH Server is running (default=22)
+        mandatory: false
+        possible_options: []
+        type: str
+    
+    ssl_audit:
+      id: ssl_audit
+      name: SSL Audit
+      description: Audits the SSL Certificates Protecting and Endpoint
+      ftp_base_location: tests/ssl_audit/
+      test_filename: test_ssl_audit.robot
+      test_type: Robot
+      test_variables:
+      - variable_name: url
+        description: Endpoint's URL
+        mandatory: true
+        possible_options: []
+        type: str
+   
+      

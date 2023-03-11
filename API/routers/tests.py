@@ -316,7 +316,6 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
     logging.info(f"Will submit Jenkins Pipeline!")
     
     # TOdo
-    print(pipeline_config)
     #return
     
     # submit pipeline scripts
@@ -559,43 +558,47 @@ async def download_developer_defined_test(
     summary="Get the report of test process",
     description="The developers can use this endpoint to gather the report of a test",
 )
-async def get_test_status(test_id: int, artifact: str,
-                        access_token: str, db: Session = Depends(get_db)):
-    
-    if test_id is None or  artifact is None:
-        return Utils.create_response(
-            status_code=400, 
-            success=False, 
-            errors=["Not enough data to get the testing artifact"]
-        ) 
- 
-    if access_token is None:
-        return Utils.create_response(
-            status_code=403, 
-            success=False, 
-            errors=["Communication token was not provided."]
-        ) 
+async def get_test_status(test_id: int = None, artifact: str= None,
+                        access_token: str= None, db: Session = Depends(get_db)):
     
     try:
-        # Get the testing artifacts ftp_base_path
-        testing_artifact_base_path = crud.get_testing_artifact_base_path(
-            db,
-            test_id,
-            access_token
-        )
+        # Check if the user is trying to obtain a default testing artifact
+        if test_id is None \
+            and access_token is None\
+            and artifact is not None:
+            testing_artifact_content, mime_type = testing_artifacts_helper.\
+                    get_default_testing_artifact_from_ftp(
+                        artifact
+                    )                        
+            return Response(testing_artifact_content, media_type=mime_type)        
         
-        logging.info("Got the ftp_testing_artifact_base_path: "\
-                    f"{testing_artifact_base_path}")
-        
-        
-        testing_artifact_content, mime_type = testing_artifacts_helper.\
-            get_testing_artifact_from_ftp(
-                testing_artifact_base_path,
-                artifact
-            )
+        # If the user is trying to obtain a test specific artifact...
+        elif test_id is not None \
+            and access_token is not None\
+            and artifact is not None:
+                # Get the testing artifacts ftp_base_path
+                testing_artifact_base_path = crud.\
+                get_testing_artifact_base_path(
+                    db,
+                    test_id,
+                    access_token
+                )
                 
-        return Response(testing_artifact_content, media_type=mime_type)
-    
+                logging.info("Got the ftp_testing_artifact_base_path: "\
+                            f"{testing_artifact_base_path}")
+                
+                
+                testing_artifact_content, mime_type = testing_artifacts_helper.\
+                    get_testing_artifact_from_ftp(
+                        testing_artifact_base_path,
+                        artifact
+                    )
+                        
+                return Response(testing_artifact_content, media_type=mime_type)
+        
+        else:
+            raise Exception("Not Enough Data to Obtain the Testing Artifact")
+
     except Exception as e:
         logging.error(e)
         return Utils.create_response(
