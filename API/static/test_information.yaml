@@ -264,5 +264,76 @@ tests:
         mandatory: true
         possible_options: []
         type: str
-   
-      
+    
+    ssh_brute_force:
+      id: ssh_brute_force
+      name: SSH Brute Force
+      description: Audits VNF's SSH Server Credentials
+      ftp_base_location: tests/ssh_brute_force/
+      test_filename: testSSHBruteforce.robot 
+      test_type: Robot
+      test_variables:
+      - variable_name: username
+        description: The username of the VNF (optional)
+        mandatory: false
+        possible_options: []
+        type: str
+      - variable_name: max_usernames_to_test
+        description: The maximum number of usernames to be tested (when the VNF's username is not provided - mandatory) 
+        mandatory: false
+        possible_options: []
+        type: int
+      - variable_name: max_password_to_test
+        description: The maximum number of passwords to be tested (mandatory)
+        mandatory: true
+        possible_options: []
+        type: int
+      - variable_name: target_ip
+        description: The IP of the target VNF (mandatory)
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: target_port
+        description: The Port of the target VNF where the SSH Server is Running (optional, default=22)
+        mandatory: false
+        possible_options: []
+        type: int
+
+    nef_authentication:
+      id: nef_authentication
+      name: NEF Authentication Test
+      description: Audits if a VNF is capable of authenticating in the NEF
+      ftp_base_location: tests/nef_authentication/
+      test_filename: testNEFAuthentication.robot
+      test_type: Robot
+      test_variables:
+      - variable_name: vnf_base_api_location
+        description: The URL of the VNF's NEF Testing API 
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: nef_reporting_base_api_location
+        description: The URL of the NEF's Reporting API
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: nef_ip
+        description: NEF's IP
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: nef_port
+        description: The NEF's Main API Port
+        mandatory: true
+        possible_options: []
+        type: int
+      - variable_name: nef_username
+        description: The NEF's Main API Login Username
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: nef_password
+        description: The NEF's Main API Login Password
+        mandatory: true
+        possible_options: []
+        type: str

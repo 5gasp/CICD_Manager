@@ -19,6 +19,9 @@ class DeploymentInfoTemplateTag:
         self.original_template = original_template
         self.template = template
         self.path = template.split("|")
+    
+    def __str__(self):
+        return self.original_template
 
 class CharacteristicsRender:
     
@@ -79,7 +82,7 @@ class CharacteristicsRender:
     def _render_deployment_info(self):
 
         self._gather_deployment_info_templates()
-
+    
         for template in self.deployment_templates:
             # Todo Optimize latter
             # get NS Record ID
@@ -141,7 +144,7 @@ class CharacteristicsRender:
     
     
     def _gather_deployment_info_templates(self):
-        template_pattern = re.compile(r"value:\s*({{(deployment_info\|.*)}})")
+        template_pattern = re.compile(r"value:.*({{(deployment_info\|.*)}})")
         
         templates = {}
         for match in template_pattern.finditer(self.testing_descriptor_text):
