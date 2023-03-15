@@ -378,27 +378,34 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
 
     try:
         for test in tests:
-            print("Test:", test)
+            logging.info(f"Parsing Test Execution Results for test '{test}'...")
             ftp_url = Constants.FTP_RESULTS_URL.split(":")[0] if ":" in Constants.FTP_RESULTS_URL else Constants.FTP_RESULTS_URL
-            xml_str = urlopen(
-                f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{ftp_url}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
-            root = ET.fromstring(xml_str)
-            failed_tests = int(root.findall("statistics")[0].find('total').find('stat').attrib['fail'])
             
-            start_timestamp = root.findall("suite")[0].findall('status')[0].attrib['starttime'].split(".")[0]
-            end_timestamp = root.findall("suite")[0].findall('status')[-1].attrib['endtime'].split(".")[0]
+            try:
+                xml_str = urlopen(
+                    f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{ftp_url}/{test_results_information.ftp_results_directory}/{test}/output.xml").read()
+                root = ET.fromstring(xml_str)
             
-            start_date, start_time = start_timestamp.split()
-            start_dt = dt.datetime.strptime(start_time, '%H:%M:%S').replace(year=int(start_date[0:4]), month=int(start_date[4:6]), day=int(start_date[6:8]))
-            end_date, end_time = end_timestamp.split()
-            end_dt = dt.datetime.strptime(end_time, '%H:%M:%S').replace(year=int(end_date[0:4]), month=int(end_date[4:6]), day=int(end_date[6:8]))
 
-            success = failed_tests == 0
-            crud.update_test_status_of_test_instance(db, test_results_information.test_id, test, str(start_dt), str(end_dt), success)
-            token = test_instance_dic['access_token']
-            url = f'{Constants.TRVD_HOST}/test-information.html?test_id={test_results_information.test_id}&access_token={token}'
-            payload['characteristic'].append({'name': f'testResultsURL{counter}', 'value': {'value': url}  })
-            counter+=1
+                failed_tests = int(root.findall("statistics")[0].find('total').find('stat').attrib['fail'])
+            
+                start_timestamp = root.findall("suite")[0].findall('status')[0].attrib['starttime'].split(".")[0]
+                end_timestamp = root.findall("suite")[0].findall('status')[-1].attrib['endtime'].split(".")[0]
+                
+                start_date, start_time = start_timestamp.split()
+                start_dt = dt.datetime.strptime(start_time, '%H:%M:%S').replace(year=int(start_date[0:4]), month=int(start_date[4:6]), day=int(start_date[6:8]))
+                end_date, end_time = end_timestamp.split()
+                end_dt = dt.datetime.strptime(end_time, '%H:%M:%S').replace(year=int(end_date[0:4]), month=int(end_date[4:6]), day=int(end_date[6:8]))
+
+                success = failed_tests == 0
+                crud.update_test_status_of_test_instance(db, test_results_information.test_id, test, str(start_dt), str(end_dt), success)
+                token = test_instance_dic['access_token']
+                url = f'{Constants.TRVD_HOST}/test-information.html?test_id={test_results_information.test_id}&access_token={token}'
+                payload['characteristic'].append({'name': f'testResultsURL{counter}', 'value': {'value': url}  })
+                counter+=1
+            except Exception as e:
+                logging.error("Impossible to parse the test execution "\
+                    f"results for test '{test}'. Reason: {e}")
         
         print(payload)
 
