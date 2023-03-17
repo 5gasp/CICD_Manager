@@ -239,6 +239,7 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
         rendered_descriptor = characteristics_render\
             .get_rendered_testing_descritptor()
     except Exception as e:
+        logging.error(f"Failed to Render the Descriptor. Reason: {e}")
         return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
 
     logging.info(f"Rendered the descriptor")
