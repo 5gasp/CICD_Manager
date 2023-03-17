@@ -178,7 +178,6 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
     testbed_tests = crud.get_test_info_by_testbed_id(db, testbed_id)
     logging.info(f"All tests exist for testbed!")
 
-
     errors = test_descriptor_validator.validate_tests_parameters(testbed_tests)
     if len(errors) != 0:
         logging.error(f"Error on validating test parameters - {errors}")

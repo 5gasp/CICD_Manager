@@ -101,6 +101,7 @@ class Jenkins_Pipeline_Configuration:
         for test_info in executed_tests_info:
             print(test_info)
             test_id = test_info["name"]
+            test_dir = None
             
             # DEVELOPER DEFINED TESTS
             if test_info["type"] == "developer-defined":
@@ -118,7 +119,8 @@ class Jenkins_Pipeline_Configuration:
                     f"{test_id}.tar.gz ; mv {test_id} {test_info['full_name']}'"
                 )
                 tests_to_perform = f"~/test_repository/\"$JOB_NAME\"/developer-defined-tests/{test_info['full_name']}"
-        
+                test_dir = tests_to_perform
+                
             #PRE-DEFINED TESTS
             elif test_info["type"] == "predefined":
                 available_test = [test.as_dict() for test in available_tests if test.testid == test_id][0]
@@ -128,6 +130,7 @@ class Jenkins_Pipeline_Configuration:
                 obtain_tests_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ltr_user:$ltr_password@$ltr_location/{test_dir}'")
                 # save test location. needed to run the test
                 tests_to_perform = str(os.path.join("~/test_repository/\"$JOB_NAME\"", test_dir, test_filename))
+                test_dir = os.path.dirname(tests_to_perform)
             
             test_to_execute = test_info['full_name']
             
@@ -142,8 +145,7 @@ class Jenkins_Pipeline_Configuration:
                 export_variables_commands_str = " ; ".join(export_variables_commands) + " ;"
             
             run_tests_commands.append(
-                f"sh '{export_variables_commands_str} cd {os.path.dirname(tests_to_perform)}; python3 -m venv venv; . venv/bin/activate; pip install --upgrade pip; pip install -r requirements.txt || pip install robotframework==6.0.2 ;  python -m robot.run -d ~/test_results/\"$JOB_NAME\"/{test_to_execute} {tests_to_perform} || true'")
-        
+                f"sh '{export_variables_commands_str} cd {test_dir}; python3 -m venv venv; . venv/bin/activate; pip install --upgrade pip; pip install -r requirements.txt || pip install robotframework==6.0.2 ;  python -m robot.run -d ~/test_results/\"$JOB_NAME\"/{test_to_execute} {tests_to_perform} || true'")
         
         # fill jenkins pipeline script
         self.__update_jenkins_script("<obtain_tests_environment>", environment_obtain_tests)

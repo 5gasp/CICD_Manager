@@ -89,7 +89,7 @@ class Test_Descriptor_Validator:
                     continue
                 # End of hotfix
                 for testbed_test in testbed_tests:
-                    if test_info["name"] == testbed_test.name:
+                    if test_info["name"] == testbed_test.testid:
                         has_test = True
                     
                         for test_variable in testbed_test.testinfo_variables:
