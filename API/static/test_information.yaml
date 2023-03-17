@@ -213,13 +213,8 @@ tests:
         mandatory: true
         possible_options: []
         type: str
-      - variable_name: expected_open_port
-        description: Port that should be opened
-        mandatory: true
-        possible_options: []
-        type: int
-      - variable_name: expected_protocol
-        description: Protocol for which the port should be opened
+      - variable_name: expected_open_ports
+        description: Ports that should be open (Example - 22/tcp,8090/tcp)
         mandatory: true
         possible_options: []
         type: str
