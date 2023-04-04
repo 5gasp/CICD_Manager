@@ -87,4 +87,4 @@ TEST_STATUS ={
     "obtained_testing_artifacts_files": "OBTAINED_TESTING_ARTIFACTS_FILES"
 }
 
-TMF_SERVICE_TEST_DEPLOYMENT_INFO_KEY = "deployment_information"
+TMF_SERVICE_TEST_DEPLOYMENT_INFO_KEY = "deployment_info"
