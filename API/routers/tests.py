@@ -282,6 +282,8 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
             db=db,
             test_instance_id=test_instance.id,
             performed_test=performed_test,
+            original_test_name= executed_test['name'] if \
+                executed_test["type"] == "predefined" else "developer-defined",
             description=executed_test["description"],
             is_developer_defined=is_developer_defined,
             developer_defined_test_filepath=developer_defined_test_filepath

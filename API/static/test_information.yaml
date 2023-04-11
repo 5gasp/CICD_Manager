@@ -12,6 +12,11 @@ tests:
       ftp_base_location: tests/bandwidth/
       test_filename: testBandwidth.robot
       test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
         description: IP of Host/VNF 1
@@ -61,6 +66,11 @@ tests:
       ftp_base_location: tests/bandwidth2/
       test_filename: testBandwidth2.robot
       test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
         description: IP of Host/VNF 1
@@ -110,6 +120,11 @@ tests:
       ftp_base_location: tests/transmission_speed/
       test_filename: testTransmissionSpeed.robot
       test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
         description: IP of Host/VNF 1
@@ -151,6 +166,7 @@ tests:
         mandatory: true
         possible_options: []
         type: float
+
     packet_loss:
       id: packet_loss
       name: packet loss
@@ -158,6 +174,11 @@ tests:
       ftp_base_location: tests/packet_loss/
       test_filename: testPacketLoss.robot
       test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
         description: IP of Host/VNF 1
@@ -207,6 +228,11 @@ tests:
       ftp_base_location: tests/open_ports/
       test_filename: testOpenPorts.robot
       test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 7
+      axis: 2
+      # End of Certification Scope
       test_variables:
       - variable_name: host
         description: Host of the target VNF
@@ -226,6 +252,11 @@ tests:
       ftp_base_location: tests/openstack_port_security/
       test_filename: testOpenstackPortSecurity.robot
       test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 2
+      # End of Certification Scope
 
     ssh_audit:
       id: ssh_audit
@@ -234,6 +265,11 @@ tests:
       ftp_base_location: tests/ssh_audit/
       test_filename: testSshAudit.robot
       test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 7
+      axis: 2
+      # End of Certification Scope
       test_variables:
       - variable_name: ssh_host
         description: Host of the target VNF
@@ -253,6 +289,11 @@ tests:
       ftp_base_location: tests/ssl_audit/
       test_filename: test_ssl_audit.robot
       test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 7
+      axis: 2
+      # End of Certification Scope
       test_variables:
       - variable_name: url
         description: Endpoint's URL
@@ -267,6 +308,11 @@ tests:
       ftp_base_location: tests/ssh_brute_force/
       test_filename: testSSHBruteforce.robot 
       test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 7
+      axis: 2
+      # End of Certification Scope
       test_variables:
       - variable_name: username
         description: The username of the VNF (optional)
@@ -301,6 +347,391 @@ tests:
       ftp_base_location: tests/nef_authentication/
       test_filename: testNEFAuthentication.robot
       test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 8
+      axis: 1
+      # End of Certification Scope
+      test_variables:
+      - variable_name: vnf_base_api_location
+        description: The URL of the VNF's NEF Testing API 
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: nef_reporting_base_api_location
+        description: The URL of the NEF's Reporting API
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: nef_ip
+        description: NEF's IP
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: nef_port
+        description: The NEF's Main API Port
+        mandatory: true
+        possible_options: []
+        type: int
+      - variable_name: nef_username
+        description: The NEF's Main API Login Username
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: nef_password
+        description: The NEF's Main API Login Password
+        mandatory: true
+        possible_options: []
+        type: str
+
+  testbed_uob:
+    bandwidth:
+      id: bandwidth
+      name: bandwidth
+      description: Tests the bandwidth between to VNFs. The results are in bits/sec
+      ftp_base_location: tests/bandwidth/
+      test_filename: testBandwidth.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      # End of Certification Scope
+      test_variables:
+      - variable_name: host1_ip
+        description: IP of Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_username
+        description: Login username for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_password
+        description: Login password for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_ip
+        description: IP of Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_username
+        description: Login username for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_password
+        description: Login password for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: comparator
+        description: Comparator to be used while validating the bandwidth
+        mandatory: true
+        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        type: str
+      - variable_name: threshold
+        description: Threshold in mbits per second
+        mandatory: true
+        possible_options: []
+        type: float
+
+    bandwidth2:
+      id: bandwidth2
+      name: bandwidth2
+      description: Tests the bandwidth between to VNFs. The results are in bits/sec
+      ftp_base_location: tests/bandwidth2/
+      test_filename: testBandwidth2.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      # End of Certification Scope
+      test_variables:
+      - variable_name: host1_ip
+        description: IP of Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_username
+        description: Login username for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_password
+        description: Login password for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_ip
+        description: IP of Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_username
+        description: Login username for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_password
+        description: Login password for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: comparator
+        description: Comparator to be used while validating the bandwidth
+        mandatory: true
+        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        type: str
+      - variable_name: threshold
+        description: Threshold in mbits per second
+        mandatory: true
+        possible_options: []
+        type: float
+
+    transmission_speed:
+      id: transmission_speed
+      name: transmission speed
+      description: Tests the transmission speed between to VNFs. The results are in ms
+      ftp_base_location: tests/transmission_speed/
+      test_filename: testTransmissionSpeed.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      # End of Certification Scope
+      test_variables:
+      - variable_name: host1_ip
+        description: IP of Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_username
+        description: Login username for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_password
+        description: Login password for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_ip
+        description: IP of Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_username
+        description: Login username for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_password
+        description: Login password for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: comparator
+        description: Comparator to be used while validating the transmission speed
+        mandatory: true
+        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        type: str
+      - variable_name: threshold
+        description: Threshold in milliseconds
+        mandatory: true
+        possible_options: []
+        type: float
+  
+    packet_loss:
+      id: packet_loss
+      name: packet loss
+      description: Tests the packet loss speed between to VNFs. The results are given in %
+      ftp_base_location: tests/packet_loss/
+      test_filename: testPacketLoss.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      # End of Certification Scope
+      test_variables:
+      - variable_name: host1_ip
+        description: IP of Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_username
+        description: Login username for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host1_password
+        description: Login password for Host/VNF 1
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_ip
+        description: IP of Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_username
+        description: Login username for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: host2_password
+        description: Login password for Host/VNF 2
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: comparator
+        description: Comparator to be used while validating the packet loss ratio
+        mandatory: true
+        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        type: str
+      - variable_name: threshold
+        description: Ratio of packets lost
+        mandatory: true
+        possible_options: []
+        type: float
+
+    open_ports:
+      id: open_ports
+      name: open ports
+      description: Validates the if a VM's open ports are the ones that should be opened
+      ftp_base_location: tests/open_ports/
+      test_filename: testOpenPorts.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 7
+      axis: 2
+      # End of Certification Scope
+      test_variables:
+      - variable_name: host
+        description: Host of the target VNF
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: expected_open_ports
+        description: Ports that should be open (Example - 22/tcp,8090/tcp)
+        mandatory: true
+        possible_options: []
+        type: str
+    
+    openstack_port_security:
+      id: openstack_port_security
+      name: Openstack Port Security
+      description: Validates the if all Openstack Interfaces have Port Security enabled
+      ftp_base_location: tests/openstack_port_security/
+      test_filename: testOpenstackPortSecurity.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 2
+      # End of Certification Scope
+
+    ssh_audit:
+      id: ssh_audit
+      name: SSH Audit
+      description: Audits VNF's SSH Server
+      ftp_base_location: tests/ssh_audit/
+      test_filename: testSshAudit.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 7
+      axis: 2
+      # End of Certification Scope
+      test_variables:
+      - variable_name: ssh_host
+        description: Host of the target VNF
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: ssh_port
+        description: Port where the SSH Server is running (default=22)
+        mandatory: false
+        possible_options: []
+        type: str
+    
+    ssl_audit:
+      id: ssl_audit
+      name: SSL Audit
+      description: Audits the SSL Certificates Protecting and Endpoint
+      ftp_base_location: tests/ssl_audit/
+      test_filename: test_ssl_audit.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 7
+      axis: 2
+      # End of Certification Scope
+      test_variables:
+      - variable_name: url
+        description: Endpoint's URL
+        mandatory: true
+        possible_options: []
+        type: str
+    
+    ssh_brute_force:
+      id: ssh_brute_force
+      name: SSH Brute Force
+      description: Audits VNF's SSH Server Credentials
+      ftp_base_location: tests/ssh_brute_force/
+      test_filename: testSSHBruteforce.robot 
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 7
+      axis: 2
+      # End of Certification Scope
+      test_variables:
+      - variable_name: username
+        description: The username of the VNF (optional)
+        mandatory: false
+        possible_options: []
+        type: str
+      - variable_name: max_usernames_to_test
+        description: The maximum number of usernames to be tested (when the VNF's username is not provided - mandatory) 
+        mandatory: false
+        possible_options: []
+        type: int
+      - variable_name: max_password_to_test
+        description: The maximum number of passwords to be tested (mandatory)
+        mandatory: true
+        possible_options: []
+        type: int
+      - variable_name: target_ip
+        description: The IP of the target VNF (mandatory)
+        mandatory: true
+        possible_options: []
+        type: str
+      - variable_name: target_port
+        description: The Port of the target VNF where the SSH Server is Running (optional, default=22)
+        mandatory: false
+        possible_options: []
+        type: int
+
+    nef_authentication:
+      id: nef_authentication
+      name: NEF Authentication Test
+      description: Audits if a VNF is capable of authenticating in the NEF
+      ftp_base_location: tests/nef_authentication/
+      test_filename: testNEFAuthentication.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 8
+      axis: 1
+      # End of Certification Scope
       test_variables:
       - variable_name: vnf_base_api_location
         description: The URL of the VNF's NEF Testing API 

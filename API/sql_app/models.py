@@ -115,6 +115,7 @@ class Test_Instance_Tests(Base):
     id = Column(Integer, primary_key=True, index=True)    
     test_instance = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
     description = Column(String)
+    original_test_name = Column(String, nullable=True)
     performed_test = Column(String, nullable=False)
     is_developer_defined = Column(Boolean, default=False)
     developer_defined_test_filepath = Column(String, default=None)

@@ -205,16 +205,19 @@ def get_all_test_status_for_test_given_id(db: Session, test_id: int, access_toke
 # ---------------------------------------- #
 
 def create_test_instance_test(db: Session, test_instance_id: int, 
-    performed_test: str, description: str, performed_test_results_location: str = None, 
-    is_developer_defined=False, developer_defined_test_filepath = None):
+    performed_test: str, original_test_name: str, description: str,
+    performed_test_results_location: str = None, is_developer_defined=False, 
+    developer_defined_test_filepath = None):
     
     test_instance_test = models.Test_Instance_Tests(
         test_instance=test_instance_id,
         performed_test=performed_test,
+        original_test_name=original_test_name,
         description=description,
         is_developer_defined=is_developer_defined,
         developer_defined_test_filepath=developer_defined_test_filepath
     )
+    
     if performed_test_results_location:
         test_instance_test.performed_test_results_location = performed_test_results_location
     db.add(test_instance_test)
