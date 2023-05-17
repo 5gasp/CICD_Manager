@@ -22,41 +22,49 @@ tests:
         description: IP of Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host1_username
         description: Login username for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host1_password
         description: Login password for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_ip
         description: IP of Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host2_username
         description: Login username for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_password
         description: Login password for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: comparator
         description: Comparator to be used while validating the bandwidth
         mandatory: true
         possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: threshold
         description: Threshold in mbits per second
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: float
 
     bandwidth2:
@@ -76,41 +84,49 @@ tests:
         description: IP of Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host1_username
         description: Login username for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host1_password
         description: Login password for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_ip
         description: IP of Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host2_username
         description: Login username for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_password
         description: Login password for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: comparator
         description: Comparator to be used while validating the bandwidth
         mandatory: true
         possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: threshold
         description: Threshold in mbits per second
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: float
 
     transmission_speed:
@@ -130,41 +146,49 @@ tests:
         description: IP of Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host1_username
         description: Login username for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host1_password
         description: Login password for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_ip
         description: IP of Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host2_username
         description: Login username for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_password
         description: Login password for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: comparator
         description: Comparator to be used while validating the transmission speed
         mandatory: true
         possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: threshold
         description: Threshold in milliseconds
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: float
 
     packet_loss:
@@ -184,41 +208,49 @@ tests:
         description: IP of Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host1_username
         description: Login username for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host1_password
         description: Login password for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_ip
         description: IP of Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host2_username
         description: Login username for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_password
         description: Login password for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: comparator
         description: Comparator to be used while validating the packet loss ratio
         mandatory: true
         possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: threshold
         description: Ratio of packets lost
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: float
 
     open_ports:
@@ -238,11 +270,13 @@ tests:
         description: Host of the target VNF
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: expected_open_ports
         description: Ports that should be open (Example - 22/tcp,8090/tcp)
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
     
     openstack_port_security:
@@ -275,11 +309,13 @@ tests:
         description: Host of the target VNF
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: ssh_port
         description: Port where the SSH Server is running (default=22)
         mandatory: false
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
     
     ssl_audit:
@@ -299,6 +335,7 @@ tests:
         description: Endpoint's URL
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
     
     ssh_brute_force:
@@ -318,26 +355,31 @@ tests:
         description: The username of the VNF (optional)
         mandatory: false
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: max_usernames_to_test
         description: The maximum number of usernames to be tested (when the VNF's username is not provided - mandatory) 
         mandatory: false
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: int
       - variable_name: max_password_to_test
         description: The maximum number of passwords to be tested (mandatory)
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: int
       - variable_name: target_ip
         description: The IP of the target VNF (mandatory)
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: target_port
         description: The Port of the target VNF where the SSH Server is Running (optional, default=22)
         mandatory: false
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: int
 
     nef_authentication:
@@ -357,31 +399,37 @@ tests:
         description: The URL of the VNF's NEF Testing API 
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: nef_reporting_base_api_location
         description: The URL of the NEF's Reporting API
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: nef_ip
         description: NEF's IP
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: nef_port
         description: The NEF's Main API Port
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: int
       - variable_name: nef_username
         description: The NEF's Main API Login Username
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: nef_password
         description: The NEF's Main API Login Password
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
 
   testbed_uob:
@@ -402,41 +450,49 @@ tests:
         description: IP of Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host1_username
         description: Login username for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host1_password
         description: Login password for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_ip
         description: IP of Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host2_username
         description: Login username for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_password
         description: Login password for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: comparator
         description: Comparator to be used while validating the bandwidth
         mandatory: true
         possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: threshold
         description: Threshold in mbits per second
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: float
 
     bandwidth2:
@@ -456,41 +512,49 @@ tests:
         description: IP of Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host1_username
         description: Login username for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host1_password
         description: Login password for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_ip
         description: IP of Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host2_username
         description: Login username for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_password
         description: Login password for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: comparator
         description: Comparator to be used while validating the bandwidth
         mandatory: true
         possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: threshold
         description: Threshold in mbits per second
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: float
 
     transmission_speed:
@@ -510,43 +574,51 @@ tests:
         description: IP of Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host1_username
         description: Login username for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host1_password
         description: Login password for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_ip
         description: IP of Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host2_username
         description: Login username for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_password
         description: Login password for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: comparator
         description: Comparator to be used while validating the transmission speed
         mandatory: true
         possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: threshold
         description: Threshold in milliseconds
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: float
-  
+
     packet_loss:
       id: packet_loss
       name: packet loss
@@ -564,41 +636,49 @@ tests:
         description: IP of Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host1_username
         description: Login username for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host1_password
         description: Login password for Host/VNF 1
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_ip
         description: IP of Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: host2_username
         description: Login username for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: host2_password
         description: Login password for Host/VNF 2
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: comparator
         description: Comparator to be used while validating the packet loss ratio
         mandatory: true
         possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: threshold
         description: Ratio of packets lost
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: float
 
     open_ports:
@@ -618,11 +698,13 @@ tests:
         description: Host of the target VNF
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: expected_open_ports
         description: Ports that should be open (Example - 22/tcp,8090/tcp)
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
     
     openstack_port_security:
@@ -655,11 +737,13 @@ tests:
         description: Host of the target VNF
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: ssh_port
         description: Port where the SSH Server is running (default=22)
         mandatory: false
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
     
     ssl_audit:
@@ -679,6 +763,7 @@ tests:
         description: Endpoint's URL
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
     
     ssh_brute_force:
@@ -698,26 +783,31 @@ tests:
         description: The username of the VNF (optional)
         mandatory: false
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: max_usernames_to_test
         description: The maximum number of usernames to be tested (when the VNF's username is not provided - mandatory) 
         mandatory: false
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: int
       - variable_name: max_password_to_test
         description: The maximum number of passwords to be tested (mandatory)
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: int
       - variable_name: target_ip
         description: The IP of the target VNF (mandatory)
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: target_port
         description: The Port of the target VNF where the SSH Server is Running (optional, default=22)
         mandatory: false
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: int
 
     nef_authentication:
@@ -737,29 +827,35 @@ tests:
         description: The URL of the VNF's NEF Testing API 
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: nef_reporting_base_api_location
         description: The URL of the NEF's Reporting API
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: nef_ip
         description: NEF's IP
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: True
         type: str
       - variable_name: nef_port
         description: The NEF's Main API Port
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: int
       - variable_name: nef_username
         description: The NEF's Main API Login Username
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str
       - variable_name: nef_password
         description: The NEF's Main API Login Password
         mandatory: true
         possible_options: []
+        can_be_injected_by_the_nods: False
         type: str

@@ -167,7 +167,7 @@ class ServiceTest_Create(BaseModel):
     state: str = None
     characteristic: List[Characteristic] = None
     relatedParty: List[RelatedParty] = None
-    relatedService: ServiceRef
+    relatedService: ServiceRef = None
     testMeasure: List[TestMeasure] = None
     testSpecification: ServiceTestSpecificationRef
     validFor: TimePeriod = None

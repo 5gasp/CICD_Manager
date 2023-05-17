@@ -80,7 +80,10 @@ class Test_Descriptor_Validator:
         
         if len(errors) == 0:
             for test_info in executed_tests_info[0:1]:
-                td_test_defined_parameters = {parameter["key"]: parameter["value"] for parameter in test_info["parameters"]}
+                td_test_defined_parameters = None
+                if "paraemeters" in test_info:
+                    td_test_defined_parameters = {parameter["key"]: parameter["value"] for parameter in test_info["parameters"]}
+                
                 # check if test exists
                 has_test = False
                 # Hotfix
