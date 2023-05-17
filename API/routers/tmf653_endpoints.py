@@ -179,7 +179,7 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
 
     #2  ->Get the Service Test Specification Id
     service_test_specification_id = serviceTestParsed.testSpecification.id
-    service_test_specification_href = serviceTestParsed.testSpecification.href
+    #service_test_specification_href = serviceTestParsed.testSpecification.href
     
     #2.2 - Authenticate with the NODS
     success, token =  Utils.get_nods_token()
