@@ -67,7 +67,7 @@ class Jenkins_Wrapper:
         self.jenkins_username = jenkins_username
         self.jenkins_password = jenkins_password
         try:
-            server = jenkins.Jenkins(jenkins_connection_url, username=jenkins_username, password=jenkins_password)
+            server = jenkins.Jenkins(url=jenkins_connection_url, username=jenkins_username, password=jenkins_password, timeout=30)
             user = server.get_whoami()
         except Exception as e:
             return False, f"Unable to connect to Jenkins Server. Cause: {str(e)}"

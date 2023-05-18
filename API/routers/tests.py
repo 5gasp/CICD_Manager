@@ -227,11 +227,15 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
     logging.info(f"Will gather the testbed's CI/CD Agent...")
     testbeds_ci_cd_agents = CRUD_Agents.get_ci_cd_agents_by_testbed(
         db, testbed_id)
+    
+    print("testbeds_ci_cd_agents:", [a.as_dict() for a in testbeds_ci_cd_agents])
     available_agents_jobs = []
     for ci_cd_agent in testbeds_ci_cd_agents:
         jenkins_wrapper = Jenkins_Wrapper()
         ret, message = jenkins_wrapper.connect_to_server(
             ci_cd_agent.url, ci_cd_agent.username, ci_cd_agent.password)
+        print(ci_cd_agent.url, ci_cd_agent.username, ci_cd_agent.password)
+        print("ret:", ret)
         if ret:
             active_jobs = [job['color'] for job in jenkins_wrapper.get_jobs()[
                 1]].count('blue_anime')
