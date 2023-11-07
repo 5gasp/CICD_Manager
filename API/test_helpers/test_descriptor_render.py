@@ -82,17 +82,18 @@ class CharacteristicsRender:
     def _render_deployment_info(self):
 
         self._gather_deployment_info_templates()
-    
         for template in self.deployment_templates:
             # Todo Optimize latter
             # get NS Record ID
             for artifact, deployed_artifact in self.deployment_information.items():
+               
                 if "nsd" in deployed_artifact\
                 and deployed_artifact["nsd"]["id"] == template.path[0]:
                     template.nsi_id = deployed_artifact["id"]
             
             # If VNF
             if True:
+                logging.info("It is a VNF")
                  # get VNF Record ID
                 self._render_vnf_deployment_info(template)
             # If CNF
@@ -121,6 +122,12 @@ class CharacteristicsRender:
         
     def _render_vnf_deployment_info(self, template):
         for artifact, deployed_artifact in self.deployment_information.items():
+            print("deployed_artifact", deployed_artifact)
+            print("template", template)
+            print(template.nsi_id)
+            print(template.path)
+            test = "nsr-id-ref" in deployed_artifact
+            logging.info(f"Is NSR Present? : {test}")
             if "nsr-id-ref" in deployed_artifact\
             and deployed_artifact["nsr-id-ref"] == template.nsi_id\
             and deployed_artifact["member-vnf-index-ref"] == template.path[1]:

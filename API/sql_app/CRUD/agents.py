@@ -49,6 +49,10 @@ def delete_ci_cd_agent(db: Session, agent_id: int):
     db_ci_cd_agent = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.id == agent_id).first()
     if not db_ci_cd_agent:
         raise AgentDoesNotExist(id)
+    # set the test_instances agent to null
+    for test_instance in db.query(models.Test_Instance).filter(
+        models.Test_Instance.ci_cd_node_id == db_ci_cd_agent.id).all():
+        test_instance.ci_cd_node_id = None
     db.delete(db_ci_cd_agent)
     db.commit()
     logging.info(f"Deleted CI/CD Agent with Id {db_ci_cd_agent.id}")

@@ -160,7 +160,7 @@ async def validate_test_descriptor(test_descriptor:UploadFile = File(...) , db: 
     }
 )
 async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Create , db: Session = Depends(get_db)):
-    
+    logging.info(f"serviceTestParsed:{str(serviceTestParsed)}")
     # Get Service Test Characteristics
     characteristics = {}
     nods_id = None

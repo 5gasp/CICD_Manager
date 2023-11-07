@@ -1,7 +1,7 @@
 # @Author: Rafael Direito
 # @Date:   01-06-2021 17:43:43
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 10-06-2022 10:52:25
+# @Last Modified time: 2023-11-07 10:19:48
 ---
 tests:
   testbed_itav:
@@ -16,6 +16,8 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: def14.Perf.1
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -78,6 +80,8 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: def14.Perf.1
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -140,6 +144,8 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: def14.Perf.12
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -202,6 +208,7 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: None
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -262,8 +269,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: true
-      weight: 7
+      weight: 5
       axis: 2
+      def: def19.Sec.7
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: host
@@ -287,9 +296,11 @@ tests:
       test_filename: testOpenstackPortSecurity.robot
       test_type: Robot
       # Certification Scope
-      mandatory: false
-      weight: 3
+      mandatory: true
+      weight: 5
       axis: 2
+      def: def19.Sec.3
+      test_conditions: [5]
       # End of Certification Scope
 
     ssh_audit:
@@ -301,8 +312,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: true
-      weight: 7
+      weight: 5
       axis: 2
+      def: def19.Sec.8
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: ssh_host
@@ -326,9 +339,11 @@ tests:
       test_filename: test_ssl_audit.robot
       test_type: Robot
       # Certification Scope
-      mandatory: true
-      weight: 7
+      mandatory: false
+      weight: 3
       axis: 2
+      def: def19.Sec.4
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: url
@@ -346,9 +361,11 @@ tests:
       test_filename: testSSHBruteforce.robot 
       test_type: Robot
       # Certification Scope
-      mandatory: true
-      weight: 7
+      mandatory: false
+      weight: 4
       axis: 2
+      def: def19.Sec.5
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: username
@@ -393,6 +410,8 @@ tests:
       mandatory: false
       weight: 8
       axis: 1
+      def: def11.5G.1
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
       - variable_name: vnf_base_api_location
@@ -431,6 +450,351 @@ tests:
         possible_options: []
         can_be_injected_by_the_nods: False
         type: str
+    
+    dummy_5g_readiness_test:
+      id: dummy_5g_readiness_test
+      name: Dummy 5G Readiness Test
+      description: Dummy 5G Readiness Test
+      ftp_base_location: tests/dummy_5g_readiness_test/
+      test_filename: dummy_5g_readiness_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 1
+      # End of Certification Scope
+    
+    dummy_security_and_privacy_test:
+      id: dummy_security_and_privacy_test
+      name: Dummy Security And Privacy Test
+      description: Dummy 5G Readiness Test
+      ftp_base_location: tests/dummy_security_and_privacy_test/
+      test_filename: dummy_security_and_privacy_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 2
+      # End of Certification Scope
+    
+    dummy_availability_and_continuity_test:
+      id: dummy_availability_and_continuity_test
+      name: Dummy Availability and Continuity Test
+      description: Dummy 5G Readiness Test
+      ftp_base_location: tests/dummy_availability_and_continuity_test/
+      test_filename: dummy_availability_and_continuity_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 3
+      # End of Certification Scope
+    
+    dummy_performance_and_scalability_test:
+      id: dummy_performance_and_scalability_test
+      name: Dummy Performance and Scalability Test
+      description: Dummy Performance and Scalability Test
+      ftp_base_location: tests/dummy_performance_and_scalability_test/
+      test_filename: dummy_performance_and_scalability_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 4
+      # End of Certification Scope
+    
+    #####################################################
+    ##              Performance Axis Tests             ##
+    #####################################################
+
+    api_performace_response_time:
+      id: api_performace_response_time
+      name: API Performance Response Time
+      description: Validates the time needed to get a response from a NApp's provided API
+      ftp_base_location: tests/api_performace_response_time/
+      test_filename: api_performace_response_time.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 5
+      axis: 4
+      def: def14.Perf.9
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: api_target
+          description: Target API Location (e.g. https://ci-cd-service.5gasp.eu/dashboard)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: api_target_threshold_ms
+          description: Max Response Time Threshold (ms) (e.g. 1000)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: float
+
+    web_performance_static_page:
+      id: web_performance_static_page
+      name: Web Performance - Static Page
+      description: Validates the time needed to gather a static page from a NApp
+      ftp_base_location: tests/web_performance_static_page/
+      test_filename: web_performance_static_page.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 4
+      def: def14.Perf.8
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: target
+          description: Target Webpage Location (e.g. https://ci-cd-service.5gasp.eu/dashboard)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: web_speed_net_threshold_bps
+          description: Minimum Speed Threshold (bps) (e.g. 5000000)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: float
+
+    network_application_performance_rtt:
+      id: network_application_performance_rtt
+      name: Network Application RTT Performance Test
+      description: Validates the RTT between NApp components
+      ftp_base_location: tests/network_application_performance_rtt/
+      test_filename: network_application_performance_rtt.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 5
+      axis: 4
+      def: def14.Perf.12
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: target
+          description: Target IP/Domain  (e.g. 5gasp.eu)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: threshold_ms
+          description: Minimum RTT Threshold (ms) (e.g. 500)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: float
+
+    #####################################################
+    ##       5G Readiness Axis Tests + Enablers        ##
+    #####################################################
+
+    mini_api_configuration:
+      id: mini_api_configuration
+      name: Mini API Configuration - Robot Script
+      description: Used to configure a NApp's MiniAPI
+      ftp_base_location: tests/mini_api_configuration/
+      test_filename: mini_api_configuration.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 0
+      axis: 1
+      def: None
+      # End of Certification Scope
+      test_variables:
+        - variable_name: api_ip
+          description: Target IP/Domain of the MiniAPI (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: api_port
+          description: MiniAPI Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: configuration_payload
+          description: Configuration Payload for the MiniAPI (e.g. '{"variables":{"NEF_IP":"127.0.0.1","NEF_PORT":8888,...}}}')
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+    
+    report_api_configuration:
+      id: report_api_configuration
+      name: NEF Emulator Report API Configuration - Robot Script
+      description: Used to create a new report in the Reporting API
+      ftp_base_location: tests/report_api_configuration/
+      test_filename: report_api_configuration.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 0
+      axis: 1
+      def: None
+      # End of Certification Scope
+      test_variables:
+        - variable_name: api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+    
+    nef_authentication_test:
+      id: nef_authentication_test
+      name: NEF Authentication Test
+      description: Validates if the NApp was able to authenticate with the NEF
+      ftp_base_location: tests/nef_authentication_test/
+      test_filename: nef_authentication_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 5
+      axis: 1
+      def: def11.5G.1
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the authentication with the NEF (e.g. http://10.10.10.10:8000/start/1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+    
+    nef_create_ue_test:
+      id: nef_create_ue_test
+      name: NEF Create UE Test
+      description: Validates if the NApp was able to register a new UE in the NEF
+      ftp_base_location: tests/nef_create_ue_test/
+      test_filename: nef_create_ue_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 0
+      axis: 1
+      def: None
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the registration of a new UE in the NEF (e.g. http://10.10.10.10:8000/start/2)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+    
+    nef_get_ue_test:
+      id: nef_get_ue_test
+      name: NEF Get UE Test
+      description: Validates if the NApp was able to obtain a UE's information from the NEF
+      ftp_base_location: tests/nef_get_ue_test/
+      test_filename: nef_get_ue_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 0
+      axis: 1
+      def: None
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the gathering of a UE's information from the NEF (e.g. http://10.10.10.10:8000/start/3)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+    nef_monitoring_subscription_test:
+      id: nef_monitoring_subscription_test
+      name: NEF Monitoring Subscription Test
+      description: Validates if the NApp was able to subscribe to a monitoring event in the NEF
+      ftp_base_location: tests/nef_monitoring_subscription_test/
+      test_filename: nef_monitoring_subscription_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 1
+      def: def11.5G.2
+      test_conditions: [1,2]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/4)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+################################################################
+##                                                            ##
+##                     Bristol's Testbed                      ##
+##                                                            ##
+################################################################
 
   testbed_uob:
     bandwidth:
@@ -444,6 +808,8 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: def14.Perf.1
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -506,6 +872,8 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: def14.Perf.1
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -568,6 +936,8 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: def14.Perf.12 
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -630,6 +1000,7 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: None
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -692,6 +1063,8 @@ tests:
       mandatory: true
       weight: 7
       axis: 2
+      def: def19.Sec.7
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: host
@@ -718,6 +1091,8 @@ tests:
       mandatory: false
       weight: 3
       axis: 2
+      def: def19.Sec.3
+      test_conditions: [5]
       # End of Certification Scope
 
     ssh_audit:
@@ -731,6 +1106,8 @@ tests:
       mandatory: true
       weight: 7
       axis: 2
+      def: def19.Sec.8
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: ssh_host
@@ -757,6 +1134,8 @@ tests:
       mandatory: true
       weight: 7
       axis: 2
+      def: def19.Sec.4
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: url
@@ -777,6 +1156,8 @@ tests:
       mandatory: true
       weight: 7
       axis: 2
+      def: def19.Sec.5
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: username
@@ -821,6 +1202,8 @@ tests:
       mandatory: false
       weight: 8
       axis: 1
+      def: def11.5G.1
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
       - variable_name: vnf_base_api_location
@@ -860,6 +1243,11 @@ tests:
         can_be_injected_by_the_nods: False
         type: str
 
+################################################################
+##                                                            ##
+##                      OdinS's Testbed                       ##
+##                                                            ##
+################################################################
 
   testbed_odins:
     bandwidth:
@@ -873,6 +1261,8 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: def14.Perf.1
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -935,6 +1325,8 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: def14.Perf.1
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -997,6 +1389,8 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: def14.Perf.12 
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -1059,6 +1453,7 @@ tests:
       mandatory: false
       weight: 5
       axis: 4
+      def: None
       # End of Certification Scope
       test_variables:
       - variable_name: host1_ip
@@ -1121,6 +1516,8 @@ tests:
       mandatory: true
       weight: 7
       axis: 2
+      def: def19.Sec.7
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: host
@@ -1147,6 +1544,8 @@ tests:
       mandatory: false
       weight: 3
       axis: 2
+      def: def19.Sec.3
+      test_conditions: [5]
       # End of Certification Scope
 
     ssh_audit:
@@ -1160,6 +1559,8 @@ tests:
       mandatory: true
       weight: 7
       axis: 2
+      def: def19.Sec.8
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: ssh_host
@@ -1186,6 +1587,8 @@ tests:
       mandatory: true
       weight: 7
       axis: 2
+      def: def19.Sec.4
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: url
@@ -1206,6 +1609,8 @@ tests:
       mandatory: true
       weight: 7
       axis: 2
+      def: def19.Sec.5
+      test_conditions: [5]
       # End of Certification Scope
       test_variables:
       - variable_name: username
@@ -1250,6 +1655,8 @@ tests:
       mandatory: false
       weight: 8
       axis: 1
+      def: def11.5G.1
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
       - variable_name: vnf_base_api_location
@@ -1288,3 +1695,4 @@ tests:
         possible_options: []
         can_be_injected_by_the_nods: False
         type: str
+

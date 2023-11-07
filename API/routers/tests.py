@@ -300,24 +300,35 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
             )
     logging.info(f"Will create Jenkins Pipeline Script!")
     # create jenkins pipeline script
-    try:
-        pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(
-            executed_tests_info, 
-            #developer_defined_tests_for_pipeline,
-            testbed_tests, 
-            descriptor_metrics_collection, 
-            metrics_collection_information, 
-            test_instance.id, 
-            test_instance.testbed_id
-        )
-        crud.create_test_status(
-            db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
-    except Exception as e:
-        logging.error("Couldn't create pipeline script: " + str(e))
-        crud.create_test_status(
-            db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
-        return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
-     
+    pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(
+        executed_tests_info, 
+        #developer_defined_tests_for_pipeline,
+        testbed_tests, 
+        descriptor_metrics_collection, 
+        metrics_collection_information, 
+        test_instance.id, 
+        test_instance.testbed_id
+    )
+    crud.create_test_status(
+        db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
+    #try:
+    #    pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(
+    #        executed_tests_info, 
+    #        #developer_defined_tests_for_pipeline,
+    #        testbed_tests, 
+    #        descriptor_metrics_collection, 
+    #        metrics_collection_information, 
+    #        test_instance.id, 
+    #        test_instance.testbed_id
+    #    )
+    #    crud.create_test_status(
+    #        db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
+    #except Exception as e:
+    #    logging.error("Couldn't create pipeline script: " + str(e))
+    #    crud.create_test_status(
+    #        db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
+    #    return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
+    # 
     logging.info(f"Will submit Jenkins Pipeline!")
     
     # TOdo
@@ -405,12 +416,16 @@ async def publish_test_results(test_results_information: ci_cd_manager_schemas.T
                 success = failed_tests == 0
                 crud.update_test_status_of_test_instance(db, test_results_information.test_id, test, str(start_dt), str(end_dt), success)
                 token = test_instance_dic['access_token']
-                url = f'{Constants.TRVD_HOST}/test-information.html?test_id={test_results_information.test_id}&access_token={token}'
-                payload['characteristic'].append({'name': f'testResultsURL{counter}', 'value': {'value': url}  })
                 counter+=1
             except Exception as e:
                 logging.error("Impossible to parse the test execution "\
                     f"results for test '{test}'. Reason: {e}")
+            
+        # Patch for the NODS
+        url = f'{Constants.TRVD_HOST}/test-information.html?test_id={test_results_information.test_id}&access_token={token}'
+        payload['characteristic'].append({'name': 'testResultsURL', 'value': {'value': url}})
+        payload['characteristic'].append({'name': 'access_token', 'value': {'value': token}})
+        payload['characteristic'].append({'name': 'test_id', 'value': {'value': test_results_information.test_id}})
         
         print(payload)
 
