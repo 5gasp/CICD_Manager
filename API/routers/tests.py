@@ -228,29 +228,62 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
     testbeds_ci_cd_agents = CRUD_Agents.get_ci_cd_agents_by_testbed(
         db, testbed_id)
     
-    print("testbeds_ci_cd_agents:", [a.as_dict() for a in testbeds_ci_cd_agents])
+    logging.info("testbeds_ci_cd_agents: " + ",".join(
+        [
+            f"({agent.id}, {agent.url})"
+            for agent
+            in testbeds_ci_cd_agents
+        ]
+        )
+    )
+    
     available_agents_jobs = []
+    
     for ci_cd_agent in testbeds_ci_cd_agents:
         jenkins_wrapper = Jenkins_Wrapper()
         ret, message = jenkins_wrapper.connect_to_server(
-            ci_cd_agent.url, ci_cd_agent.username, ci_cd_agent.password)
-        print(ci_cd_agent.url, ci_cd_agent.username, ci_cd_agent.password)
-        print("ret:", ret)
+            ci_cd_agent.url,
+            ci_cd_agent.username,
+            ci_cd_agent.password
+        )
+        
+        #print(ci_cd_agent.url, ci_cd_agent.username, ci_cd_agent.password)
+        
+        logging.info(
+            f"Is the CI/CD Agent at {ci_cd_agent.url} available? {ret}"
+        )
+        
         if ret:
-            active_jobs = [job['color'] for job in jenkins_wrapper.get_jobs()[
-                1]].count('blue_anime')
+            active_jobs = [
+                job['color']
+                for job in jenkins_wrapper.get_jobs()[1]
+            ].count('blue_anime')
+            
             available_agents_jobs.append(
-                (jenkins_wrapper, ci_cd_agent, active_jobs))
+                (jenkins_wrapper, ci_cd_agent, active_jobs)
+            )
     
     if len(available_agents_jobs) == 0:
-        return Utils.create_response(status_code=400, success=False, 
-                                     errors=["No CI/CD Agent Available"])
+        return Utils.create_response(
+            status_code=400,
+            success=False,
+            errors=["No CI/CD Agent Available"]
+        )
     
     logging.info(f"Testbed's CI/CD Agent has been selected!")
 
     selected_ci_cd_agent_info = sorted(
-        available_agents_jobs, key=lambda e: e[2])[0]
+        available_agents_jobs,
+        key=lambda e: e[2]
+    )[0]
+    
+    logging.info("Testbed's CI/CD Agent has been selected!")
+    logging.info(
+        f"The agent is available at {selected_ci_cd_agent_info[1].url}"
+    )
+    
     jenkins_wrapper = selected_ci_cd_agent_info[0]
+    
     selected_ci_cd_node = selected_ci_cd_agent_info[1]
 
     crud.update_test_instance_ci_cd_agent(
@@ -310,46 +343,42 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
         test_instance.testbed_id
     )
     crud.create_test_status(
-        db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
-    #try:
-    #    pipeline_config = jenkins_wrapper.create_jenkins_pipeline_script(
-    #        executed_tests_info, 
-    #        #developer_defined_tests_for_pipeline,
-    #        testbed_tests, 
-    #        descriptor_metrics_collection, 
-    #        metrics_collection_information, 
-    #        test_instance.id, 
-    #        test_instance.testbed_id
-    #    )
-    #    crud.create_test_status(
-    #        db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], True)
-    #except Exception as e:
-    #    logging.error("Couldn't create pipeline script: " + str(e))
-    #    crud.create_test_status(
-    #        db, test_instance.id, Constants.TEST_STATUS["created_pipeline_script"], False)
-    #    return Utils.create_response(status_code=400, success=False, errors=["Couldn't create pipeline script: " + str(e)])
-    # 
+        db,
+        test_instance.id,
+        Constants.TEST_STATUS["created_pipeline_script"],
+        True
+    )
     logging.info(f"Will submit Jenkins Pipeline!")
     
-    # TOdo
-    #return
-    
     # submit pipeline scripts
-    job_name = netapp_id + '-' + network_service_id + \
-        '-' + str(test_instance.build)
+    job_name = f"{netapp_id}-{network_service_id}-{str(test_instance.build)}"
+    logging.info
     
     ret, message = jenkins_wrapper.create_new_job(job_name, pipeline_config)
+    
     if not ret:
         crud.create_test_status(
-            db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], False)
+            db,
+            test_instance.id,
+            Constants.TEST_STATUS["submitted_pipeline_script"],
+            False
+        )
+        logging.error("Couldn't submit Jenkins Pipeline - ")
         return Utils.create_response(status_code=400, success=False, errors=[message])
+
     crud.create_test_status(
-        db, test_instance.id, Constants.TEST_STATUS["submitted_pipeline_script"], True)
+        db,
+        test_instance.id,
+        Constants.TEST_STATUS["submitted_pipeline_script"],
+        True
+    )
+    
     jenkins_job_name = message
     
     logging.info("Trying to run Jenkins Job...")
     # run jenkins job
     ret, message = jenkins_wrapper.run_job(jenkins_job_name)
+    
     if not ret:
         return Utils.create_response(status_code=400, success=False, errors=[message])
     build_id = message

@@ -259,35 +259,13 @@ tests:
         possible_options: []
         can_be_injected_by_the_nods: False
         type: float
-
-    open_ports:
-      id: open_ports
-      name: open ports
-      description: Validates the if a VM's open ports are the ones that should be opened
-      ftp_base_location: tests/open_ports/
-      test_filename: testOpenPorts.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: true
-      weight: 5
-      axis: 2
-      def: def19.Sec.7
-      test_conditions: [5]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host
-        description: Host of the target VNF
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: expected_open_ports
-        description: Ports that should be open (Example - 22/tcp,8090/tcp)
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
     
+    ############################################################################
+    ##                                                                        ##
+    ##                             SECURITY TESTS                             ##                      
+    ##                                                                        ##
+    ############################################################################
+
     openstack_port_security:
       id: openstack_port_security
       name: Openstack Port Security
@@ -303,34 +281,7 @@ tests:
       test_conditions: [5]
       # End of Certification Scope
 
-    ssh_audit:
-      id: ssh_audit
-      name: SSH Audit
-      description: Audits VNF's SSH Server
-      ftp_base_location: tests/ssh_audit/
-      test_filename: testSshAudit.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: true
-      weight: 5
-      axis: 2
-      def: def19.Sec.8
-      test_conditions: [5]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: ssh_host
-        description: Host of the target VNF
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: ssh_port
-        description: Port where the SSH Server is running (default=22)
-        mandatory: false
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-    
+
     ssl_audit:
       id: ssl_audit
       name: SSL Audit
@@ -352,7 +303,8 @@ tests:
         possible_options: []
         can_be_injected_by_the_nods: True
         type: str
-    
+
+
     ssh_brute_force:
       id: ssh_brute_force
       name: SSH Brute Force
@@ -398,59 +350,163 @@ tests:
         possible_options: []
         can_be_injected_by_the_nods: False
         type: int
+  
 
-    nef_authentication:
-      id: nef_authentication
-      name: NEF Authentication Test
-      description: Audits if a VNF is capable of authenticating in the NEF
-      ftp_base_location: tests/nef_authentication/
-      test_filename: testNEFAuthentication.robot
+    open_ports:
+      id: open_ports
+      name: open ports
+      description: Validates the if a VM's open ports are the ones that should be open
+      ftp_base_location: tests/open_ports/
+      test_filename: testOpenPorts.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 5
+      axis: 2
+      def: def19.Sec.7
+      test_conditions: [5]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: host
+        description: Host of the target VNF
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: expected_open_ports
+        description: Ports that should be open (Example - 22/tcp,8090/tcp)
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+
+
+    ssh_audit:
+      id: ssh_audit
+      name: SSH Audit
+      description: Audits VNF's SSH Server
+      ftp_base_location: tests/ssh_audit/
+      test_filename: testSshAudit.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 5
+      axis: 2
+      def: def19.Sec.8
+      test_conditions: [5]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: ssh_host
+        description: Host of the target VNF
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: ssh_port
+        description: Port where the SSH Server is running (default=22)
+        mandatory: false
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+
+    # TODO !
+    mini_api_configuration: 
+      id: mini_api_configuration
+      name: Mini API Configuration Robot Script
+      description: Used to Configure the MiniAPI
+      ftp_base_location: tests/mini_api_configuration/
+      test_filename: mini_api_configuration.robot
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: 8
-      axis: 1
-      def: def11.5G.1
-      test_conditions: [1]
+      weight: -1
+      axis: -1
+      def: NoDef
+      test_conditions: [-1]
       # End of Certification Scope
       test_variables:
-      - variable_name: vnf_base_api_location
-        description: The URL of the VNF's NEF Testing API 
+      - variable_name: configuration_endpoint
+        description: The MiniAPI COnfiguration endpoint
         mandatory: true
         possible_options: []
-        can_be_injected_by_the_nods: True
+        can_be_injected_by_the_nods: False
         type: str
-      - variable_name: nef_reporting_base_api_location
-        description: The URL of the NEF's Reporting API
+      - variable_name: configuration_payload
+        description: The payload o be submitted to the MiniAPI
         mandatory: true
         possible_options: []
-        can_be_injected_by_the_nods: True
+        can_be_injected_by_the_nods: False
         type: str
-      - variable_name: nef_ip
-        description: NEF's IP
+      
+
+    # TODO !
+    nef_authentication_test: 
+      id: nef_authentication_test
+      name: NEF Authentication Test
+      description: Audits if a VNF is capable of authenticating in the NEF
+      ftp_base_location: tests/nef_authentication_test/
+      test_filename: nef_authentication_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: -1
+      axis: 2
+      def: def19.Sec.9
+      test_conditions: [-1]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: reporting_api_ip
+        description: The IP of the NEF's Reporting API
         mandatory: true
         possible_options: []
-        can_be_injected_by_the_nods: True
+        can_be_injected_by_the_nods: False
         type: str
-      - variable_name: nef_port
-        description: The NEF's Main API Port
+      - variable_name: reporting_api_port
+        description: The NEF's Reporting API Port
         mandatory: true
         possible_options: []
         can_be_injected_by_the_nods: False
         type: int
-      - variable_name: nef_username
-        description: The NEF's Main API Login Username
+      - variable_name: mini_api_endpoint_to_invoke
+        description: The MiniAPI URL that may be used to trigger this test
         mandatory: true
         possible_options: []
-        can_be_injected_by_the_nods: False
+        can_be_injected_by_the_nods: True
         type: str
-      - variable_name: nef_password
-        description: The NEF's Main API Login Password
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-    
+
+#############################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     dummy_5g_readiness_test:
       id: dummy_5g_readiness_test
       name: Dummy 5G Readiness Test
