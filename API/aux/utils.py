@@ -72,7 +72,7 @@ def load_testbeds_to_db(session, testbed_info_file):
 
 
 def load_test_info(db, tests_info_file):
-
+    print("HERE")
     with open(tests_info_file) as mfile:
         tests_data = yaml.load(mfile, Loader=yaml.FullLoader)
         Constants.TEST_INFO = tests_data

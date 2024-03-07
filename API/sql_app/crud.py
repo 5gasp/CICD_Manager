@@ -315,11 +315,64 @@ def create_test_information(db: Session,testinfo_data: testinfo_schemas.TestInfo
     testbed = get_testbed_by_id(db,testinfo_data.testbed_id)
     if not testbed:
         return False,"The selected testbed does not exit"
-    test_info_instances = get_test_info_by_testbed_id(db,testinfo_data.testbed_id)
-    print(test_info_instances)
-    if test_info_instances and not is_testinfo_valid(db,test_info_instances,testinfo_data):
-        return False, f"This testbed already contains information about a test with the id {testinfo_data.testid}"
+    
+    test_info_instances = get_test_info_by_testbed_id(
+        db,testinfo_data.testbed_id
+    )
+
+    # Verify if already exists a test with the same id in the testbed
+    test_info_instance = db.query(models.Test_Information).filter(
+        models.Test_Information.testbed_id == testinfo_data.testbed_id,
+        models.Test_Information.testid == testinfo_data.testid,
+        ).first()
+    
+    
+    if test_info_instance:
+
+        test_info_instance_id = test_info_instance.testid
+
+        logging.info(
+            f"The testbed '{testbed.name}' already contains information " +
+            f"about a test with the id {testinfo_data.testid}. Will update it!"
+        )
+         
+        db.begin_nested()
+        try:
+            # Delete current test info variables
+            for test_info_variable in test_info_instance.testinfo_variables:
+                db.delete(test_info_variable)
+                db.flush()
+            
+            # Create new test info variables
+            test_info_variables = create_testinfo_variables(db,testinfo_data)
+            
+            # Udpate the current test instance
+            test_info_instance.name=testinfo_data.name,
+            test_info_instance.description=testinfo_data.description,
+            test_info_instance.ftp_base_location=testinfo_data.ftp_base_location,
+            test_info_instance.test_filename=testinfo_data.test_filename,
+            test_info_instance.test_type=testinfo_data.test_type,
+            test_info_instance.testinfo_variables=test_info_variables
+
+            db.commit()
+            logging.info(
+                f"Updated test instance '{test_info_instance_id}' in " +
+                f"testbed '{test_info_instance.testbed_id}'."
+            )
+            
+            return test_info_instance, ""
+        except Exception as e:
+            logging.error(
+                f"Failed to update test instance '{test_info_instance_id}'" +
+                f" in testbed '{test_info_instance.testbed_id}'. Due to: " +
+                f"Exception {e}.\n Rolling back..."
+            )
+            db.rollback()
+            logging.error("Rollback completed.")
+            return None
+        
     testinfo_variables = create_testinfo_variables(db,testinfo_data)
+    
     test_info_instance = models.Test_Information(
         testid=testinfo_data.testid,
         name=testinfo_data.name,
@@ -333,6 +386,12 @@ def create_test_information(db: Session,testinfo_data: testinfo_schemas.TestInfo
     db.add(test_info_instance)
     db.commit()
     db.refresh(test_info_instance)
+    
+    logging.info(
+        f"Updated test instance '{test_info_instance.testid}' in " +
+        f"testbed '{test_info_instance.testbed_id}'."
+    )
+
     return test_info_instance,""
     
 
