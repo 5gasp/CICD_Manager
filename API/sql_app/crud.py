@@ -30,6 +30,52 @@ logging.basicConfig(
 )
 
 # ---------------------------------------- #
+# ---------------- Metrics --------------- #
+# ---------------------------------------- #
+def create_metrics_dasboard(db: Session, test_id, url, username, password):
+    metrics_dashboard_instance = models.Test_Metrics_Dashboard(
+        test_id=test_id,
+        url=url,
+        access_username=username,
+        access_password=password
+    )
+    db.add(metrics_dashboard_instance)
+    db.commit()
+    db.refresh(metrics_dashboard_instance)
+    logging.info(
+        f"Created metrics dashboard with id {metrics_dashboard_instance.id}"
+    )
+    return metrics_dashboard_instance
+
+def get_metrics_dasboard(db: Session, test_id: int):
+    metrics_dashboard_instance = db.query(models.Test_Metrics_Dashboard)\
+        .filter(models.Test_Metrics_Dashboard.test_id == test_id)
+    return metrics_dashboard_instance
+
+# ---------------------------------------- #
+# ----------------- Logs ----------------- #
+# ---------------------------------------- #
+def create_logs_dasboard(db: Session, test_id, url, username, password):
+    logs_dashboard_instance = models.Test_Logs_Dashboard(
+        test_id=test_id,
+        url=url,
+        access_username=username,
+        access_password=password
+    )
+    db.add(logs_dashboard_instance)
+    db.commit()
+    db.refresh(logs_dashboard_instance)
+    logging.info(
+        f"Created logs dashboard with id {logs_dashboard_instance.id}"
+    )
+    return logs_dashboard_instance
+
+def get_logs_dasboard(db: Session, test_id: int):
+    logs_dashboard_instance = db.query(models.Test_Logs_Dashboard)\
+        .filter(models.Test_Logs_Dashboard.test_id == test_id)
+    return logs_dashboard_instance
+
+# ---------------------------------------- #
 # --------------- Testbeds --------------- #
 # ---------------------------------------- #
 
@@ -61,9 +107,6 @@ def create_testbed(db: Session, testbed: ci_cd_manager_schemas.Testbed_Create):
     db.refresh(testbed_instance)
     logging.info(f"Created testbed with id {testbed_instance.id}")
     return testbed_instance
-
-
-
 
 def get_testbed_by_id(db: Session, id: str):
     return db.query(models.Testbed).filter(models.Testbed.id == id).first()

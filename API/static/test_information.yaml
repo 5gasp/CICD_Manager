@@ -2,269 +2,60 @@
 # @Date:   01-06-2021 17:43:43
 # @Last Modified by:   Rafael Direito
 # @Last Modified time: 2023-11-07 10:19:48
+
+# Test Axis
+# 1: 5G Readiness
+# 2: Security & Privacy
+# 3: Availability & Continuity
+# 4: Performance & Scalability
+
 ---
 tests:
+  ######################################################################################################################
+  ##                                                                                                                  ##
+  ##                                                                                                                  ##
+  ##                                                  ITAV's TESTBED                                                  ##
+  ##                                                                                                                  ##
+  ##                                                                                                                  ##
+  ######################################################################################################################
   testbed_itav:
-    bandwidth:
-      id: bandwidth
-      name: bandwidth
-      description: Tests the bandwidth between to VNFs. The results are in bits/sec
-      ftp_base_location: tests/bandwidth/
-      test_filename: testBandwidth.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: def14.Perf.1
-      test_conditions: [7]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the bandwidth
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Threshold in mbits per second
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    bandwidth2:
-      id: bandwidth2
-      name: bandwidth2
-      description: Tests the bandwidth between to VNFs. The results are in bits/sec
-      ftp_base_location: tests/bandwidth2/
-      test_filename: testBandwidth2.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: def14.Perf.1
-      test_conditions: [7]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the bandwidth
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Threshold in mbits per second
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    transmission_speed:
-      id: transmission_speed
-      name: transmission speed
-      description: Tests the transmission speed between to VNFs. The results are in ms
-      ftp_base_location: tests/transmission_speed/
-      test_filename: testTransmissionSpeed.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: def14.Perf.12
-      test_conditions: [7]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the transmission speed
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Threshold in milliseconds
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    packet_loss:
-      id: packet_loss
-      name: packet loss
-      description: Tests the packet loss speed between to VNFs. The results are given in %
-      ftp_base_location: tests/packet_loss/
-      test_filename: testPacketLoss.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: None
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the packet loss ratio
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Ratio of packets lost
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-    
     ############################################################################
     ##                                                                        ##
     ##                             SECURITY TESTS                             ##
     ##                                                                        ##
     ############################################################################
+
+    network_application_package_integrity_test:
+      id: network_application_package_integrity_test
+      name: Network Application Package Integrity
+      description: Validate package signature, to avoid the onboarding of unauthorized or modified copies of the given Network Application
+      ftp_base_location: tests/none
+      test_filename: none.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 4
+      axis: 2
+      def: def19.Sec.1
+      test_conditions: [5]
+      # End of Certification Scope
+
+
+    network_application_uses_offered_sec_group_test:
+      id: network_application_uses_offered_sec_group_test
+      name: Network Application should use a security-group offered by testbed
+      description: Validate if the Network Application’s VNFs use a testbed available security-group
+      ftp_base_location: tests/none
+      test_filename: none.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 4
+      axis: 2
+      def: def19.Sec.2
+      test_conditions: [5]
+      # End of Certification Scope
+    
 
     openstack_port_security:
       id: openstack_port_security
@@ -274,7 +65,7 @@ tests:
       test_filename: testOpenstackPortSecurity.robot
       test_type: Robot
       # Certification Scope
-      mandatory: true
+      mandatory: false
       weight: 5
       axis: 2
       def: def19.Sec.3
@@ -350,7 +141,21 @@ tests:
         possible_options: []
         can_be_injected_by_the_nods: False
         type: int
-  
+
+    protected_encrypted_interfaces:
+      id: protected_encrypted_interfaces
+      name: Protected/ Encrypted Interfaces
+      description: Validate if the Network Application’s VNFs offer all functionalities though protected/encrypted access protocols
+      ftp_base_location: tests/none
+      test_filename: none.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 0
+      axis: 2
+      def: def19.Sec.6
+      test_conditions: []
+      # End of Certification Scope
 
     open_ports:
       id: open_ports
@@ -360,8 +165,8 @@ tests:
       test_filename: testOpenPorts.robot
       test_type: Robot
       # Certification Scope
-      mandatory: true
-      weight: 5
+      mandatory: false
+      weight: 6
       axis: 2
       def: def19.Sec.7
       test_conditions: [5]
@@ -389,8 +194,8 @@ tests:
       test_filename: testSshAudit.robot
       test_type: Robot
       # Certification Scope
-      mandatory: true
-      weight: 5
+      mandatory: false
+      weight: 8
       axis: 2
       def: def19.Sec.8
       test_conditions: [5]
@@ -410,7 +215,6 @@ tests:
         type: str
       
 
-    # TODO !
     nef_authentication_test: 
       id: nef_authentication_test
       name: NEF Authentication Test
@@ -420,10 +224,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
+      weight: 6
       axis: 2
       def: def19.Sec.9
-      test_conditions: [-1]
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
       - variable_name: reporting_api_ip
@@ -454,7 +258,6 @@ tests:
     ############################################################################
 
 
-    # TODO !
     mini_api_configuration: 
       id: mini_api_configuration
       name: Mini API Configuration Robot Script
@@ -464,10 +267,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: -1
+      weight: 0
+      axis: 0
       def: NoDef
-      test_conditions: [-1]
+      test_conditions: []
       # End of Certification Scope
       test_variables:
       - variable_name: configuration_endpoint
@@ -484,7 +287,6 @@ tests:
         type: str
 
 
-    # TODO !
     authentication_with_5gs_test: 
       id: authentication_with_5gs_test
       name: Authentication with 5GS
@@ -494,10 +296,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
+      weight: 3
       axis: 1
       def: def11.5G.1
-      test_conditions: [-1]
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
       - variable_name: reporting_api_ip
@@ -555,7 +357,6 @@ tests:
           type: int
 
 
-    # Todo !
     nef_ue_handover_test:
       id: nef_ue_handover_test
       name: NEF Acquisition of UE handover event
@@ -565,10 +366,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
+      weight: 5
       axis: 1
       def: def11.5G.3
-      test_conditions: [1,2]
+      test_conditions: [1,3]
       # End of Certification Scope
       test_variables:
         - variable_name: mini_api_endpoint_to_invoke
@@ -597,7 +398,6 @@ tests:
           type: str
 
 
-    # Todo !
     nef_ue_rsrp_acquisition_test:
       id: nef_ue_rsrp_acquisition_test
       name: Acquisition of UE Received Signal Power (RSRP) information
@@ -607,10 +407,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
+      weight: 5
       axis: 1
       def: def11.5G.4
-      test_conditions: [1,2]
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
         - variable_name: mini_api_endpoint_to_invoke
@@ -639,7 +439,6 @@ tests:
           type: str
     
 
-    # Todo !
     nef_ue_path_loss_test:
       id: nef_ue_path_loss_test
       name: Acquisition of UE path loss 
@@ -649,10 +448,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
+      weight: 5
       axis: 1
       def: def11.5G.5
-      test_conditions: [1,2]
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
         - variable_name: mini_api_endpoint_to_invoke
@@ -681,7 +480,6 @@ tests:
           type: str
       
 
-    # Todo !
     nef_serving_cell_info_test:
       id: nef_serving_cell_info_test
       name: Acquisition of serving cell information
@@ -691,10 +489,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
+      weight: 7
       axis: 1
       def: def11.5G.6
-      test_conditions: [1,2]
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
         - variable_name: mini_api_endpoint_to_invoke
@@ -723,7 +521,6 @@ tests:
           type: str
 
 
-    # Todo !
     nef_qos_subscription_test:
       id: nef_qos_subscription_test
       name: Acquisition of QoS sustainability
@@ -733,10 +530,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
+      weight: 7
       axis: 1
       def: def11.5G.7
-      test_conditions: [1,2]
+      test_conditions: [1,4]
       # End of Certification Scope
       test_variables:
         - variable_name: mini_api_endpoint_to_invoke
@@ -771,7 +568,6 @@ tests:
     ##                                                                        ##
     ############################################################################
 
-    # Todo !
     e2e_single_ue_latency_and_throughput_test:
       id: e2e_single_ue_latency_and_throughput_test
       name: E2E download/upload Internet Protocol (IP) throughput & latency performance, single UE
@@ -781,10 +577,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 8
+      axis: 3
       def: def14.Perf.1
-      test_conditions: []
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
         - variable_name: server_mini_api_start_endpoint_to_invoke
@@ -831,7 +627,6 @@ tests:
           type: int
 
 
-    # Todo !
     e2e_multiple_ue_latency_and_throughput_test:
       id: e2e_multiple_ue_latency_and_throughput_test
       name: E2E download/upload IP throughput & latency performance, multiple UE
@@ -841,10 +636,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 8
+      axis: 3
       def: def14.Perf.2
-      test_conditions: []
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
         - variable_name: server_mini_api_start_endpoint_to_invoke
@@ -897,7 +692,6 @@ tests:
           type: int
 
 
-    # Todo !
     nef_signaling_performance_response_time_test:
       id: nef_signaling_performance_response_time_test
       name: NEF signalling performance - response time
@@ -907,10 +701,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 5
+      axis: 3
       def: def14.Perf.5
-      test_conditions: []
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
         - variable_name: host
@@ -933,7 +727,6 @@ tests:
           type: int
 
 
-    # Todo !
     nef_signaling_performance_requests_per_second_test:
       id: nef_signaling_performance_requests_per_second_test
       name: NEF signalling performance - requests per second
@@ -943,10 +736,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 5
+      axis: 3
       def: def14.Perf.6
-      test_conditions: []
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
         - variable_name: host
@@ -969,7 +762,6 @@ tests:
           type: int
 
 
-    # Todo !
     nef_signaling_performance_maximum_connections_test:
       id: nef_signaling_performance_maximum_connections_test
       name: NEF signalling performance - maximum number of connections
@@ -979,10 +771,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 5
+      axis: 3
       def: def14.Perf.7
-      test_conditions: []
+      test_conditions: [1]
       # End of Certification Scope
       test_variables:
         - variable_name: mini_api_endpoint_to_invoke
@@ -1023,7 +815,6 @@ tests:
           type: int
 
 
-    # Todo !
     web_performance_static_page:
       id: web_performance_static_page
       name: Network Application - web performance (static page)
@@ -1033,10 +824,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 5
+      axis: 3
       def: def14.Perf.8
-      test_conditions: []
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
         - variable_name: target
@@ -1053,7 +844,6 @@ tests:
           type: int
           
 
-    # Todo !
     api_performance_response_time:
       id: api_performance_response_time
       name: Network Application - API performance - response time
@@ -1063,10 +853,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 5
+      axis: 3
       def: def14.Perf.9
-      test_conditions: []
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
         - variable_name: api_target
@@ -1084,7 +874,6 @@ tests:
 
 
 
-    # Todo !
     api_performance_requests_per_second:
       id: api_performance_requests_per_second
       name: Network Application - API performance - requests per second
@@ -1094,10 +883,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 5
+      axis: 3
       def: def14.Perf.10
-      test_conditions: []
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
         - variable_name: host
@@ -1126,7 +915,6 @@ tests:
           type: int
 
 
-    # Todo !
     maximum_number_of_connections_test:
       id: maximum_number_of_connections_test
       name: Network Application - API performance - maximum number of connections
@@ -1136,10 +924,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 5
+      axis: 3
       def: def14.Perf.11
-      test_conditions: []
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
         - variable_name: load_test_host
@@ -1186,7 +974,6 @@ tests:
           type: str
 
 
-    # Todo !
     network_application_performance_rtt:
       id: network_application_performance_rtt
       name: Network Application - IP Round-trip time (RTT) 
@@ -1196,10 +983,10 @@ tests:
       test_type: Robot
       # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 8
+      axis: 3
       def: def14.Perf.12
-      test_conditions: []
+      test_conditions: [7]
       # End of Certification Scope
       test_variables:
         - variable_name: target
@@ -1216,7 +1003,6 @@ tests:
           type: int
 
 
-    # Todo !
     hops_until_target_test:
       id: hops_until_target_test
       name: Network Application - IP Traceroute
@@ -1225,9 +1011,1041 @@ tests:
       test_filename: hops_until_target_test.robot
       test_type: Robot
       # Certification Scope
+      mandatory: true
+      weight: 5
+      axis: 3
+      def: def14.Perf.13
+      test_conditions: []
+      # End of Certification Scope
+      test_variables:
+        - variable_name: target
+          description: The target of this test (an IP / domain)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: threshold
+          description: The threshold for the maximum number of hops
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Start Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf13)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: mini_api_endpoint_to_invoke_results
+          description: Results Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/results/Def14Perf13)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+
+  ######################################################################################################################
+  ##                                                                                                                  ##
+  ##                                                                                                                  ##
+  ##                                                  ININ's TESTBED                                                  ##
+  ##                                                                                                                  ##
+  ##                                                                                                                  ##
+  ######################################################################################################################
+  testbed_inin:
+    ############################################################################
+    ##                                                                        ##
+    ##                             SECURITY TESTS                             ##
+    ##                                                                        ##
+    ############################################################################
+
+    network_application_package_integrity_test:
+      id: network_application_package_integrity_test
+      name: Network Application Package Integrity
+      description: Validate package signature, to avoid the onboarding of unauthorized or modified copies of the given Network Application
+      ftp_base_location: tests/none
+      test_filename: none.robot
+      test_type: Robot
+      # Certification Scope
       mandatory: false
-      weight: -1
-      axis: 4
+      weight: 4
+      axis: 2
+      def: def19.Sec.1
+      test_conditions: [5]
+      # End of Certification Scope
+
+
+    network_application_uses_offered_sec_group_test:
+      id: network_application_uses_offered_sec_group_test
+      name: Network Application should use a security-group offered by testbed
+      description: Validate if the Network Application’s VNFs use a testbed available security-group
+      ftp_base_location: tests/none
+      test_filename: none.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 4
+      axis: 2
+      def: def19.Sec.2
+      test_conditions: [5]
+      # End of Certification Scope
+    
+
+    openstack_port_security:
+      id: openstack_port_security
+      name: Openstack Port Security
+      description: Validates the if all Openstack Interfaces have Port Security enabled
+      ftp_base_location: tests/openstack_port_security/
+      test_filename: testOpenstackPortSecurity.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 2
+      def: def19.Sec.3
+      test_conditions: [5]
+      # End of Certification Scope
+
+
+    ssl_audit:
+      id: ssl_audit
+      name: SSL Audit
+      description: Audits the SSL Certificates Protecting and Endpoint
+      ftp_base_location: tests/ssl_audit/
+      test_filename: test_ssl_audit.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 2
+      def: def19.Sec.4
+      test_conditions: [5]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: url
+        description: Endpoint's URL
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+
+
+    ssh_brute_force:
+      id: ssh_brute_force
+      name: SSH Brute Force
+      description: Audits VNF's SSH Server Credentials
+      ftp_base_location: tests/ssh_brute_force/
+      test_filename: testSSHBruteforce.robot 
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 4
+      axis: 2
+      def: def19.Sec.5
+      test_conditions: [5]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: username
+        description: The username of the VNF (optional)
+        mandatory: false
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      - variable_name: max_usernames_to_test
+        description: The maximum number of usernames to be tested (when the VNF's username is not provided - mandatory) 
+        mandatory: false
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: int
+      - variable_name: max_password_to_test
+        description: The maximum number of passwords to be tested (mandatory)
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: int
+      - variable_name: target_ip
+        description: The IP of the target VNF (mandatory)
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: target_port
+        description: The Port of the target VNF where the SSH Server is Running (optional, default=22)
+        mandatory: false
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: int
+
+    protected_encrypted_interfaces:
+      id: protected_encrypted_interfaces
+      name: Protected/ Encrypted Interfaces
+      description: Validate if the Network Application’s VNFs offer all functionalities though protected/encrypted access protocols
+      ftp_base_location: tests/none
+      test_filename: none.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 0
+      axis: 2
+      def: def19.Sec.6
+      test_conditions: []
+      # End of Certification Scope
+
+    open_ports:
+      id: open_ports
+      name: open ports
+      description: Validates the if a VM's open ports are the ones that should be open
+      ftp_base_location: tests/open_ports/
+      test_filename: testOpenPorts.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 6
+      axis: 2
+      def: def19.Sec.7
+      test_conditions: [5]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: host
+        description: Host of the target VNF
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: expected_open_ports
+        description: Ports that should be open (Example - 22/tcp,8090/tcp)
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+
+
+    ssh_audit:
+      id: ssh_audit
+      name: SSH Audit
+      description: Audits VNF's SSH Server
+      ftp_base_location: tests/ssh_audit/
+      test_filename: testSshAudit.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 8
+      axis: 2
+      def: def19.Sec.8
+      test_conditions: [5]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: ssh_host
+        description: Host of the target VNF
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: ssh_port
+        description: Port where the SSH Server is running (default=22)
+        mandatory: false
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      
+
+    nef_authentication_test: 
+      id: nef_authentication_test
+      name: NEF Authentication Test
+      description: Audits if a VNF is capable of authenticating in the NEF
+      ftp_base_location: tests/nef_authentication_test/
+      test_filename: nef_authentication_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 6
+      axis: 2
+      def: def19.Sec.9
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: reporting_api_ip
+        description: The IP of the NEF's Reporting API
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      - variable_name: reporting_api_port
+        description: The NEF's Reporting API Port
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: int
+      - variable_name: mini_api_endpoint_to_invoke
+        description: The MiniAPI URL that may be used to trigger this test
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+
+
+
+    ############################################################################
+    ##                                                                        ##
+    ##                                5G TESTS                                ##
+    ##                                                                        ##
+    ############################################################################
+
+
+    mini_api_configuration: 
+      id: mini_api_configuration
+      name: Mini API Configuration Robot Script
+      description: Used to Configure the MiniAPI
+      ftp_base_location: tests/mini_api_configuration/
+      test_filename: mini_api_configuration.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 0
+      axis: 0
+      def: NoDef
+      test_conditions: []
+      # End of Certification Scope
+      test_variables:
+      - variable_name: configuration_endpoint
+        description: The MiniAPI COnfiguration endpoint
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      - variable_name: configuration_payload
+        description: The payload o be submitted to the MiniAPI
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+
+
+    authentication_with_5gs_test: 
+      id: authentication_with_5gs_test
+      name: Authentication with 5GS
+      description: This test will validate the authentication and authorization of a Network Application to use 5GS resources (NEF)
+      ftp_base_location: tests/authentication_with_5gs_test/
+      test_filename: authentication_with_5gs_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 1
+      def: def11.5G.1
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: reporting_api_ip
+        description: The IP of the NEF's Reporting API
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      - variable_name: reporting_api_port
+        description: The NEF's Reporting API Port
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: int
+      - variable_name: mini_api_endpoint_to_invoke
+        description: The MiniAPI URL that may be used to trigger this test
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+
+
+    nef_monitoring_subscription_test:
+      id: nef_monitoring_subscription_test
+      name: NEF Monitoring Subscription Test
+      description: Validates if the NApp was able to subscribe to a monitoring event in the NEF
+      ftp_base_location: tests/nef_monitoring_subscription_test/
+      test_filename: nef_monitoring_subscription_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 1
+      def: def11.5G.2
+      test_conditions: [1,2]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/4)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    nef_ue_handover_test:
+      id: nef_ue_handover_test
+      name: NEF Acquisition of UE handover event
+      description: This test will validate that a Network Application is able to subscribe and eventually retrieve information about an indicative UE handover event (servicing cell switch)
+      ftp_base_location: tests/nef_handover_test/
+      test_filename: nef_ue_handover_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 1
+      def: def11.5G.3
+      test_conditions: [1,3]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/Def115G3)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: ue_supi
+          description: The SUPI of the UE from which we are trying to get handover events
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+
+
+    nef_ue_rsrp_acquisition_test:
+      id: nef_ue_rsrp_acquisition_test
+      name: Acquisition of UE Received Signal Power (RSRP) information
+      description: This test will validate that a Network Application is able to retrieve indicative information about RSRP
+      ftp_base_location: tests/nef_ue_rsrp_acquisition_test/
+      test_filename: nef_ue_rsrp_acquisition_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 1
+      def: def11.5G.4
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/Def115G4)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: ue_supi
+          description: The SUPI of the UE from which we are trying to get the RSRP
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+    
+
+    nef_ue_path_loss_test:
+      id: nef_ue_path_loss_test
+      name: Acquisition of UE path loss 
+      description: This test will validate that a Network Application is able to retrieve indicative information about the UE RSSI subtracted from the respective radio node transmitted (path loss)
+      ftp_base_location: tests/nef_ue_path_loss_test/
+      test_filename: nef_ue_path_loss_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 1
+      def: def11.5G.5
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/Def115G5)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: ue_supi
+          description: The SUPI of the UE from which we are trying to get the path loss
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+      
+
+    nef_serving_cell_info_test:
+      id: nef_serving_cell_info_test
+      name: Acquisition of serving cell information
+      description: This test will validate that a Network Application is able to retrieve indicative information about the serving radio node (cell)
+      ftp_base_location: tests/nef_serving_cell_info_test/
+      test_filename: nef_serving_cell_info_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 7
+      axis: 1
+      def: def11.5G.6
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/Def115G6)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: ue_supi
+          description: The SUPI of the UE from which we are trying to get the serving cell
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+
+
+    nef_qos_subscription_test:
+      id: nef_qos_subscription_test
+      name: Acquisition of QoS sustainability
+      description: This test will validate that a Network Application is able to subscribe and eventually retrieve information about a QoS compromised event
+      ftp_base_location: tests/nef_qos_subscription_test/
+      test_filename: nef_qos_subscription_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 7
+      axis: 1
+      def: def11.5G.7
+      test_conditions: [1,4]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/Def115G7)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: monitoring_payload
+          description: The Monitoring Payload to be submitted
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+
+
+    ############################################################################
+    ##                                                                        ##
+    ##                   PERFORMANCE AND SCALABILITY TESTS                    ##
+    ##                                                                        ##
+    ############################################################################
+
+    e2e_single_ue_latency_and_throughput_test:
+      id: e2e_single_ue_latency_and_throughput_test
+      name: E2E download/upload Internet Protocol (IP) throughput & latency performance, single UE
+      description: Verify if the Network Application does comply with the minimal download/ upload IP throughput and latency performance required for proper operation with single UE in E2E deployment.
+      ftp_base_location: tests/e2e_single_ue_latency_and_throughput_test/
+      test_filename: e2e_single_ue_latency_and_throughput_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 8
+      axis: 3
+      def: def14.Perf.1
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: server_mini_api_start_endpoint_to_invoke
+          description: Start Endpoint to invoke on the Server MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: server_mini_api_stop_endpoint_to_invoke
+          description: Stop Endpoint to invoke on the Server MiniAPI(e.g. http://10.10.10.10:8000/stop/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: client_mini_api_start_endpoint_to_invoke
+          description: Start Endpoint to invoke on the Client MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: client_mini_api_results_endpoint_to_invoke
+          description: Get Results Endpoint to invoke on the Client MiniAPI(e.g. http://10.10.10.10:8000/results/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: iperf_server_ip
+          description: IP Server IP, should correspond to the server MiniAPI IP
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: min_bandwidth_mbps_threshold
+          description: Min Bandwidth Threshold
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: max_rtt_ms_threshold
+          description: Max RTT Threshold
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    e2e_multiple_ue_latency_and_throughput_test:
+      id: e2e_multiple_ue_latency_and_throughput_test
+      name: E2E download/upload IP throughput & latency performance, multiple UE
+      description: Verify if the Network Application does comply with the minimal download/ upload IP throughput and Latency performance required for proper operation with multiple UE in E2E deployment.
+      ftp_base_location: tests/e2e_multiple_ue_latency_and_throughput_test/
+      test_filename: e2e_multiple_ue_latency_and_throughput_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 8
+      axis: 3
+      def: def14.Perf.2
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: server_mini_api_start_endpoint_to_invoke
+          description: Start Endpoint to invoke on the Server MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: server_mini_api_stop_endpoint_to_invoke
+          description: Stop Endpoint to invoke on the Server MiniAPI(e.g. http://10.10.10.10:8000/stop/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: client_mini_api_start_endpoint_to_invoke
+          description: Start Endpoint to invoke on the Client MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: client_mini_api_results_endpoint_to_invoke
+          description: Get Results Endpoint to invoke on the Client MiniAPI(e.g. http://10.10.10.10:8000/results/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: iperf_server_ip
+          description: IP Server IP, should correspond to the server MiniAPI IP
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: min_bandwidth_mbps_threshold
+          description: Min Bandwidth Threshold
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: max_rtt_ms_threshold
+          description: Max RTT Threshold
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: ue_count
+          description: Number of UEs that should be used for this test
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    nef_signaling_performance_response_time_test:
+      id: nef_signaling_performance_response_time_test
+      name: NEF signalling performance - response time
+      description: Validate by measuring NEF API response time.
+      ftp_base_location: tests/nef_signaling_performance_response_time_test/
+      test_filename: nef_signaling_performance_response_time_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.5
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: host
+          description: The target's host (e.g. IP)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: endpoint
+          description: The target's endpoint (e.g. /nef-callback)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: max_response_time_threshold_secs
+          description: The threshold for the maximum responde time (secs)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    nef_signaling_performance_requests_per_second_test:
+      id: nef_signaling_performance_requests_per_second_test
+      name: NEF signalling performance - requests per second
+      description: Validate by measuring how many requests the NEF API can serve per second.
+      ftp_base_location: tests/nef_signaling_performance_requests_per_second_test/
+      test_filename: nef_signaling_performance_requests_per_second_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.6
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: host
+          description: The target's host (e.g. IP)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: endpoint
+          description: The target's endpoint (e.g. /nef-callback)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: min_threshold
+          description: The threshold for the minimum requests per second
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    nef_signaling_performance_maximum_connections_test:
+      id: nef_signaling_performance_maximum_connections_test
+      name: NEF signalling performance - maximum number of connections
+      description: Validate by measuring maximum number of simultaneous connections established to the NEF API.
+      ftp_base_location: tests/nef_signaling_performance_maximum_connections_test/
+      test_filename: nef_signaling_performance_maximum_connections_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.7
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Start Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf7)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: mini_api_endpoint_to_invoke_cleanup
+          description: Stop Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/stop/Def14Perf7)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: mini_api_endpoint_to_invoke_results
+          description: Results Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/results/Def14Perf7)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: load_test_host
+          description: The target's host (e.g. IP)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: load_test_endpoint
+          description: The target's endpoint (e.g. /nef-callback)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: connections_minimum_threshold
+          description: The threshold for the minimum connections that must be supported
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    web_performance_static_page:
+      id: web_performance_static_page
+      name: Network Application - web performance (static page)
+      description: Validate Network Application performance by extracting download/upload and net/gross speed from bytes and time.
+      ftp_base_location: tests/web_performance_static_page/
+      test_filename: web_performance_static_page.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.8
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: target
+          description: The target of this test (the location of the webpage  - http://example.org)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: web_speed_net_threshold_bps
+          description: The threshold for the minimum network throughput (bps)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+          
+
+    api_performance_response_time:
+      id: api_performance_response_time
+      name: Network Application - API performance - response time
+      description: Validate by measuring Network Application API response time.
+      ftp_base_location: tests/api_performance_response_time/
+      test_filename: api_performance_response_time.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.9
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: api_target
+          description: The target of this test (the location of the api  - http://example.org:3001/hello)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: threshold_ms
+          description: The threshold for the minimum response time (ms)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+
+    api_performance_requests_per_second:
+      id: api_performance_requests_per_second
+      name: Network Application - API performance - requests per second
+      description: Validate by measuring how many requests the Network Application API can serve per second.
+      ftp_base_location: tests/api_performance_requests_per_second/
+      test_filename: api_performance_requests_per_second.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.10
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: host
+          description: The target's host (e.g. IP)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: endpoint
+          description: The target's endpoint (e.g. /hello)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: http_method
+          description: The HTTP method that should be used in this test (e.g. POST or GET)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: min_threshold
+          description: The threshold for the minimum requests per second
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    maximum_number_of_connections_test:
+      id: maximum_number_of_connections_test
+      name: Network Application - API performance - maximum number of connections
+      description: Validate by measuring maximum number of simultaneous connections established to the Network Application.
+      ftp_base_location: tests/maximum_number_of_connections_test/
+      test_filename: maximum_number_of_connections_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.11
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: load_test_host
+          description: The target's host (e.g. IP)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: load_test_endpoint
+          description: The target's endpoint (e.g. /hello)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: load_test_http_method
+          description: The HTTP method that should be used in this test (e.g. POST or GET)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: connections_minimum_threshold
+          description: The threshold for the minimum connections that must be supported
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Start Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf11)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: mini_api_endpoint_to_invoke_cleanup
+          description: Stop Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/stop/Def14Perf11)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: mini_api_endpoint_to_invoke_results
+          description: Results Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/results/Def14Perf11)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+
+
+    network_application_performance_rtt:
+      id: network_application_performance_rtt
+      name: Network Application - IP Round-trip time (RTT) 
+      description: Validate that Network Application replies to the Internet Control Message Protocol (ICMP) requests and not exceeding the configured value.
+      ftp_base_location: tests/network_application_performance_rtt/
+      test_filename: network_application_performance_rtt.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 8
+      axis: 3
+      def: def14.Perf.12
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: target
+          description: The target of this test (the location of the webpage  - http://example.org)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: threshold_ms
+          description: The threshold for the maximum RTT(ms)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    hops_until_target_test:
+      id: hops_until_target_test
+      name: Network Application - IP Traceroute
+      description: Validate that number of hops to the target does not exceed defined value by using ICMP request/response.
+      ftp_base_location: tests/hops_until_target_test/
+      test_filename: hops_until_target_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 5
+      axis: 3
       def: def14.Perf.13
       test_conditions: []
       # End of Certification Scope
@@ -1260,23 +2078,1158 @@ tests:
 
 
 
-#############################################################################
+
+
+  ######################################################################################################################
+  ##                                                                                                                  ##
+  ##                                                                                                                  ##
+  ##                                                   UoP's TESTBED                                                  ##
+  ##                                                                                                                  ##
+  ##                                                                                                                  ##
+  ######################################################################################################################
+  testbed_uop:
+    ############################################################################
+    ##                                                                        ##
+    ##                             SECURITY TESTS                             ##
+    ##                                                                        ##
+    ############################################################################
+
+    network_application_package_integrity_test:
+      id: network_application_package_integrity_test
+      name: Network Application Package Integrity
+      description: Validate package signature, to avoid the onboarding of unauthorized or modified copies of the given Network Application
+      ftp_base_location: tests/none
+      test_filename: none.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 4
+      axis: 2
+      def: def19.Sec.1
+      test_conditions: [5]
+      # End of Certification Scope
+
+
+    network_application_uses_offered_sec_group_test:
+      id: network_application_uses_offered_sec_group_test
+      name: Network Application should use a security-group offered by testbed
+      description: Validate if the Network Application’s VNFs use a testbed available security-group
+      ftp_base_location: tests/none
+      test_filename: none.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 4
+      axis: 2
+      def: def19.Sec.2
+      test_conditions: [5]
+      # End of Certification Scope
+    
+
+    openstack_port_security:
+      id: openstack_port_security
+      name: Openstack Port Security
+      description: Validates the if all Openstack Interfaces have Port Security enabled
+      ftp_base_location: tests/openstack_port_security/
+      test_filename: testOpenstackPortSecurity.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 2
+      def: def19.Sec.3
+      test_conditions: [5]
+      # End of Certification Scope
+
+
+    ssl_audit:
+      id: ssl_audit
+      name: SSL Audit
+      description: Audits the SSL Certificates Protecting and Endpoint
+      ftp_base_location: tests/ssl_audit/
+      test_filename: test_ssl_audit.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 2
+      def: def19.Sec.4
+      test_conditions: [5]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: url
+        description: Endpoint's URL
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+
+
+    ssh_brute_force:
+      id: ssh_brute_force
+      name: SSH Brute Force
+      description: Audits VNF's SSH Server Credentials
+      ftp_base_location: tests/ssh_brute_force/
+      test_filename: testSSHBruteforce.robot 
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 4
+      axis: 2
+      def: def19.Sec.5
+      test_conditions: [5]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: username
+        description: The username of the VNF (optional)
+        mandatory: false
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      - variable_name: max_usernames_to_test
+        description: The maximum number of usernames to be tested (when the VNF's username is not provided - mandatory) 
+        mandatory: false
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: int
+      - variable_name: max_password_to_test
+        description: The maximum number of passwords to be tested (mandatory)
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: int
+      - variable_name: target_ip
+        description: The IP of the target VNF (mandatory)
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: target_port
+        description: The Port of the target VNF where the SSH Server is Running (optional, default=22)
+        mandatory: false
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: int
+
+    protected_encrypted_interfaces:
+      id: protected_encrypted_interfaces
+      name: Protected/ Encrypted Interfaces
+      description: Validate if the Network Application’s VNFs offer all functionalities though protected/encrypted access protocols
+      ftp_base_location: tests/none
+      test_filename: none.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 0
+      axis: 2
+      def: def19.Sec.6
+      test_conditions: []
+      # End of Certification Scope
+
+    open_ports:
+      id: open_ports
+      name: open ports
+      description: Validates the if a VM's open ports are the ones that should be open
+      ftp_base_location: tests/open_ports/
+      test_filename: testOpenPorts.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 6
+      axis: 2
+      def: def19.Sec.7
+      test_conditions: [5]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: host
+        description: Host of the target VNF
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: expected_open_ports
+        description: Ports that should be open (Example - 22/tcp,8090/tcp)
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+
+
+    ssh_audit:
+      id: ssh_audit
+      name: SSH Audit
+      description: Audits VNF's SSH Server
+      ftp_base_location: tests/ssh_audit/
+      test_filename: testSshAudit.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 8
+      axis: 2
+      def: def19.Sec.8
+      test_conditions: [5]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: ssh_host
+        description: Host of the target VNF
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: ssh_port
+        description: Port where the SSH Server is running (default=22)
+        mandatory: false
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      
+
+    nef_authentication_test: 
+      id: nef_authentication_test
+      name: NEF Authentication Test
+      description: Audits if a VNF is capable of authenticating in the NEF
+      ftp_base_location: tests/nef_authentication_test/
+      test_filename: nef_authentication_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 6
+      axis: 2
+      def: def19.Sec.9
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: reporting_api_ip
+        description: The IP of the NEF's Reporting API
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      - variable_name: reporting_api_port
+        description: The NEF's Reporting API Port
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: int
+      - variable_name: mini_api_endpoint_to_invoke
+        description: The MiniAPI URL that may be used to trigger this test
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
 
 
 
+    ############################################################################
+    ##                                                                        ##
+    ##                                5G TESTS                                ##
+    ##                                                                        ##
+    ############################################################################
+
+
+    mini_api_configuration: 
+      id: mini_api_configuration
+      name: Mini API Configuration Robot Script
+      description: Used to Configure the MiniAPI
+      ftp_base_location: tests/mini_api_configuration/
+      test_filename: mini_api_configuration.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 0
+      axis: 0
+      def: NoDef
+      test_conditions: []
+      # End of Certification Scope
+      test_variables:
+      - variable_name: configuration_endpoint
+        description: The MiniAPI COnfiguration endpoint
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      - variable_name: configuration_payload
+        description: The payload o be submitted to the MiniAPI
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+
+
+    authentication_with_5gs_test: 
+      id: authentication_with_5gs_test
+      name: Authentication with 5GS
+      description: This test will validate the authentication and authorization of a Network Application to use 5GS resources (NEF)
+      ftp_base_location: tests/authentication_with_5gs_test/
+      test_filename: authentication_with_5gs_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 3
+      axis: 1
+      def: def11.5G.1
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: reporting_api_ip
+        description: The IP of the NEF's Reporting API
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      - variable_name: reporting_api_port
+        description: The NEF's Reporting API Port
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: int
+      - variable_name: mini_api_endpoint_to_invoke
+        description: The MiniAPI URL that may be used to trigger this test
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+
+
+    nef_monitoring_subscription_test:
+      id: nef_monitoring_subscription_test
+      name: NEF Monitoring Subscription Test
+      description: Validates if the NApp was able to subscribe to a monitoring event in the NEF
+      ftp_base_location: tests/nef_monitoring_subscription_test/
+      test_filename: nef_monitoring_subscription_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 1
+      def: def11.5G.2
+      test_conditions: [1,2]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/4)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    nef_ue_handover_test:
+      id: nef_ue_handover_test
+      name: NEF Acquisition of UE handover event
+      description: This test will validate that a Network Application is able to subscribe and eventually retrieve information about an indicative UE handover event (servicing cell switch)
+      ftp_base_location: tests/nef_handover_test/
+      test_filename: nef_ue_handover_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 1
+      def: def11.5G.3
+      test_conditions: [1,3]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/Def115G3)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: ue_supi
+          description: The SUPI of the UE from which we are trying to get handover events
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+
+
+    nef_ue_rsrp_acquisition_test:
+      id: nef_ue_rsrp_acquisition_test
+      name: Acquisition of UE Received Signal Power (RSRP) information
+      description: This test will validate that a Network Application is able to retrieve indicative information about RSRP
+      ftp_base_location: tests/nef_ue_rsrp_acquisition_test/
+      test_filename: nef_ue_rsrp_acquisition_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 1
+      def: def11.5G.4
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/Def115G4)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: ue_supi
+          description: The SUPI of the UE from which we are trying to get the RSRP
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+    
+
+    nef_ue_path_loss_test:
+      id: nef_ue_path_loss_test
+      name: Acquisition of UE path loss 
+      description: This test will validate that a Network Application is able to retrieve indicative information about the UE RSSI subtracted from the respective radio node transmitted (path loss)
+      ftp_base_location: tests/nef_ue_path_loss_test/
+      test_filename: nef_ue_path_loss_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 1
+      def: def11.5G.5
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/Def115G5)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: ue_supi
+          description: The SUPI of the UE from which we are trying to get the path loss
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+      
+
+    nef_serving_cell_info_test:
+      id: nef_serving_cell_info_test
+      name: Acquisition of serving cell information
+      description: This test will validate that a Network Application is able to retrieve indicative information about the serving radio node (cell)
+      ftp_base_location: tests/nef_serving_cell_info_test/
+      test_filename: nef_serving_cell_info_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 7
+      axis: 1
+      def: def11.5G.6
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/Def115G6)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: ue_supi
+          description: The SUPI of the UE from which we are trying to get the serving cell
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+
+
+    nef_qos_subscription_test:
+      id: nef_qos_subscription_test
+      name: Acquisition of QoS sustainability
+      description: This test will validate that a Network Application is able to subscribe and eventually retrieve information about a QoS compromised event
+      ftp_base_location: tests/nef_qos_subscription_test/
+      test_filename: nef_qos_subscription_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 7
+      axis: 1
+      def: def11.5G.7
+      test_conditions: [1,4]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Endpoint to invoke on the MiniAPI, which will trigger the subscription to a monitoring event in the NEF (e.g. http://10.10.10.10:8000/start/Def115G7)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: monitoring_payload
+          description: The Monitoring Payload to be submitted
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+
+
+    ############################################################################
+    ##                                                                        ##
+    ##                   PERFORMANCE AND SCALABILITY TESTS                    ##
+    ##                                                                        ##
+    ############################################################################
+
+    e2e_single_ue_latency_and_throughput_test:
+      id: e2e_single_ue_latency_and_throughput_test
+      name: E2E download/upload Internet Protocol (IP) throughput & latency performance, single UE
+      description: Verify if the Network Application does comply with the minimal download/ upload IP throughput and latency performance required for proper operation with single UE in E2E deployment.
+      ftp_base_location: tests/e2e_single_ue_latency_and_throughput_test/
+      test_filename: e2e_single_ue_latency_and_throughput_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 8
+      axis: 3
+      def: def14.Perf.1
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: server_mini_api_start_endpoint_to_invoke
+          description: Start Endpoint to invoke on the Server MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: server_mini_api_stop_endpoint_to_invoke
+          description: Stop Endpoint to invoke on the Server MiniAPI(e.g. http://10.10.10.10:8000/stop/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: client_mini_api_start_endpoint_to_invoke
+          description: Start Endpoint to invoke on the Client MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: client_mini_api_results_endpoint_to_invoke
+          description: Get Results Endpoint to invoke on the Client MiniAPI(e.g. http://10.10.10.10:8000/results/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: iperf_server_ip
+          description: IP Server IP, should correspond to the server MiniAPI IP
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: min_bandwidth_mbps_threshold
+          description: Min Bandwidth Threshold
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: max_rtt_ms_threshold
+          description: Max RTT Threshold
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    e2e_multiple_ue_latency_and_throughput_test:
+      id: e2e_multiple_ue_latency_and_throughput_test
+      name: E2E download/upload IP throughput & latency performance, multiple UE
+      description: Verify if the Network Application does comply with the minimal download/ upload IP throughput and Latency performance required for proper operation with multiple UE in E2E deployment.
+      ftp_base_location: tests/e2e_multiple_ue_latency_and_throughput_test/
+      test_filename: e2e_multiple_ue_latency_and_throughput_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 8
+      axis: 3
+      def: def14.Perf.2
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: server_mini_api_start_endpoint_to_invoke
+          description: Start Endpoint to invoke on the Server MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: server_mini_api_stop_endpoint_to_invoke
+          description: Stop Endpoint to invoke on the Server MiniAPI(e.g. http://10.10.10.10:8000/stop/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: client_mini_api_start_endpoint_to_invoke
+          description: Start Endpoint to invoke on the Client MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: client_mini_api_results_endpoint_to_invoke
+          description: Get Results Endpoint to invoke on the Client MiniAPI(e.g. http://10.10.10.10:8000/results/Def14Perf1)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: iperf_server_ip
+          description: IP Server IP, should correspond to the server MiniAPI IP
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: min_bandwidth_mbps_threshold
+          description: Min Bandwidth Threshold
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: max_rtt_ms_threshold
+          description: Max RTT Threshold
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: ue_count
+          description: Number of UEs that should be used for this test
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    nef_signaling_performance_response_time_test:
+      id: nef_signaling_performance_response_time_test
+      name: NEF signalling performance - response time
+      description: Validate by measuring NEF API response time.
+      ftp_base_location: tests/nef_signaling_performance_response_time_test/
+      test_filename: nef_signaling_performance_response_time_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.5
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: host
+          description: The target's host (e.g. IP)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: endpoint
+          description: The target's endpoint (e.g. /nef-callback)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: max_response_time_threshold_secs
+          description: The threshold for the maximum responde time (secs)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    nef_signaling_performance_requests_per_second_test:
+      id: nef_signaling_performance_requests_per_second_test
+      name: NEF signalling performance - requests per second
+      description: Validate by measuring how many requests the NEF API can serve per second.
+      ftp_base_location: tests/nef_signaling_performance_requests_per_second_test/
+      test_filename: nef_signaling_performance_requests_per_second_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.6
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: host
+          description: The target's host (e.g. IP)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: endpoint
+          description: The target's endpoint (e.g. /nef-callback)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: min_threshold
+          description: The threshold for the minimum requests per second
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    nef_signaling_performance_maximum_connections_test:
+      id: nef_signaling_performance_maximum_connections_test
+      name: NEF signalling performance - maximum number of connections
+      description: Validate by measuring maximum number of simultaneous connections established to the NEF API.
+      ftp_base_location: tests/nef_signaling_performance_maximum_connections_test/
+      test_filename: nef_signaling_performance_maximum_connections_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.7
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Start Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf7)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: mini_api_endpoint_to_invoke_cleanup
+          description: Stop Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/stop/Def14Perf7)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: mini_api_endpoint_to_invoke_results
+          description: Results Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/results/Def14Perf7)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: load_test_host
+          description: The target's host (e.g. IP)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: load_test_endpoint
+          description: The target's endpoint (e.g. /nef-callback)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: connections_minimum_threshold
+          description: The threshold for the minimum connections that must be supported
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    web_performance_static_page:
+      id: web_performance_static_page
+      name: Network Application - web performance (static page)
+      description: Validate Network Application performance by extracting download/upload and net/gross speed from bytes and time.
+      ftp_base_location: tests/web_performance_static_page/
+      test_filename: web_performance_static_page.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.8
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: target
+          description: The target of this test (the location of the webpage  - http://example.org)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: web_speed_net_threshold_bps
+          description: The threshold for the minimum network throughput (bps)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+          
+
+    api_performance_response_time:
+      id: api_performance_response_time
+      name: Network Application - API performance - response time
+      description: Validate by measuring Network Application API response time.
+      ftp_base_location: tests/api_performance_response_time/
+      test_filename: api_performance_response_time.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.9
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: api_target
+          description: The target of this test (the location of the api  - http://example.org:3001/hello)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: threshold_ms
+          description: The threshold for the minimum response time (ms)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
 
 
 
+    api_performance_requests_per_second:
+      id: api_performance_requests_per_second
+      name: Network Application - API performance - requests per second
+      description: Validate by measuring how many requests the Network Application API can serve per second.
+      ftp_base_location: tests/api_performance_requests_per_second/
+      test_filename: api_performance_requests_per_second.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.10
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: host
+          description: The target's host (e.g. IP)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: endpoint
+          description: The target's endpoint (e.g. /hello)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: http_method
+          description: The HTTP method that should be used in this test (e.g. POST or GET)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: min_threshold
+          description: The threshold for the minimum requests per second
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    maximum_number_of_connections_test:
+      id: maximum_number_of_connections_test
+      name: Network Application - API performance - maximum number of connections
+      description: Validate by measuring maximum number of simultaneous connections established to the Network Application.
+      ftp_base_location: tests/maximum_number_of_connections_test/
+      test_filename: maximum_number_of_connections_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 3
+      def: def14.Perf.11
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: load_test_host
+          description: The target's host (e.g. IP)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: load_test_endpoint
+          description: The target's endpoint (e.g. /hello)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: load_test_http_method
+          description: The HTTP method that should be used in this test (e.g. POST or GET)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: connections_minimum_threshold
+          description: The threshold for the minimum connections that must be supported
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Start Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf11)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: mini_api_endpoint_to_invoke_cleanup
+          description: Stop Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/stop/Def14Perf11)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: mini_api_endpoint_to_invoke_results
+          description: Results Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/results/Def14Perf11)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+
+
+    network_application_performance_rtt:
+      id: network_application_performance_rtt
+      name: Network Application - IP Round-trip time (RTT) 
+      description: Validate that Network Application replies to the Internet Control Message Protocol (ICMP) requests and not exceeding the configured value.
+      ftp_base_location: tests/network_application_performance_rtt/
+      test_filename: network_application_performance_rtt.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 8
+      axis: 3
+      def: def14.Perf.12
+      test_conditions: [7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: target
+          description: The target of this test (the location of the webpage  - http://example.org)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: threshold_ms
+          description: The threshold for the maximum RTT(ms)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+
+
+    hops_until_target_test:
+      id: hops_until_target_test
+      name: Network Application - IP Traceroute
+      description: Validate that number of hops to the target does not exceed defined value by using ICMP request/response.
+      ftp_base_location: tests/hops_until_target_test/
+      test_filename: hops_until_target_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: true
+      weight: 5
+      axis: 3
+      def: def14.Perf.13
+      test_conditions: []
+      # End of Certification Scope
+      test_variables:
+        - variable_name: target
+          description: The target of this test (an IP / domain)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: threshold
+          description: The threshold for the maximum number of hops
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
+        - variable_name: mini_api_endpoint_to_invoke
+          description: Start Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/start/Def14Perf13)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: mini_api_endpoint_to_invoke_results
+          description: Results Endpoint to invoke on the MiniAPI(e.g. http://10.10.10.10:8000/results/Def14Perf13)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
 
 
 
+    ############################################################################
+    ##                                                                        ##
+    ##                    AVAILABILITY AND CONTINUITY TESTS                   ##
+    ##                                                                        ##
+    ############################################################################
+
+    availability_and_continuity_bandwidth:
+      id: availability_and_continuity_bandwidth
+      name: Network Application continues its proper functioning after restricted bandwidth scenario
+      description: A network application must rely on Server - Client concept and be container-based (UoPatras (UoP) testbed). The server-side component is deployed in a separate cluster than the client-side. Connectivity among them is achieved via 5G. After some time, a bandwidth (BW) restriction is enforced at the client-side host for a specified amount of time.
+      ftp_base_location: tests/availability_and_continuity_bandwidth/
+      test_filename: availability_and_continuity_bandwidth.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      def: def12.AvailCont.1
+      test_conditions: [6,7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: NEFURL
+          description: URL of the NEF
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+
+    availability_and_continuity_latency:
+      id: availability_and_continuity_latency
+      name: Network Application continues its proper functioning after an introduced delay scenario
+      description: A network application must rely on Server - Client concept and be container-based (UoP testbed). The server-side component is deployed in a separate cluster than the client-side. Connectivity among them is achieved via 5G. After some time, specific delay is enforced at the client-side host for a specified amount of time. 
+      ftp_base_location: tests/availability_and_continuity_latency/
+      test_filename: availability_and_continuity_latency.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      def: def12.AvailCont.2
+      test_conditions: [6,7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: NEFURL
+          description: URL of the NEF
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+
+    availability_and_continuity_packet_loss:
+      id: availability_and_continuity_packet_loss
+      name: Network Application continues its proper functioning after an introduced packet loss scenario
+      description: A network application must rely on Server - Client concept and be container-based (UoP testbed). The server-side component is deployed in a separate cluster than the client-side. Connectivity among them is achieved via 5G. After some time, specific packet loss percentage is enforced at the client-side host for a specified amount of time. 
+      ftp_base_location: tests/availability_and_continuity_packet_loss/
+      test_filename: availability_and_continuity_packet_loss.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      def: def12.AvailCont.3
+      test_conditions: [6,7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: NEFURL
+          description: URL of the NEF
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+
+    availability_and_continuity_packet_corruption:
+      id: availability_and_continuity_packet_corruption
+      name: Network Application continues its proper functioning after an introduced packet corruption scenario
+      description: A network application must rely on Server - Client concept and be container-based (UoP testbed). The server-side component is deployed in a separate cluster than the client-side. Connectivity among them is achieved via 5G. After some time, specific packet error rate percentage is enforced at the client-side host for a specified amount of time. 
+      ftp_base_location: tests/availability_and_continuity_packet_corruption/
+      test_filename: availability_and_continuity_packet_corruption.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      def: def12.AvailCont.4
+      test_conditions: [6,7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: NEFURL
+          description: URL of the NEF
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
 
 
-
-
-
-
-
+    availability_and_continuity_communication_loss:
+      id: availability_and_continuity_communication_loss
+      name: Network Application continues its proper functioning after an introduced total disruption of communication scenario
+      description: A network application must rely on Server - Client concept and be container-based (UoP testbed). The server-side component is deployed in a separate cluster than the client-side. Connectivity among them is achieved via 5G. After some time, communication is totally disrupted between the client - server for a specified amount of time. 
+      ftp_base_location: tests/availability_and_continuity_communication_loss/
+      test_filename: availability_and_continuity_communication_loss.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 4
+      def: def12.AvailCont.5
+      test_conditions: [6,7]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: NEFURL
+          description: URL of the NEF
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
 
 
 
@@ -1342,7 +3295,7 @@ tests:
 #      # Certification Scope
 #      mandatory: false
 #      weight: 3
-#      axis: 4
+#      axis: 3
 #      # End of Certification Scope
 #    
 #    #####################################################
@@ -1359,7 +3312,7 @@ tests:
 #      # Certification Scope
 #      mandatory: true
 #      weight: 5
-#      axis: 4
+#      axis: 3
 #      def: def14.Perf.9
 #      test_conditions: [7]
 #      # End of Certification Scope
@@ -1387,7 +3340,7 @@ tests:
 #      # Certification Scope
 #      mandatory: false
 #      weight: 3
-#      axis: 4
+#      axis: 3
 #      def: def14.Perf.8
 #      test_conditions: [7]
 #      # End of Certification Scope
@@ -1415,7 +3368,7 @@ tests:
 #      # Certification Scope
 #      mandatory: true
 #      weight: 5
-#      axis: 4
+#      axis: 3
 #      def: def14.Perf.12
 #      test_conditions: [7]
 #      # End of Certification Scope
@@ -1632,909 +3585,909 @@ tests:
 #          type: int
 
 
-################################################################
-##                                                            ##
-##                     Bristol's Testbed                      ##
-##                                                            ##
-################################################################
-
-  testbed_uob:
-    bandwidth:
-      id: bandwidth
-      name: bandwidth
-      description: Tests the bandwidth between to VNFs. The results are in bits/sec
-      ftp_base_location: tests/bandwidth/
-      test_filename: testBandwidth.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: def14.Perf.1
-      test_conditions: [7]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the bandwidth
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Threshold in mbits per second
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    bandwidth2:
-      id: bandwidth2
-      name: bandwidth2
-      description: Tests the bandwidth between to VNFs. The results are in bits/sec
-      ftp_base_location: tests/bandwidth2/
-      test_filename: testBandwidth2.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: def14.Perf.1
-      test_conditions: [7]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the bandwidth
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Threshold in mbits per second
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    transmission_speed:
-      id: transmission_speed
-      name: transmission speed
-      description: Tests the transmission speed between to VNFs. The results are in ms
-      ftp_base_location: tests/transmission_speed/
-      test_filename: testTransmissionSpeed.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: def14.Perf.12 
-      test_conditions: [7]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the transmission speed
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Threshold in milliseconds
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    packet_loss:
-      id: packet_loss
-      name: packet loss
-      description: Tests the packet loss speed between to VNFs. The results are given in %
-      ftp_base_location: tests/packet_loss/
-      test_filename: testPacketLoss.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: None
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the packet loss ratio
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Ratio of packets lost
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    open_ports:
-      id: open_ports
-      name: open ports
-      description: Validates the if a VM's open ports are the ones that should be opened
-      ftp_base_location: tests/open_ports/
-      test_filename: testOpenPorts.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: true
-      weight: 7
-      axis: 2
-      def: def19.Sec.7
-      test_conditions: [5]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host
-        description: Host of the target VNF
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: expected_open_ports
-        description: Ports that should be open (Example - 22/tcp,8090/tcp)
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-    
-    openstack_port_security:
-      id: openstack_port_security
-      name: Openstack Port Security
-      description: Validates the if all Openstack Interfaces have Port Security enabled
-      ftp_base_location: tests/openstack_port_security/
-      test_filename: testOpenstackPortSecurity.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 3
-      axis: 2
-      def: def19.Sec.3
-      test_conditions: [5]
-      # End of Certification Scope
-
-    ssh_audit:
-      id: ssh_audit
-      name: SSH Audit
-      description: Audits VNF's SSH Server
-      ftp_base_location: tests/ssh_audit/
-      test_filename: testSshAudit.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: true
-      weight: 7
-      axis: 2
-      def: def19.Sec.8
-      test_conditions: [5]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: ssh_host
-        description: Host of the target VNF
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: ssh_port
-        description: Port where the SSH Server is running (default=22)
-        mandatory: false
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-    
-    ssl_audit:
-      id: ssl_audit
-      name: SSL Audit
-      description: Audits the SSL Certificates Protecting and Endpoint
-      ftp_base_location: tests/ssl_audit/
-      test_filename: test_ssl_audit.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: true
-      weight: 7
-      axis: 2
-      def: def19.Sec.4
-      test_conditions: [5]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: url
-        description: Endpoint's URL
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-    
-    ssh_brute_force:
-      id: ssh_brute_force
-      name: SSH Brute Force
-      description: Audits VNF's SSH Server Credentials
-      ftp_base_location: tests/ssh_brute_force/
-      test_filename: testSSHBruteforce.robot 
-      test_type: Robot
-      # Certification Scope
-      mandatory: true
-      weight: 7
-      axis: 2
-      def: def19.Sec.5
-      test_conditions: [5]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: username
-        description: The username of the VNF (optional)
-        mandatory: false
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: max_usernames_to_test
-        description: The maximum number of usernames to be tested (when the VNF's username is not provided - mandatory) 
-        mandatory: false
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: int
-      - variable_name: max_password_to_test
-        description: The maximum number of passwords to be tested (mandatory)
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: int
-      - variable_name: target_ip
-        description: The IP of the target VNF (mandatory)
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: target_port
-        description: The Port of the target VNF where the SSH Server is Running (optional, default=22)
-        mandatory: false
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: int
-
-    nef_authentication:
-      id: nef_authentication
-      name: NEF Authentication Test
-      description: Audits if a VNF is capable of authenticating in the NEF
-      ftp_base_location: tests/nef_authentication/
-      test_filename: testNEFAuthentication.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 8
-      axis: 1
-      def: def11.5G.1
-      test_conditions: [1]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: vnf_base_api_location
-        description: The URL of the VNF's NEF Testing API 
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: nef_reporting_base_api_location
-        description: The URL of the NEF's Reporting API
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: nef_ip
-        description: NEF's IP
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: nef_port
-        description: The NEF's Main API Port
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: int
-      - variable_name: nef_username
-        description: The NEF's Main API Login Username
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: nef_password
-        description: The NEF's Main API Login Password
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-
-################################################################
-##                                                            ##
-##                      OdinS's Testbed                       ##
-##                                                            ##
-################################################################
-
-  testbed_odins:
-    bandwidth:
-      id: bandwidth
-      name: bandwidth
-      description: Tests the bandwidth between to VNFs. The results are in bits/sec
-      ftp_base_location: tests/bandwidth/
-      test_filename: testBandwidth.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: def14.Perf.1
-      test_conditions: [7]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the bandwidth
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Threshold in mbits per second
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    bandwidth2:
-      id: bandwidth2
-      name: bandwidth2
-      description: Tests the bandwidth between to VNFs. The results are in bits/sec
-      ftp_base_location: tests/bandwidth2/
-      test_filename: testBandwidth2.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: def14.Perf.1
-      test_conditions: [7]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the bandwidth
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Threshold in mbits per second
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    transmission_speed:
-      id: transmission_speed
-      name: transmission speed
-      description: Tests the transmission speed between to VNFs. The results are in ms
-      ftp_base_location: tests/transmission_speed/
-      test_filename: testTransmissionSpeed.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: def14.Perf.12 
-      test_conditions: [7]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the transmission speed
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Threshold in milliseconds
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    packet_loss:
-      id: packet_loss
-      name: packet loss
-      description: Tests the packet loss speed between to VNFs. The results are given in %
-      ftp_base_location: tests/packet_loss/
-      test_filename: testPacketLoss.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 5
-      axis: 4
-      def: None
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host1_ip
-        description: IP of Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host1_username
-        description: Login username for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host1_password
-        description: Login password for Host/VNF 1
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_ip
-        description: IP of Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: host2_username
-        description: Login username for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: host2_password
-        description: Login password for Host/VNF 2
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: comparator
-        description: Comparator to be used while validating the packet loss ratio
-        mandatory: true
-        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: threshold
-        description: Ratio of packets lost
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: float
-
-    open_ports:
-      id: open_ports
-      name: open ports
-      description: Validates the if a VM's open ports are the ones that should be opened
-      ftp_base_location: tests/open_ports/
-      test_filename: testOpenPorts.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: true
-      weight: 7
-      axis: 2
-      def: def19.Sec.7
-      test_conditions: [5]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: host
-        description: Host of the target VNF
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: expected_open_ports
-        description: Ports that should be open (Example - 22/tcp,8090/tcp)
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-    
-    openstack_port_security:
-      id: openstack_port_security
-      name: Openstack Port Security
-      description: Validates the if all Openstack Interfaces have Port Security enabled
-      ftp_base_location: tests/openstack_port_security/
-      test_filename: testOpenstackPortSecurity.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 3
-      axis: 2
-      def: def19.Sec.3
-      test_conditions: [5]
-      # End of Certification Scope
-
-    ssh_audit:
-      id: ssh_audit
-      name: SSH Audit
-      description: Audits VNF's SSH Server
-      ftp_base_location: tests/ssh_audit/
-      test_filename: testSshAudit.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: true
-      weight: 7
-      axis: 2
-      def: def19.Sec.8
-      test_conditions: [5]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: ssh_host
-        description: Host of the target VNF
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: ssh_port
-        description: Port where the SSH Server is running (default=22)
-        mandatory: false
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-    
-    ssl_audit:
-      id: ssl_audit
-      name: SSL Audit
-      description: Audits the SSL Certificates Protecting and Endpoint
-      ftp_base_location: tests/ssl_audit/
-      test_filename: test_ssl_audit.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: true
-      weight: 7
-      axis: 2
-      def: def19.Sec.4
-      test_conditions: [5]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: url
-        description: Endpoint's URL
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-    
-    ssh_brute_force:
-      id: ssh_brute_force
-      name: SSH Brute Force
-      description: Audits VNF's SSH Server Credentials
-      ftp_base_location: tests/ssh_brute_force/
-      test_filename: testSSHBruteforce.robot 
-      test_type: Robot
-      # Certification Scope
-      mandatory: true
-      weight: 7
-      axis: 2
-      def: def19.Sec.5
-      test_conditions: [5]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: username
-        description: The username of the VNF (optional)
-        mandatory: false
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: max_usernames_to_test
-        description: The maximum number of usernames to be tested (when the VNF's username is not provided - mandatory) 
-        mandatory: false
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: int
-      - variable_name: max_password_to_test
-        description: The maximum number of passwords to be tested (mandatory)
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: int
-      - variable_name: target_ip
-        description: The IP of the target VNF (mandatory)
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: target_port
-        description: The Port of the target VNF where the SSH Server is Running (optional, default=22)
-        mandatory: false
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: int
-
-    nef_authentication:
-      id: nef_authentication
-      name: NEF Authentication Test
-      description: Audits if a VNF is capable of authenticating in the NEF
-      ftp_base_location: tests/nef_authentication/
-      test_filename: testNEFAuthentication.robot
-      test_type: Robot
-      # Certification Scope
-      mandatory: false
-      weight: 8
-      axis: 1
-      def: def11.5G.1
-      test_conditions: [1]
-      # End of Certification Scope
-      test_variables:
-      - variable_name: vnf_base_api_location
-        description: The URL of the VNF's NEF Testing API 
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: nef_reporting_base_api_location
-        description: The URL of the NEF's Reporting API
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: nef_ip
-        description: NEF's IP
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: True
-        type: str
-      - variable_name: nef_port
-        description: The NEF's Main API Port
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: int
-      - variable_name: nef_username
-        description: The NEF's Main API Login Username
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
-      - variable_name: nef_password
-        description: The NEF's Main API Login Password
-        mandatory: true
-        possible_options: []
-        can_be_injected_by_the_nods: False
-        type: str
+#################################################################
+###                                                            ##
+###                     Bristol's Testbed                      ##
+###                                                            ##
+#################################################################
+#
+#  testbed_uob:
+#    bandwidth:
+#      id: bandwidth
+#      name: bandwidth
+#      description: Tests the bandwidth between to VNFs. The results are in bits/sec
+#      ftp_base_location: tests/bandwidth/
+#      test_filename: testBandwidth.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 5
+#      axis: 3
+#      def: def14.Perf.1
+#      test_conditions: [7]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: host1_ip
+#        description: IP of Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host1_username
+#        description: Login username for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host1_password
+#        description: Login password for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_ip
+#        description: IP of Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host2_username
+#        description: Login username for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_password
+#        description: Login password for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: comparator
+#        description: Comparator to be used while validating the bandwidth
+#        mandatory: true
+#        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: threshold
+#        description: Threshold in mbits per second
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: float
+#
+#    bandwidth2:
+#      id: bandwidth2
+#      name: bandwidth2
+#      description: Tests the bandwidth between to VNFs. The results are in bits/sec
+#      ftp_base_location: tests/bandwidth2/
+#      test_filename: testBandwidth2.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 5
+#      axis: 3
+#      def: def14.Perf.1
+#      test_conditions: [7]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: host1_ip
+#        description: IP of Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host1_username
+#        description: Login username for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host1_password
+#        description: Login password for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_ip
+#        description: IP of Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host2_username
+#        description: Login username for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_password
+#        description: Login password for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: comparator
+#        description: Comparator to be used while validating the bandwidth
+#        mandatory: true
+#        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: threshold
+#        description: Threshold in mbits per second
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: float
+#
+#    transmission_speed:
+#      id: transmission_speed
+#      name: transmission speed
+#      description: Tests the transmission speed between to VNFs. The results are in ms
+#      ftp_base_location: tests/transmission_speed/
+#      test_filename: testTransmissionSpeed.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 5
+#      axis: 3
+#      def: def14.Perf.12 
+#      test_conditions: [7]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: host1_ip
+#        description: IP of Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host1_username
+#        description: Login username for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host1_password
+#        description: Login password for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_ip
+#        description: IP of Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host2_username
+#        description: Login username for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_password
+#        description: Login password for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: comparator
+#        description: Comparator to be used while validating the transmission speed
+#        mandatory: true
+#        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: threshold
+#        description: Threshold in milliseconds
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: float
+#
+#    packet_loss:
+#      id: packet_loss
+#      name: packet loss
+#      description: Tests the packet loss speed between to VNFs. The results are given in %
+#      ftp_base_location: tests/packet_loss/
+#      test_filename: testPacketLoss.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 5
+#      axis: 3
+#      def: None
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: host1_ip
+#        description: IP of Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host1_username
+#        description: Login username for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host1_password
+#        description: Login password for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_ip
+#        description: IP of Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host2_username
+#        description: Login username for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_password
+#        description: Login password for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: comparator
+#        description: Comparator to be used while validating the packet loss ratio
+#        mandatory: true
+#        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: threshold
+#        description: Ratio of packets lost
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: float
+#
+#    open_ports:
+#      id: open_ports
+#      name: open ports
+#      description: Validates the if a VM's open ports are the ones that should be opened
+#      ftp_base_location: tests/open_ports/
+#      test_filename: testOpenPorts.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: true
+#      weight: 7
+#      axis: 2
+#      def: def19.Sec.7
+#      test_conditions: [5]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: host
+#        description: Host of the target VNF
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: expected_open_ports
+#        description: Ports that should be open (Example - 22/tcp,8090/tcp)
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#    
+#    openstack_port_security:
+#      id: openstack_port_security
+#      name: Openstack Port Security
+#      description: Validates the if all Openstack Interfaces have Port Security enabled
+#      ftp_base_location: tests/openstack_port_security/
+#      test_filename: testOpenstackPortSecurity.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 3
+#      axis: 2
+#      def: def19.Sec.3
+#      test_conditions: [5]
+#      # End of Certification Scope
+#
+#    ssh_audit:
+#      id: ssh_audit
+#      name: SSH Audit
+#      description: Audits VNF's SSH Server
+#      ftp_base_location: tests/ssh_audit/
+#      test_filename: testSshAudit.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: true
+#      weight: 7
+#      axis: 2
+#      def: def19.Sec.8
+#      test_conditions: [5]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: ssh_host
+#        description: Host of the target VNF
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: ssh_port
+#        description: Port where the SSH Server is running (default=22)
+#        mandatory: false
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#    
+#    ssl_audit:
+#      id: ssl_audit
+#      name: SSL Audit
+#      description: Audits the SSL Certificates Protecting and Endpoint
+#      ftp_base_location: tests/ssl_audit/
+#      test_filename: test_ssl_audit.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: true
+#      weight: 7
+#      axis: 2
+#      def: def19.Sec.4
+#      test_conditions: [5]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: url
+#        description: Endpoint's URL
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#    
+#    ssh_brute_force:
+#      id: ssh_brute_force
+#      name: SSH Brute Force
+#      description: Audits VNF's SSH Server Credentials
+#      ftp_base_location: tests/ssh_brute_force/
+#      test_filename: testSSHBruteforce.robot 
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: true
+#      weight: 7
+#      axis: 2
+#      def: def19.Sec.5
+#      test_conditions: [5]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: username
+#        description: The username of the VNF (optional)
+#        mandatory: false
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: max_usernames_to_test
+#        description: The maximum number of usernames to be tested (when the VNF's username is not provided - mandatory) 
+#        mandatory: false
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: int
+#      - variable_name: max_password_to_test
+#        description: The maximum number of passwords to be tested (mandatory)
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: int
+#      - variable_name: target_ip
+#        description: The IP of the target VNF (mandatory)
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: target_port
+#        description: The Port of the target VNF where the SSH Server is Running (optional, default=22)
+#        mandatory: false
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: int
+#
+#    nef_authentication:
+#      id: nef_authentication
+#      name: NEF Authentication Test
+#      description: Audits if a VNF is capable of authenticating in the NEF
+#      ftp_base_location: tests/nef_authentication/
+#      test_filename: testNEFAuthentication.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 8
+#      axis: 1
+#      def: def11.5G.1
+#      test_conditions: [1]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: vnf_base_api_location
+#        description: The URL of the VNF's NEF Testing API 
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: nef_reporting_base_api_location
+#        description: The URL of the NEF's Reporting API
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: nef_ip
+#        description: NEF's IP
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: nef_port
+#        description: The NEF's Main API Port
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: int
+#      - variable_name: nef_username
+#        description: The NEF's Main API Login Username
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: nef_password
+#        description: The NEF's Main API Login Password
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#
+#################################################################
+###                                                            ##
+###                      OdinS's Testbed                       ##
+###                                                            ##
+#################################################################
+#
+#  testbed_odins:
+#    bandwidth:
+#      id: bandwidth
+#      name: bandwidth
+#      description: Tests the bandwidth between to VNFs. The results are in bits/sec
+#      ftp_base_location: tests/bandwidth/
+#      test_filename: testBandwidth.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 5
+#      axis: 3
+#      def: def14.Perf.1
+#      test_conditions: [7]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: host1_ip
+#        description: IP of Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host1_username
+#        description: Login username for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host1_password
+#        description: Login password for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_ip
+#        description: IP of Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host2_username
+#        description: Login username for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_password
+#        description: Login password for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: comparator
+#        description: Comparator to be used while validating the bandwidth
+#        mandatory: true
+#        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: threshold
+#        description: Threshold in mbits per second
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: float
+#
+#    bandwidth2:
+#      id: bandwidth2
+#      name: bandwidth2
+#      description: Tests the bandwidth between to VNFs. The results are in bits/sec
+#      ftp_base_location: tests/bandwidth2/
+#      test_filename: testBandwidth2.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 5
+#      axis: 3
+#      def: def14.Perf.1
+#      test_conditions: [7]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: host1_ip
+#        description: IP of Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host1_username
+#        description: Login username for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host1_password
+#        description: Login password for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_ip
+#        description: IP of Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host2_username
+#        description: Login username for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_password
+#        description: Login password for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: comparator
+#        description: Comparator to be used while validating the bandwidth
+#        mandatory: true
+#        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: threshold
+#        description: Threshold in mbits per second
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: float
+#
+#    transmission_speed:
+#      id: transmission_speed
+#      name: transmission speed
+#      description: Tests the transmission speed between to VNFs. The results are in ms
+#      ftp_base_location: tests/transmission_speed/
+#      test_filename: testTransmissionSpeed.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 5
+#      axis: 3
+#      def: def14.Perf.12 
+#      test_conditions: [7]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: host1_ip
+#        description: IP of Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host1_username
+#        description: Login username for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host1_password
+#        description: Login password for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_ip
+#        description: IP of Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host2_username
+#        description: Login username for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_password
+#        description: Login password for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: comparator
+#        description: Comparator to be used while validating the transmission speed
+#        mandatory: true
+#        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: threshold
+#        description: Threshold in milliseconds
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: float
+#
+#    packet_loss:
+#      id: packet_loss
+#      name: packet loss
+#      description: Tests the packet loss speed between to VNFs. The results are given in %
+#      ftp_base_location: tests/packet_loss/
+#      test_filename: testPacketLoss.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 5
+#      axis: 3
+#      def: None
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: host1_ip
+#        description: IP of Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host1_username
+#        description: Login username for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host1_password
+#        description: Login password for Host/VNF 1
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_ip
+#        description: IP of Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: host2_username
+#        description: Login username for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: host2_password
+#        description: Login password for Host/VNF 2
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: comparator
+#        description: Comparator to be used while validating the packet loss ratio
+#        mandatory: true
+#        possible_options: ['more_than', 'more_or_equal_than', 'less_than', 'less_or_equal_than']
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: threshold
+#        description: Ratio of packets lost
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: float
+#
+#    open_ports:
+#      id: open_ports
+#      name: open ports
+#      description: Validates the if a VM's open ports are the ones that should be opened
+#      ftp_base_location: tests/open_ports/
+#      test_filename: testOpenPorts.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: true
+#      weight: 7
+#      axis: 2
+#      def: def19.Sec.7
+#      test_conditions: [5]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: host
+#        description: Host of the target VNF
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: expected_open_ports
+#        description: Ports that should be open (Example - 22/tcp,8090/tcp)
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#    
+#    openstack_port_security:
+#      id: openstack_port_security
+#      name: Openstack Port Security
+#      description: Validates the if all Openstack Interfaces have Port Security enabled
+#      ftp_base_location: tests/openstack_port_security/
+#      test_filename: testOpenstackPortSecurity.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 3
+#      axis: 2
+#      def: def19.Sec.3
+#      test_conditions: [5]
+#      # End of Certification Scope
+#
+#    ssh_audit:
+#      id: ssh_audit
+#      name: SSH Audit
+#      description: Audits VNF's SSH Server
+#      ftp_base_location: tests/ssh_audit/
+#      test_filename: testSshAudit.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: true
+#      weight: 7
+#      axis: 2
+#      def: def19.Sec.8
+#      test_conditions: [5]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: ssh_host
+#        description: Host of the target VNF
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: ssh_port
+#        description: Port where the SSH Server is running (default=22)
+#        mandatory: false
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#    
+#    ssl_audit:
+#      id: ssl_audit
+#      name: SSL Audit
+#      description: Audits the SSL Certificates Protecting and Endpoint
+#      ftp_base_location: tests/ssl_audit/
+#      test_filename: test_ssl_audit.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: true
+#      weight: 7
+#      axis: 2
+#      def: def19.Sec.4
+#      test_conditions: [5]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: url
+#        description: Endpoint's URL
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#    
+#    ssh_brute_force:
+#      id: ssh_brute_force
+#      name: SSH Brute Force
+#      description: Audits VNF's SSH Server Credentials
+#      ftp_base_location: tests/ssh_brute_force/
+#      test_filename: testSSHBruteforce.robot 
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: true
+#      weight: 7
+#      axis: 2
+#      def: def19.Sec.5
+#      test_conditions: [5]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: username
+#        description: The username of the VNF (optional)
+#        mandatory: false
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: max_usernames_to_test
+#        description: The maximum number of usernames to be tested (when the VNF's username is not provided - mandatory) 
+#        mandatory: false
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: int
+#      - variable_name: max_password_to_test
+#        description: The maximum number of passwords to be tested (mandatory)
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: int
+#      - variable_name: target_ip
+#        description: The IP of the target VNF (mandatory)
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: target_port
+#        description: The Port of the target VNF where the SSH Server is Running (optional, default=22)
+#        mandatory: false
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: int
+#
+#    nef_authentication:
+#      id: nef_authentication
+#      name: NEF Authentication Test
+#      description: Audits if a VNF is capable of authenticating in the NEF
+#      ftp_base_location: tests/nef_authentication/
+#      test_filename: testNEFAuthentication.robot
+#      test_type: Robot
+#      # Certification Scope
+#      mandatory: false
+#      weight: 8
+#      axis: 1
+#      def: def11.5G.1
+#      test_conditions: [1]
+#      # End of Certification Scope
+#      test_variables:
+#      - variable_name: vnf_base_api_location
+#        description: The URL of the VNF's NEF Testing API 
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: nef_reporting_base_api_location
+#        description: The URL of the NEF's Reporting API
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: nef_ip
+#        description: NEF's IP
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: True
+#        type: str
+#      - variable_name: nef_port
+#        description: The NEF's Main API Port
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: int
+#      - variable_name: nef_username
+#        description: The NEF's Main API Login Username
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
+#      - variable_name: nef_password
+#        description: The NEF's Main API Login Password
+#        mandatory: true
+#        possible_options: []
+#        can_be_injected_by_the_nods: False
+#        type: str
 

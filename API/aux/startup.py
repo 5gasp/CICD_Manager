@@ -30,13 +30,16 @@ def load_config():
     # load config
     config = configparser.ConfigParser()
     config.read('config.ini')
-
+    print(config)
     # Test config
     try:
         # Load Variables
-        Constants.FTP_RESULTS_USER = config['FTP']['User']
-        Constants.FTP_RESULTS_PASSWORD = config['FTP']['Password']
-        Constants.FTP_RESULTS_URL = config['FTP']['Url']
+        Constants.FTP_RESULTS_USER = config['RESULTS_FTP']['User']
+        Constants.FTP_RESULTS_PASSWORD = config['RESULTS_FTP']['Password']
+        Constants.FTP_RESULTS_URL = config['RESULTS_FTP']['Url']
+        Constants.FTP_LTR_USER = config['LTR_FTP']['User']
+        Constants.FTP_LTR_PASSWORD = config['LTR_FTP']['Password']
+        Constants.FTP_LTR_URL = config['LTR_FTP']['Url']
         Constants.CI_CD_MANAGER_URL = config['CI_CD_MANAGER']['Url']
         Constants.TEST_INFO_FILEPATH = config['DESCRIPTORS_LOCATION']['Tests_Information_Descriptor_Filepath']
         Constants.TESTBED_INFO_FILEPATH = config['DESCRIPTORS_LOCATION']['Testbeds_Information_Descriptor_Filepath']
@@ -51,6 +54,19 @@ def load_config():
         Constants.NODS_USER = config['NODS']['User']
         Constants.NODS_PASSWORD = config['NODS']['Password']
         Constants.TRVD_HOST = config['TRVD']['Host']
+
+        Constants.PROMETHEUS_TARGET_UPDATE_API = config['PROMETHEUS']['TargetsUpdateAPI']
+        Constants.GRAFANA_DATASOURCE_UID = config['GRAFANA']['DatasourceUID']
+        Constants.GRAFANA_USERNAME = config['GRAFANA']['Username']
+        Constants.GRAFANA_PASSWORD = config['GRAFANA']['Password']
+        Constants.GRAFANA_IP_OR_DOMAIN = config['GRAFANA']['IPorDomain']
+        Constants.GRAFANA_PORT = config['GRAFANA']['Port']
+        Constants.DASHBOARD_UID_LENGTH = config['GRAFANA']['DashboardUIDLength']
+        Constants.KIBANA_USERNAME = config['KIBANA']['Username']
+        Constants.KIBANA_PASSWORD = config['KIBANA']['Password']
+        Constants.KIBANA_IP_OR_DOMAIN = config['KIBANA']['IPorDomain']
+        Constants.KIBANA_PORT = config['KIBANA']['Port']
+        
     except Exception as e:
         print(e)
         print("-----")

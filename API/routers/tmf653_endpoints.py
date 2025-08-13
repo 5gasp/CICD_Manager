@@ -9,6 +9,7 @@
 # generic imports
 from wsgiref import headers
 from fastapi import APIRouter
+from fastapi import BackgroundTasks
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from sql_app.database import SessionLocal
@@ -19,7 +20,7 @@ from sql_app.schemas import TMF653 as tmf653_schemas
 import test_helpers.developer_defined as dev_defined_test_helpers
 from test_helpers import test_descriptor_render
 from test_helpers import testing_artifacts as testing_artifacts_helper
-
+from background_tasks import metrics_and_logs
 import logging
 import inspect
 import sys
@@ -159,7 +160,11 @@ async def validate_test_descriptor(test_descriptor:UploadFile = File(...) , db: 
         }
     }
 )
-async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Create , db: Session = Depends(get_db)):
+async def create_service_test(
+        serviceTestParsed: tmf653_schemas.ServiceTest_Create,
+        background_tasks: BackgroundTasks,
+        db: Session = Depends(get_db),
+    ):
     logging.info(f"serviceTestParsed:{str(serviceTestParsed)}")
     # Get Service Test Characteristics
     characteristics = {}
@@ -264,4 +269,4 @@ async def create_service_test(serviceTestParsed: tmf653_schemas.ServiceTest_Crea
                 message=f"Unable to Obtain the Developer Defined Tests from NODS -{e}",
                 data=[])
     #return Utils.create_response(status_code=200, success=True, message=f"IXXXX", data=[])
-    return TestRouters.new_test(rendered_descriptor, nods_id, loaded_tests_dict, testing_artifacts_location, db)
+    return TestRouters.new_test(rendered_descriptor, nods_id, loaded_tests_dict, testing_artifacts_location, db, background_tasks)

@@ -21,6 +21,53 @@ VALIDATION_SCHEMA = {
             }
         }
     },
+'metrics_collection': {
+        'required': False,
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'job_name': {'required': True, 'type': 'string'},
+                'metrics_collection': {
+                    'required': True,
+                    'type': 'list',
+                    'schema': {
+                        'type': 'dict',
+                        'schema': {
+                            'type': {'required': True, 'type': 'string'},
+                            'collection_endpoint': {'required': True, 'type': 'string'}
+                        }
+                    }
+                },
+                'viewer': {
+                    'required': False,
+                    'type': 'dict',
+                    'schema': {
+                        'type': {'required': True, 'type': 'string'},
+                        'dashboard_src': {'required': False, 'type': 'string'},
+                        'name_for_dashboard': {'required': False, 'type': 'string'}
+                    }
+                }
+            }
+        }
+    },
+
+    # New top-level log_collection
+    'log_collection': {
+        'required': False,
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'test_agent_name': {'required': True, 'type': 'string'},
+                'type': {'required': True, 'type': 'string'},
+                'viewer': {
+                    'required': False,
+                    'type': 'string'  # or dict if you expect more fields later
+                }
+            }
+        }
+    },
     'test_phases': {
         'required': True,
         'type': 'dict',

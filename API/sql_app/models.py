@@ -193,3 +193,29 @@ class Role(Base):
 	def as_dict(self):
 		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+
+class Test_Metrics_Dashboard(Base):
+	__tablename__ = "test_metrics_dashboard"
+
+	id = Column(Integer, primary_key=True, index=True)
+	test_id = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
+	url = Column(String, nullable=False)
+	access_username = Column(String, nullable=False)
+	access_password = Column(String, nullable=False)
+
+	def as_dict(self):
+		dic =  {c.name: getattr(self, c.name) for c in self.__table__.columns}
+		return dic
+
+class Test_Logs_Dashboard(Base):
+	__tablename__ = "test_logs_dashboard"
+
+	id = Column(Integer, primary_key=True, index=True)
+	test_id = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
+	url = Column(String, nullable=False)
+	access_username = Column(String, nullable=False)
+	access_password = Column(String, nullable=False)
+
+	def as_dict(self):
+		dic =  {c.name: getattr(self, c.name) for c in self.__table__.columns}
+		return dic

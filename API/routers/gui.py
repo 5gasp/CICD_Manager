@@ -114,6 +114,37 @@ async def get_testing_process_status(test_id: int, access_token: str, db: Sessio
 
 
 @router.get(
+    "/gui/logs-and-metrics",
+    tags=["gui"],
+    summary="Get Testing Process Logs and Metrics",
+    description="Gets all the logs and metrics of the testing process.",
+)
+async def get_testing_process_metrics_and_logs(
+    test_id: int,
+    db: Session = Depends(get_db)
+):
+    try:
+        metrics_data = crud.get_metrics_dasboard(db, test_id)
+        if not metrics_data:
+            return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."]) 
+        logs_data = crud.get_logs_dasboard(db, test_id)
+        if not logs_data:
+            return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."]) 
+        
+        return Utils.create_response(
+            data={
+                "metrics": [metrics.as_dict() for metrics in metrics_data],
+                "logs": [logs.as_dict() for logs in logs_data]
+            }
+            )
+    except Exception as e:
+        logging.error(e)
+        return Utils.create_response(status_code=400, success=False, errors=["Couldn't retrieve the tests status."]) 
+
+
+
+
+@router.get(
     "/gui/test-console-log",
     tags=["gui"],
     summary="Get testing process console log",

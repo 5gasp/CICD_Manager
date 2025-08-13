@@ -11,6 +11,7 @@
 from distutils.log import error
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi import BackgroundTasks
 from pydantic import NoneIsAllowedError
 from fastapi.responses import JSONResponse, StreamingResponse, Response
 from sqlalchemy.orm import Session
@@ -42,6 +43,7 @@ sys.path.insert(0, parentdir)
 
 # custom imports
 from wrappers.jenkins.wrapper import Jenkins_Wrapper
+from background_tasks import metrics_and_logs
 from testing_descriptors_validator.test_descriptor_validator import Test_Descriptor_Validator
 import aux.constants as Constants
 import aux.utils as Utils
@@ -154,7 +156,7 @@ async def new_test(test_descriptor: UploadFile = File(...),  db: Session = Depen
     
     
 def new_test(test_descriptor_data, nods_id, developer_defined_tests, 
-             testing_artifacts_location, db):
+             testing_artifacts_location, db,background_tasks):
     
     #  validate the structure of the testing descriptor
 
@@ -182,7 +184,7 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
     if len(errors) != 0:
         logging.error(f"Error on validating test parameters - {errors}")
         return Utils.create_response(status_code=400, success=False, errors=errors, message="Error on validating test parameters")
-
+    
     # validate metrics collection information
     metrics_collection_information = Constants.METRICS_COLLECTION_INFO
     is_ok = test_descriptor_validator.validate_metrics_collection_process(
@@ -196,7 +198,6 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
         descriptor_metrics_collection = test_descriptor_data[
             "test_phases"]["setup"]["metrics_collection"]
 
-        
     # register the test in database
     logging.info(f"Will register the tests in the database...")
     netapp_id = test_descriptor_data["test_info"]["netapp_id"]
@@ -207,7 +208,25 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
         db, netapp_id, network_service_id, testbed_id, nods_id=nods_id)
     logging.info(f"All tests were registered in the database...")
     
+    if "metrics_collection" in test_descriptor_data:
+        background_tasks.add_task(
+            # Function
+            metrics_and_logs.parse_metrics_collection_info,
+            # Paramaeters
+            db,
+            test_instance.id,
+            test_descriptor_data['metrics_collection']
+        )
     
+    if "log_collection" in test_descriptor_data:
+         background_tasks.add_task(
+            # Function
+            metrics_and_logs.parse_log_collection_info,
+            # Parameters
+            db,
+            test_instance.id,
+            test_descriptor_data['log_collection']
+        )
     
     # Register Testing Artifacts
     # Todo
