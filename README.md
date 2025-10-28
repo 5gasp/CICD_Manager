@@ -17,6 +17,7 @@ Moving to the `config.ini` configuration file,
 * The `RESULTS_FTP` variables should be updated to reflect the credentials and location of the results repository
 * The `CI_CD_MANAGER` URL should point to the URL on which the CI/CD Manager is exposed
 * The `DB` variables should be configured to reflect the credentials and location of the database
+* The `NODS` variables should be configured to reflect the credentials and location of the Network Application Onboarding and Deployment Services (made available through [OpenSlice](https://osl.etsi.org/))
 * The `TRVD` host should point to the URL on which the Test Results Visualization Dashboard is exposed. This dashboard is web interface that showcases the outcomes and results of the various testing processes, and is available at [https://github.com/5gasp/CICD-VisualizationDashboard](https://github.com/5gasp/CICD-VisualizationDashboard). Instructions on how to deploy this component can be found in its repository.
 
 
@@ -40,5 +41,24 @@ After deploying these services, you will find:
 * A Kibana instance, already configured to display the logs centralized in ElasticSearch, on port 5601
 * A custom Prometheus Target Update API, to register new targets for metrics collection, on port 9091 (this API will be invoked by the CI/CD Manager)
 
+## Example Service Specification and LCM Rules
+
+As stated in 5GASP's [various deliverables](https://www.5gasp.eu/publications/deliverables.html), the deployment of the Network Applications and their supporting 5G Resources is achieved through the Network Application Onboarding and Deployment Services (NODS), made available through [OpenSlice](https://osl.etsi.org/). In OpenSlice, all these resources are defined through TMF Service Specifications, which also hold various LCM Rules employed for managing the service-comprised components. 
+
+When requesting the orchestration of a Network Application and its respective validation, we propose to follow a sequential deployment approach, where the following components are deployed sequentially:
+
+1. A Network Slice defined according GSMA's NEST
+2. A 5G UE, defined according to 3GPP specifications, which will be attached to the previous Network Slice
+3. A Testing Agent, placed in a specific location, that allows to perform test cases on the Network Application
+4. The Network Application itself
+
+When all these deployments are achieved, the NODS then triggeres the execution of testing processes.
+
+Additionally, the various services previously listed, can be bundled in the following manner:
+
+* Network Slice and UE Bundle (comprises the Network Slice and 5G UE)
+* Net. App Triplet (comprises (i) the Net. Slice and UE Bundle, (ii) the Testing Agent, (iii) the Network Application). This Triplet service is the one that holds the LCM rules that are used to trigger the CI/CD Service. 
+
+For the sake of reproducibility of our experiments, in folder `ExampleServiceSpecifications` you may find the Service Specification for these services, as well as their LCM rules. 
 
 
