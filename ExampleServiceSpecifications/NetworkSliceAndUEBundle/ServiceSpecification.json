@@ -1,0 +1,367 @@
+{
+    "uuid": "1cdb389e-f67d-4b50-bb1b-83e30ab0b934",
+    "lastUpdate": "2025-10-16T09:00:30.290054Z",
+    "@baseType": "BaseEntity",
+    "@schemaLocation": null,
+    "@type": "CustomerFacingServiceSpecification",
+    "href": null,
+    "name": "3GPPP Network Slice and UE Bundle @ ITAv (CFS)",
+    "description": "3GPPP Network Slice & UE Bundle - Adapted For ITAv (RFS)\t",
+    "lifecycleStatus": "In study",
+    "version": "0.1.0",
+    "validFor": {
+        "endDateTime": "2045-10-15T18:55:28.682252Z",
+        "startDateTime": "2025-10-15T18:55:28.682251Z"
+    },
+    "isBundle": true,
+    "attachment": [],
+    "relatedParty": [
+        {
+            "uuid": "e7ee8ec6-6891-4a21-93c5-a272a4798696",
+            "@baseType": "BaseEntity",
+            "@schemaLocation": null,
+            "@type": null,
+            "href": null,
+            "name": "admin",
+            "role": "OWNER",
+            "@referredType": "SimpleUsername_Individual",
+            "id": "admin",
+            "extendedInfo": null
+        }
+    ],
+    "resourceSpecification": [],
+    "serviceLevelSpecification": [],
+    "serviceSpecCharacteristic": [
+        {
+            "uuid": "71ca43ff-f2f3-4f60-a8f5-44289c76548f",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "rollbackDeployment",
+            "configurable": null,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "3fbe2965-3c11-48ac-b165-134bc4c7e552",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T19:31:27.798458Z",
+                        "startDateTime": "2025-10-15T19:31:27.798458Z"
+                    },
+                    "value": {
+                        "value": "false",
+                        "alias": ""
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T14:57:48.850Z",
+                "startDateTime": "2025-10-15T14:57:48.850Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "71ca43ff-f2f3-4f60-a8f5-44289c76548f"
+        },
+        {
+            "uuid": "47927f4c-331c-4eb6-991b-e208c26c1e0b",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "slice:Name",
+            "configurable": null,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "1fe0e08d-6687-4740-8285-a9029cf27adf",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-08-13T08:48:21.301748Z",
+                        "startDateTime": "2025-08-13T08:48:21.301747Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-08-13T08:48:08.836Z",
+                "startDateTime": "2025-08-13T08:48:08.836Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "47927f4c-331c-4eb6-991b-e208c26c1e0b"
+        },
+        {
+            "uuid": "120cb33b-21fa-4969-aa0e-cda4736beffc",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "SSPEC_GRAPH_NOTATION",
+            "configurable": false,
+            "description": "SSPEC_GRAPH_NOTATION",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "LONGTEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "70fc6181-9227-49fb-91e6-c7f1918dbee8",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": "N/A",
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": null,
+                    "validFor": {
+                        "endDateTime": "2045-08-13T08:48:07.229550Z",
+                        "startDateTime": "2025-08-13T08:48:07.229549Z"
+                    },
+                    "value": {
+                        "value": "blockdiag {default_textcolor = white;\r\ndefault_fontsize = 12;\r\n\r\n\"1cdb389e-f67d-4b50-bb1b-83e30ab0b934\" -> \"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" ;\r\n\"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" -> \"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" ;\r\n\"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" -> \"9f456788-243b-4cf5-850f-3f52d40fb6e4\";\r\n\"9f456788-243b-4cf5-850f-3f52d40fb6e4\" [ label = \"ITAvNetSlice@av.it.pt/v1@default@https://10.255.28.136:6443/\", shape = roundedbox, color = \"#e28743\"]; \"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" [ label = \"3GPPP Network Slice @ ITAv (RFS)\", color = \"#2596be\"]; \"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" [ label = \"3GPPP Network Slice @ ITAv (CFS)\", color = \"#2596be\"]; \"1cdb389e-f67d-4b50-bb1b-83e30ab0b934\" -> \"4ac08f6f-58fd-42da-9c57-7a5583e8664a\" ;\r\n\"4ac08f6f-58fd-42da-9c57-7a5583e8664a\" -> \"3726a441-1603-42bc-8764-2847bd064d2e\" ;\r\n\"3726a441-1603-42bc-8764-2847bd064d2e\" -> \"0d193ec4-7bd3-4eaa-b217-e2d624d40dd1\";\r\n\"0d193ec4-7bd3-4eaa-b217-e2d624d40dd1\" [ label = \"ITAvUE@av.it.pt/v1@default@https://10.255.28.136:6443/\", shape = roundedbox, color = \"#e28743\"]; \"3726a441-1603-42bc-8764-2847bd064d2e\" [ label = \"3GPPP UE @ ITAv (RFS)\", color = \"#2596be\"]; \"4ac08f6f-58fd-42da-9c57-7a5583e8664a\" [ label = \"3GPPP UE @ ITAv (CFS)\", color = \"#2596be\"]; \"1cdb389e-f67d-4b50-bb1b-83e30ab0b934\" [ label = \"3GPPP Network Slice and UE Bundle @ ITAv (CFS)\", color = \"#2596be\"]; }",
+                        "alias": "SSPEC_GRAPH_NOTATION"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T18:55:28.665355Z",
+                "startDateTime": "2025-10-15T18:55:28.665354Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "120cb33b-21fa-4969-aa0e-cda4736beffc"
+        },
+        {
+            "uuid": "8604dee2-2c46-4e10-b7b6-29dc875194c6",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "rollbackDeployment:Completed",
+            "configurable": null,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "84a18e51-421a-4649-87f0-dee5aa7d11e5",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T14:59:25.080021Z",
+                        "startDateTime": "2025-10-15T14:59:25.080021Z"
+                    },
+                    "value": {
+                        "value": "false",
+                        "alias": "false"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T14:59:06.063Z",
+                "startDateTime": "2025-10-15T14:59:06.063Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "8604dee2-2c46-4e10-b7b6-29dc875194c6"
+        },
+        {
+            "uuid": "f4ca84e0-561f-4a63-8aa2-d0ef0c76bed4",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "ue:Supi",
+            "configurable": null,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2045-08-13T11:54:56.399Z",
+                "startDateTime": "2025-08-13T11:54:56.399Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "f4ca84e0-561f-4a63-8aa2-d0ef0c76bed4"
+        },
+        {
+            "uuid": "1c368943-237b-4760-a46b-b08198170a5c",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "slice:isConfigured",
+            "configurable": null,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "cbda5fab-2c5a-4765-91b0-30bcad7a148b",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T18:57:08.804596Z",
+                        "startDateTime": "2025-10-15T18:57:08.804596Z"
+                    },
+                    "value": {
+                        "value": "false",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-08-13T08:47:53.087Z",
+                "startDateTime": "2025-08-13T08:47:53.087Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "1c368943-237b-4760-a46b-b08198170a5c"
+        },
+        {
+            "uuid": "7daf12f1-7d23-4f79-8fcb-fa770353c82c",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "ue:isConfigured",
+            "configurable": null,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "3cf7ee9a-b852-472d-a941-852494d3f8f5",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T18:57:22.738414Z",
+                        "startDateTime": "2025-10-15T18:57:22.738414Z"
+                    },
+                    "value": {
+                        "value": "false",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-08-13T11:55:08.054Z",
+                "startDateTime": "2025-08-13T11:55:08.054Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "7daf12f1-7d23-4f79-8fcb-fa770353c82c"
+        }
+    ],
+    "serviceSpecRelationship": [
+        {
+            "uuid": "35fcd6bc-dbeb-4ebf-9e3e-5774bb146a03",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecRelationship",
+            "href": null,
+            "name": "3GPPP Network Slice @ ITAv (CFS)",
+            "id": "a7e853bb-3570-448a-8967-80ba8a4ea5a9",
+            "relationshipType": null,
+            "role": null,
+            "validFor": null
+        },
+        {
+            "uuid": "6bdce779-368c-4377-8d06-11f8af9bd64d",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecRelationship",
+            "href": null,
+            "name": "3GPPP UE @ ITAv (CFS)",
+            "id": "4ac08f6f-58fd-42da-9c57-7a5583e8664a",
+            "relationshipType": null,
+            "role": null,
+            "validFor": null
+        }
+    ],
+    "targetServiceSchema": null,
+    "id": "1cdb389e-f67d-4b50-bb1b-83e30ab0b934"
+}
