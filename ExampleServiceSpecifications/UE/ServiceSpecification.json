@@ -1,0 +1,845 @@
+{
+    "uuid": "4ac08f6f-58fd-42da-9c57-7a5583e8664a",
+    "lastUpdate": "2025-10-15T18:51:53.327243Z",
+    "@baseType": "BaseEntity",
+    "@schemaLocation": null,
+    "@type": "CustomerFacingServiceSpecification",
+    "href": null,
+    "name": "3GPPP UE @ ITAv (CFS)",
+    "description": "My 3GPPP UE - Adapted For ITAv (CFS)",
+    "lifecycleStatus": "In study",
+    "version": "0.1.0",
+    "validFor": {
+        "endDateTime": "2025-10-15T19:09:19.308Z",
+        "startDateTime": "2025-10-15T18:45:18.122Z"
+    },
+    "isBundle": true,
+    "attachment": [],
+    "relatedParty": [
+        {
+            "uuid": "38dd5e83-3454-4478-b5d6-6c49a8db824e",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.prm669.model.RelatedParty",
+            "href": null,
+            "name": "admin",
+            "role": "OWNER",
+            "@referredType": "SimpleUsername_Individual",
+            "id": "admin",
+            "extendedInfo": ""
+        }
+    ],
+    "resourceSpecification": [],
+    "serviceLevelSpecification": [],
+    "serviceSpecCharacteristic": [
+        {
+            "uuid": "93fd0b40-eaa4-401e-8760-53e724e43b2f",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "PduSession : IpV6",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "e7f31e56-7839-4fbf-a2d4-a94be1de9513",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:04:33.648643Z",
+                        "startDateTime": "2025-10-15T16:04:33.648643Z"
+                    },
+                    "value": {
+                        "value": "",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648640Z",
+                "startDateTime": "2025-10-15T16:04:33.648639Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "93fd0b40-eaa4-401e-8760-53e724e43b2f"
+        },
+        {
+            "uuid": "8b8aad77-47f2-42b1-a2aa-a58bcd3948de",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Network-Slice-UE-Enforcement : Wait Time Before Retrying",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "773890b3-dbd7-4bb7-b4a2-4e1f1675b2c9",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:04:33.648939Z",
+                        "startDateTime": "2025-10-15T16:04:33.648938Z"
+                    },
+                    "value": {
+                        "value": "15",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648935Z",
+                "startDateTime": "2025-10-15T16:04:33.648935Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "8b8aad77-47f2-42b1-a2aa-a58bcd3948de"
+        },
+        {
+            "uuid": "46fab8e1-53c1-4b0f-8344-2368281a7b92",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "RequestedNSSAI : SST",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "21bf2665-612e-4ab1-a2a8-ad767560cb69",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T18:39:02.614779Z",
+                        "startDateTime": "2025-10-15T18:39:02.614779Z"
+                    },
+                    "value": {
+                        "value": "1",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648832Z",
+                "startDateTime": "2025-10-15T16:04:33.648832Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "46fab8e1-53c1-4b0f-8344-2368281a7b92"
+        },
+        {
+            "uuid": "91872194-8a82-4df7-a566-1678c22a6d89",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "DefaultNSSAI : SST",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "947384eb-85d9-43a6-8749-ab98012cf15f",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T18:38:50.071941Z",
+                        "startDateTime": "2025-10-15T18:38:50.071941Z"
+                    },
+                    "value": {
+                        "value": "1",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648540Z",
+                "startDateTime": "2025-10-15T16:04:33.648539Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "91872194-8a82-4df7-a566-1678c22a6d89"
+        },
+        {
+            "uuid": "86bf599b-14c0-4a95-bbf7-3e961ac92006",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "PduSession : IpV4",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "583e4fbf-29a4-4d22-b9fc-22309aff8015",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:04:33.648571Z",
+                        "startDateTime": "2025-10-15T16:04:33.648571Z"
+                    },
+                    "value": {
+                        "value": "",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648567Z",
+                "startDateTime": "2025-10-15T16:04:33.648566Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "86bf599b-14c0-4a95-bbf7-3e961ac92006"
+        },
+        {
+            "uuid": "9ae09473-605d-4a9d-83ac-f7249042fc57",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "PduSession : Type",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "3878b5d5-6c7d-4142-844b-18fd68ae086b",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:04:33.648786Z",
+                        "startDateTime": "2025-10-15T16:04:33.648785Z"
+                    },
+                    "value": {
+                        "value": "IPv4v6",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648783Z",
+                "startDateTime": "2025-10-15T16:04:33.648782Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "9ae09473-605d-4a9d-83ac-f7249042fc57"
+        },
+        {
+            "uuid": "3913d8c2-dd04-4496-aced-109f8ed9d818",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "RequestedNSSAI : SD",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "38766e38-26f5-49a5-97d8-909b87ce2e45",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T18:38:59.158297Z",
+                        "startDateTime": "2025-10-15T18:38:59.158296Z"
+                    },
+                    "value": {
+                        "value": "123456",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648606Z",
+                "startDateTime": "2025-10-15T16:04:33.648605Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "3913d8c2-dd04-4496-aced-109f8ed9d818"
+        },
+        {
+            "uuid": "a0cf9eb8-ea21-49b3-8438-4c362629103d",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "isConfigured",
+            "configurable": null,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "aa09d465-8218-4fad-b1da-7b2cb8e3ebcc",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T18:40:16.758994Z",
+                        "startDateTime": "2025-10-15T18:40:16.758993Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T18:39:53.863Z",
+                "startDateTime": "2025-10-15T18:39:53.863Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "a0cf9eb8-ea21-49b3-8438-4c362629103d"
+        },
+        {
+            "uuid": "1eede679-66e8-49f5-b70b-c19039b4f1c7",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Network-Slice-UE-Enforcement : Retry On Fail",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "BOOLEAN",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "307d2a70-b0eb-45b2-bad0-721650da7fe6",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "BOOLEAN",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:04:33.648886Z",
+                        "startDateTime": "2025-10-15T16:04:33.648886Z"
+                    },
+                    "value": {
+                        "value": "true",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648883Z",
+                "startDateTime": "2025-10-15T16:04:33.648883Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "1eede679-66e8-49f5-b70b-c19039b4f1c7"
+        },
+        {
+            "uuid": "dfffe218-2914-4211-a914-aca766e020a4",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "SSPEC_GRAPH_NOTATION",
+            "configurable": false,
+            "description": "SSPEC_GRAPH_NOTATION",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "LONGTEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "0a78aecf-9074-49de-adc0-615f6ec11aa9",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": "N/A",
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": null,
+                    "validFor": {
+                        "endDateTime": "2045-10-15T18:38:45.991489Z",
+                        "startDateTime": "2025-10-15T18:38:45.991487Z"
+                    },
+                    "value": {
+                        "value": "blockdiag {default_textcolor = white;\r\ndefault_fontsize = 12;\r\n\r\n\"4ac08f6f-58fd-42da-9c57-7a5583e8664a\" -> \"3726a441-1603-42bc-8764-2847bd064d2e\" ;\r\n\"3726a441-1603-42bc-8764-2847bd064d2e\" -> \"0d193ec4-7bd3-4eaa-b217-e2d624d40dd1\";\r\n\"0d193ec4-7bd3-4eaa-b217-e2d624d40dd1\" [ label = \"ITAvUE@av.it.pt/v1@default@https://10.255.28.136:6443/\", shape = roundedbox, color = \"#e28743\"]; \"3726a441-1603-42bc-8764-2847bd064d2e\" [ label = \"3GPPP UE @ ITAv (RFS)\", color = \"#2596be\"]; \"4ac08f6f-58fd-42da-9c57-7a5583e8664a\" [ label = \"3GPPP UE @ ITAv (CFS)\", color = \"#2596be\"]; }",
+                        "alias": "SSPEC_GRAPH_NOTATION"
+                    }
+                }
+            ],
+            "validFor": null,
+            "@valueSchemaLocation": null,
+            "id": "dfffe218-2914-4211-a914-aca766e020a4"
+        },
+        {
+            "uuid": "8d0ad973-1213-4360-b464-81eae18e1d91",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Supi",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "91560957-5952-471b-9bab-4c6d0b9ebbf2",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:04:33.648977Z",
+                        "startDateTime": "2025-10-15T16:04:33.648976Z"
+                    },
+                    "value": {
+                        "value": "imsi-123456789012345",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648973Z",
+                "startDateTime": "2025-10-15T16:04:33.648972Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "8d0ad973-1213-4360-b464-81eae18e1d91"
+        },
+        {
+            "uuid": "3cbd854e-3c1f-4cc5-b3fb-f405324ab515",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "DefaultNSSAI : SD",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "810060cd-39b4-428e-8b64-bef1afa04fa1",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T18:38:45.996384Z",
+                        "startDateTime": "2025-10-15T18:38:45.996383Z"
+                    },
+                    "value": {
+                        "value": "123456",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.649079Z",
+                "startDateTime": "2025-10-15T16:04:33.649079Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "3cbd854e-3c1f-4cc5-b3fb-f405324ab515"
+        },
+        {
+            "uuid": "d0a37c12-bf20-446c-b20e-57674d7fff7f",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "DNN",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "d3ab09ef-84ae-4d57-8402-99a1a4a2da0b",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T18:39:19.819493Z",
+                        "startDateTime": "2025-10-15T18:39:19.819492Z"
+                    },
+                    "value": {
+                        "value": "5gasp.eu",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.649037Z",
+                "startDateTime": "2025-10-15T16:04:33.649036Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "d0a37c12-bf20-446c-b20e-57674d7fff7f"
+        },
+        {
+            "uuid": "2658358f-a6bb-4d9a-8820-c038ebfe1cbe",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Operational State",
+            "configurable": null,
+            "description": "Operational State",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "e4951336-e5f8-48c8-b0ee-ea6bf7b0d3bf",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T18:40:39.790983Z",
+                        "startDateTime": "2025-10-15T18:40:39.790983Z"
+                    },
+                    "value": {
+                        "value": "ENABLED",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T18:39:35.227Z",
+                "startDateTime": "2025-10-15T18:39:35.227Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "2658358f-a6bb-4d9a-8820-c038ebfe1cbe"
+        },
+        {
+            "uuid": "93f5e3ac-323c-416d-b281-cf626dfdad11",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "SessionAmbr : Downlink",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "3cef1e9c-0611-4fe7-b863-1d56bfe39014",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:04:33.648732Z",
+                        "startDateTime": "2025-10-15T16:04:33.648732Z"
+                    },
+                    "value": {
+                        "value": "60",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648729Z",
+                "startDateTime": "2025-10-15T16:04:33.648729Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "93f5e3ac-323c-416d-b281-cf626dfdad11"
+        },
+        {
+            "uuid": "e1c333c0-5991-4ce6-bada-5d2b9c842116",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Network-Slice-UE-Enforcement : Max. Retries",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "b1ae5b86-ae9d-429c-82f4-5b3217f5f0a6",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:04:33.648625Z",
+                        "startDateTime": "2025-10-15T16:04:33.648624Z"
+                    },
+                    "value": {
+                        "value": "5",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648621Z",
+                "startDateTime": "2025-10-15T16:04:33.648621Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "e1c333c0-5991-4ce6-bada-5d2b9c842116"
+        },
+        {
+            "uuid": "b2d0a4df-85fa-400e-b983-dc21941fd7eb",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "SessionAmbr : Uplink",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "a1f8bf53-b2e5-4178-afa3-9993dc3b8792",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:04:33.648593Z",
+                        "startDateTime": "2025-10-15T16:04:33.648592Z"
+                    },
+                    "value": {
+                        "value": "60",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:04:33.648580Z",
+                "startDateTime": "2025-10-15T16:04:33.648580Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "b2d0a4df-85fa-400e-b983-dc21941fd7eb"
+        }
+    ],
+    "serviceSpecRelationship": [
+        {
+            "uuid": "35bb27ef-7949-48c8-9c30-e33ad89cb5f5",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecRelationship",
+            "href": null,
+            "name": "3GPPP UE @ ITAv (RFS)",
+            "id": "3726a441-1603-42bc-8764-2847bd064d2e",
+            "relationshipType": null,
+            "role": null,
+            "validFor": null
+        }
+    ],
+    "targetServiceSchema": null,
+    "id": "4ac08f6f-58fd-42da-9c57-7a5583e8664a"
+}

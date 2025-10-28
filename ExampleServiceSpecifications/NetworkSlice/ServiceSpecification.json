@@ -1,0 +1,2454 @@
+{
+    "uuid": "a7e853bb-3570-448a-8967-80ba8a4ea5a9",
+    "lastUpdate": "2025-10-15T18:49:24.995062Z",
+    "@baseType": "BaseEntity",
+    "@schemaLocation": null,
+    "@type": "CustomerFacingServiceSpecification",
+    "href": null,
+    "name": "3GPPP Network Slice @ ITAv (CFS)",
+    "description": "My 3GPPP Network Slice - Adapted For ITAv (CFS)",
+    "lifecycleStatus": "In design",
+    "version": "0.1.0",
+    "validFor": {
+        "endDateTime": "2043-12-31T23:59:59.999Z",
+        "startDateTime": "2024-01-01T00:00:00.001Z"
+    },
+    "isBundle": true,
+    "attachment": [],
+    "relatedParty": [
+        {
+            "uuid": "214e3160-5cce-4565-917b-bb8135838e87",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.prm669.model.RelatedParty",
+            "href": null,
+            "name": "admin",
+            "role": "OWNER",
+            "@referredType": "SimpleUsername_Individual",
+            "id": "admin",
+            "extendedInfo": ""
+        }
+    ],
+    "resourceSpecification": [],
+    "serviceLevelSpecification": [],
+    "serviceSpecCharacteristic": [
+        {
+            "uuid": "4d676f9d-4dd2-450c-aa49-85a232568f18",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "DL Throughput Per UE : Maximum Throughput",
+            "configurable": true,
+            "description": "This attribute defines data rate supported by the network slice per UE\n(Unit: kbits/s)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "4d676f9d-4dd2-450c-aa49-85a232568f18"
+        },
+        {
+            "uuid": "e6ccc95c-2cfc-4029-8440-1f24308397ee",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "DL Throughput Per UE : Guaranteed Throughput",
+            "configurable": true,
+            "description": "This attribute defines data rate supported by the network slice per UE\n(Unit: kbits/s)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "e6ccc95c-2cfc-4029-8440-1f24308397ee"
+        },
+        {
+            "uuid": "4d229771-b090-44c4-8c3b-8d3445a1e246",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "SSPEC_GRAPH_NOTATION",
+            "configurable": false,
+            "description": "SSPEC_GRAPH_NOTATION",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "LONGTEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "4a2e029c-d426-4f24-9bc2-deadcdcf667c",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": "N/A",
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": null,
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "blockdiag {default_textcolor = white;\r\ndefault_fontsize = 12;\r\n\r\n\"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" -> \"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" ;\r\n\"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" -> \"9f456788-243b-4cf5-850f-3f52d40fb6e4\";\r\n\"9f456788-243b-4cf5-850f-3f52d40fb6e4\" [ label = \"ITAvNetSlice@av.it.pt/v1@default@https://10.255.28.136:6443/\", shape = roundedbox, color = \"#e28743\"]; \"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" [ label = \"3GPPP Network Slice @ ITAv (RFS)\", color = \"#2596be\"]; \"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" [ label = \"3GPPP Network Slice @ ITAv (CFS)\", color = \"#2596be\"]; }",
+                        "alias": "SSPEC_GRAPH_NOTATION"
+                    }
+                },
+                {
+                    "uuid": "8da6a2a6-54a6-4770-baaf-8ae25031aa40",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": "N/A",
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": null,
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "blockdiag {default_textcolor = white;\r\ndefault_fontsize = 12;\r\n\r\n\"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" -> \"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" ;\r\n\"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" -> \"9f456788-243b-4cf5-850f-3f52d40fb6e4\";\r\n\"9f456788-243b-4cf5-850f-3f52d40fb6e4\" [ label = \"ITAvNetSlice@av.it.pt/v1@default@https://10.255.28.136:6443/\", shape = roundedbox, color = \"#e28743\"]; \"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" [ label = \"3GPPP Network Slice @ ITAv (RFS)\", color = \"#2596be\"]; \"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" [ label = \"3GPPP Network Slice @ ITAv (CFS)\", color = \"#2596be\"]; }",
+                        "alias": "SSPEC_GRAPH_NOTATION"
+                    }
+                },
+                {
+                    "uuid": "ed3681d1-0937-4843-90fd-bfcbd071bba9",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": "N/A",
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": null,
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "blockdiag {default_textcolor = white;\r\ndefault_fontsize = 12;\r\n\r\n\"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" -> \"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" ;\r\n\"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" -> \"9f456788-243b-4cf5-850f-3f52d40fb6e4\";\r\n\"9f456788-243b-4cf5-850f-3f52d40fb6e4\" [ label = \"ITAvNetSlice@av.it.pt/v1@default@https://10.255.28.136:6443/\", shape = roundedbox, color = \"#e28743\"]; \"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" [ label = \"3GPPP Network Slice @ ITAv (RFS)\", color = \"#2596be\"]; \"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" [ label = \"3GPPP Network Slice @ ITAv (CFS)\", color = \"#2596be\"]; }",
+                        "alias": "SSPEC_GRAPH_NOTATION"
+                    }
+                },
+                {
+                    "uuid": "2d0f9add-6d3c-496e-b768-0acd06efaf9f",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": "N/A",
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": null,
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "blockdiag {default_textcolor = white;\r\ndefault_fontsize = 12;\r\n\r\n\"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" -> \"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" ;\r\n\"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" -> \"9f456788-243b-4cf5-850f-3f52d40fb6e4\";\r\n\"9f456788-243b-4cf5-850f-3f52d40fb6e4\" [ label = \"ITAvNetSlice@av.it.pt/v1@default@https://10.255.28.136:6443/\", shape = roundedbox, color = \"#e28743\"]; \"533fa63c-9a6a-4bf7-a8f4-875ca5cd230f\" [ label = \"3GPPP Network Slice @ ITAv (RFS)\", color = \"#2596be\"]; \"a7e853bb-3570-448a-8967-80ba8a4ea5a9\" [ label = \"3GPPP Network Slice @ ITAv (CFS)\", color = \"#2596be\"]; }",
+                        "alias": "SSPEC_GRAPH_NOTATION"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:18:45.681781Z",
+                "startDateTime": "2025-10-15T16:18:45.681780Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "4d229771-b090-44c4-8c3b-8d3445a1e246"
+        },
+        {
+            "uuid": "87d53ec3-d5f5-4704-9e61-cf67f62939d1",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Deterministic Communication : DL : Availability",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "ENUM",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "09ba608b-55c1-42dc-acc7-de5f3990b578",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "SUPPORTED",
+                        "alias": "SUPPORTED"
+                    }
+                },
+                {
+                    "uuid": "10dcf472-ce35-42a3-813a-e5a88c8503b6",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "NOT_SUPPORTED",
+                        "alias": "NOT_SUPPORTED"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "87d53ec3-d5f5-4704-9e61-cf67f62939d1"
+        },
+        {
+            "uuid": "b9e3bea8-b3ba-4d48-9511-0e697230f068",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "User Management Open : Support",
+            "configurable": true,
+            "description": "An attribute specifies whether or not the network slice \n        supports the capability for the NSC to manage their users or groups \n        of users' network services and corresponding requirements.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "ENUM",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "de8956d5-9e75-41ab-90c7-e73123172b2a",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "SUPPORTED",
+                        "alias": "SUPPORTED"
+                    }
+                },
+                {
+                    "uuid": "d7b7edde-4eb1-495c-97e9-7374396cac78",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "NOT_SUPPORTED",
+                        "alias": "NOT_SUPPORTED"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "b9e3bea8-b3ba-4d48-9511-0e697230f068"
+        },
+        {
+            "uuid": "3e280098-1456-41a0-849a-a161f74cf1dd",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Max. Packet Size : Maximum Size",
+            "configurable": true,
+            "description": "This parameter specifies the maximum packet size\n        supported by the network slice\n(Unit: bytes)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "3e280098-1456-41a0-849a-a161f74cf1dd"
+        },
+        {
+            "uuid": "b3263658-d30a-42e6-bd23-bb43dd274f50",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Max. UL Data Volume",
+            "configurable": true,
+            "description": "Stage2 issue: Not defined in 28.541. XML and YAML says \"string\"",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "b3263658-d30a-42e6-bd23-bb43dd274f50"
+        },
+        {
+            "uuid": "dd75944e-b8e5-4fd0-9838-f5ac8dcd6b96",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "S-NSSAI : SST",
+            "configurable": true,
+            "description": "Slice/Service Type.\nValues 0 to 127 belong to standardized SST range and are defined in 3GPP TS 23.501. Values 128 to 255 belong to operator-specific range.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "dd75944e-b8e5-4fd0-9838-f5ac8dcd6b96"
+        },
+        {
+            "uuid": "ee8f3fce-481d-4150-8f3f-4ea7bedbbfad",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "PLMN : MNC",
+            "configurable": true,
+            "description": "The mobile network code consists of two or three decimal digits (for example: MNC of 001 is not the same as MNC of 01.\nPattern: [0-9][0-9][0-9]|[0-9][0-9]",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "43460a91-9376-4233-a96f-ae238277014a",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "369b52e5-bd4a-494c-8fd7-ed048872cdc5",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "915f9d3e-1c51-4f71-b738-15dc32220d90",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "735035f8-fc39-49ab-9c01-3bd86f056ef7",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "ee8f3fce-481d-4150-8f3f-4ea7bedbbfad"
+        },
+        {
+            "uuid": "ed4bba6f-7e55-4394-b756-b420a48d8c45",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Term Density : Density",
+            "configurable": true,
+            "description": "An attribute specifies the overall user density over \n        the coverage area of the network slice.\n(Unit: users/km2)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "e44022e7-6453-4992-9a85-c9ec7872b733",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "8f6b29c9-33dd-476e-b102-76d36e1daf8f",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "ed4bba6f-7e55-4394-b756-b420a48d8c45"
+        },
+        {
+            "uuid": "d48f3489-146a-4e52-907f-d75f961f6bc4",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Max. DL Data Volume",
+            "configurable": true,
+            "description": "Stage2 issue: Not defined in 28.541. XML and YAML says \"string\"",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "d48f3489-146a-4e52-907f-d75f961f6bc4"
+        },
+        {
+            "uuid": "b632c31e-d09b-4096-88c8-c371283b3155",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Resource Sharing Level",
+            "configurable": true,
+            "description": "Specifies whether the resources to be allocated to the network slice instance may be shared with another network slice instance(s).",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "ENUM",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "2ff26bda-0518-4bde-b83d-c27ca499c6f2",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "NOT_SHARED",
+                        "alias": "NOT_SHARED"
+                    }
+                },
+                {
+                    "uuid": "54aff7f0-e842-48fb-abe1-852962472491",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "SHARED",
+                        "alias": "SHARED"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "b632c31e-d09b-4096-88c8-c371283b3155"
+        },
+        {
+            "uuid": "8cd58624-1117-4031-b1f2-67489e11de13",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Deterministic Communication : DL : Periodicity",
+            "configurable": true,
+            "description": "This parameter provides the DL periodicity supported by the network slice.\nThis parameter must be present when the “Availability” is set to Supported.\n(Units: ms)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "8cd58624-1117-4031-b1f2-67489e11de13"
+        },
+        {
+            "uuid": "e12ac86b-add2-49b1-9e93-b6db6e8deb28",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Coverage Area",
+            "configurable": true,
+            "description": "A list of TrackingAreas where the NSI can be selected.\nThe TACs should be splitted with ',' \nExample: 0x1234,0x5678\nRange for each TAC: 0...16777215",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "e12ac86b-add2-49b1-9e93-b6db6e8deb28"
+        },
+        {
+            "uuid": "3b815cc8-ab72-4e2c-a7b8-94160b097a2e",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Jitter",
+            "configurable": true,
+            "description": "An attribute specifies the deviation from the desired value to the actual value when assessing time parameters.\n(Units: microseconds)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "c259b8e2-3a82-4aef-9c31-ef7e4d69ab21",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "d6b95f96-c869-43cb-8905-5ca3a37b6159",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "3b815cc8-ab72-4e2c-a7b8-94160b097a2e"
+        },
+        {
+            "uuid": "ddf56c71-c428-4512-b1bb-1aba089bf841",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "DL Throughput Per Slice : Guaranteed Throughput",
+            "configurable": true,
+            "description": "This attribute defines achievable data rate of the network slice in downlink that is available ubiquitously across the coverage area of the slice.\n(Unit: kbits/s)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "fbc4fbe7-b00e-42f1-97ca-f0678c5b4352",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "93046e0e-aa8d-4211-afbb-862ee203cb2e",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "ddf56c71-c428-4512-b1bb-1aba089bf841"
+        },
+        {
+            "uuid": "cd75d36d-835b-455c-b6f7-59ab08487091",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "N6 Protection",
+            "configurable": true,
+            "description": "An attribute which includes required security functions and corresponding rules of each function for network slice N6 interface protection.\nThe input should be a JSON string",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "Text",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "cd75d36d-835b-455c-b6f7-59ab08487091"
+        },
+        {
+            "uuid": "04eba172-b207-4cb3-95d4-b55ee83217c1",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "V2X Communication Model : V2X Mode",
+            "configurable": true,
+            "description": "An attribute specifies whether or not the V2X \n        communication mode is supported by the network slice.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "ENUM",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "05f085e1-4fe1-4768-a64e-01fe24ffbb64",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "SUPPORTED_BY_NR",
+                        "alias": "SUPPORTED_BY_NR"
+                    }
+                },
+                {
+                    "uuid": "a404f43d-67ae-4922-aa74-affd1c9804ad",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "NOT_SUPPORTED",
+                        "alias": "NOT_SUPPORTED"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "04eba172-b207-4cb3-95d4-b55ee83217c1"
+        },
+        {
+            "uuid": "c80faa79-8941-4b3a-b2af-0a53d15fd5fb",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "DL Throughput Per Slice : Maximum Throughput",
+            "configurable": true,
+            "description": "This attribute defines achievable data rate of the network slice in downlink that is available ubiquitously across the coverage area of the slice.\n(Unit: kbits/s)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "c80faa79-8941-4b3a-b2af-0a53d15fd5fb"
+        },
+        {
+            "uuid": "11dde672-fabe-4dfe-9f10-bbb26148238a",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Operational State",
+            "configurable": true,
+            "description": "The operational state of the network slice instance. It describes whether or not the resource is installed and working.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "ENUM",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "0a839041-2700-4305-82ff-0a96fb9bae1f",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:39:34.643709Z",
+                        "startDateTime": "2025-10-15T16:39:34.643709Z"
+                    },
+                    "value": {
+                        "value": "ENABLED",
+                        "alias": "ENABLED"
+                    }
+                },
+                {
+                    "uuid": "c7f4f946-c0c6-4e5c-8c85-8dd2a8857a30",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:39:34.643712Z",
+                        "startDateTime": "2025-10-15T16:39:34.643712Z"
+                    },
+                    "value": {
+                        "value": "DISABLED",
+                        "alias": "DISABLED"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "11dde672-fabe-4dfe-9f10-bbb26148238a"
+        },
+        {
+            "uuid": "b28ab2ff-5cb1-4875-a32f-1a741d948bf1",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Max. Number Of UEs",
+            "configurable": true,
+            "description": "The maximum number of UEs that may simultaneously access the network slice instance.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "a664ae70-f043-47ce-972c-240af9522a74",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "27c3c5d1-bca4-41f4-8662-fdece59ccc9d",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "5a25e554-9299-432f-aa4e-188da8d1bcd1",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "c2896eb2-7e48-44ea-9cd0-01574a132c1a",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "b28ab2ff-5cb1-4875-a32f-1a741d948bf1"
+        },
+        {
+            "uuid": "57354d8f-bd83-4c0f-a7a3-b8a92dfa38cc",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "UL Throughput Per UE : Guaranteed Throughput",
+            "configurable": true,
+            "description": "This attribute defines data rate supported by the network slice per UE\n(Unit: kbits/s)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "890cec52-4074-4977-9806-0e6d5a360aa5",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:22:25.909138Z",
+                        "startDateTime": "2025-10-15T16:22:25.909136Z"
+                    },
+                    "value": {
+                        "value": "50000",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "57354d8f-bd83-4c0f-a7a3-b8a92dfa38cc"
+        },
+        {
+            "uuid": "3f05cdff-55ba-434b-9ef4-a08e0d40ebd5",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Survival Time",
+            "configurable": true,
+            "description": "An attribute specifies the time that an application consuming a communication service may continue without an anticipated message.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "4b3ab6b3-1b23-4116-8866-eda1dc9b4bf9",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "8ca71149-f14e-4342-9326-6b4eab2a5d20",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "3f05cdff-55ba-434b-9ef4-a08e0d40ebd5"
+        },
+        {
+            "uuid": "b1445f5c-60df-4085-afab-5c8bff6096ce",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "isConfigured",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "008e4acb-c4bd-4b1c-a0f3-7bf228bb4a44",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:31:54.243571Z",
+                        "startDateTime": "2025-10-15T16:31:54.243570Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2045-10-15T16:31:44.211Z",
+                "startDateTime": "2025-10-15T16:31:44.211Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "b1445f5c-60df-4085-afab-5c8bff6096ce"
+        },
+        {
+            "uuid": "a4d8f783-1161-4970-9576-5a777c0c4785",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "SST",
+            "configurable": true,
+            "description": "Values 0 to 127 belong to standardized SST range and are defined in 3GPP TS 23.501. Values 128 to 255 belong to operator-specific range.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "a4d8f783-1161-4970-9576-5a777c0c4785"
+        },
+        {
+            "uuid": "df6443a4-a8a1-4974-a185-584b26869838",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "NB-IoT : Support",
+            "configurable": true,
+            "description": "An attribute specifies whether NB-IoT is supported in the RAN in the Network Slice",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "ENUM",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "4b9db65e-4e32-42a8-a439-7866c0062a49",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "NOT_SUPPORTED",
+                        "alias": "NOT_SUPPORTED"
+                    }
+                },
+                {
+                    "uuid": "30afb672-88f0-4679-a787-cdf33bf40362",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "SUPPORTED",
+                        "alias": "SUPPORTED"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "df6443a4-a8a1-4974-a185-584b26869838"
+        },
+        {
+            "uuid": "b9513a8a-568c-45c8-813c-03c9089e20c6",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Latency : UL",
+            "configurable": true,
+            "description": "The packet transmission latency (milliseconds) through the RAN, CN, and TN part of 5G network, used to evaluate utilization performance of the end-to-end network slice instance.\nUnit: milliseconds",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "3ee1abd1-79fc-4f1b-ab45-239400f61a04",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:22:58.193677Z",
+                        "startDateTime": "2025-10-15T16:22:58.193676Z"
+                    },
+                    "value": {
+                        "value": "5",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "b9513a8a-568c-45c8-813c-03c9089e20c6"
+        },
+        {
+            "uuid": "1905c41e-db46-4aff-97e8-eac1bd355930",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "UE Speed",
+            "configurable": true,
+            "description": "An attribute specifies the maximum speed (in km/hour) supported by the network slice at which a defined QoS can be achieved.\n(Units: km/h)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "1905c41e-db46-4aff-97e8-eac1bd355930"
+        },
+        {
+            "uuid": "1832b87a-dec4-4dda-9a47-fec90d483cd7",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "PLMN : MCC",
+            "configurable": true,
+            "description": "The mobile country code consists of three decimal digits, The first digit of the mobile country code identifies the geographic region (the digits 1 and 8 are not used). Pattern '[02-79][0-9][0-9]'",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "2f320472-4205-4014-92b0-8da22b1ad1bf",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "3f865c12-8668-42c2-bb7b-25c931220da0",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "e478c140-5d11-4073-ab7d-75f4509eabe0",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "5aa7ebf5-8210-49e0-96aa-c68a56809e99",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "1832b87a-dec4-4dda-9a47-fec90d483cd7"
+        },
+        {
+            "uuid": "24045e80-2e42-4528-a0c7-2d8bcb2036eb",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Reliability",
+            "configurable": true,
+            "description": "An attribute specifies in the context of network layer packet transmissions, percentage value of the amount of sent network layer packets successfully delivered to a given system entity within the time constraint required by the targeted service, divided by the total number of sent network layer packets.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "4307f7f8-2cb8-4e61-be42-d4a27013eb76",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "a127883f-f530-4893-ad5d-474242dff4bb",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "24045e80-2e42-4528-a0c7-2d8bcb2036eb"
+        },
+        {
+            "uuid": "4195b25d-26be-46cc-b589-66452b88a606",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Network Slice Subnet Ref (DNN)",
+            "configurable": true,
+            "description": "DN of Network Slice Subnet relating to the Network Slice instance",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "e5436d02-cb56-4adc-8545-d217a031599e",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:23:23.418990Z",
+                        "startDateTime": "2025-10-15T16:23:23.418989Z"
+                    },
+                    "value": {
+                        "value": "5gasp.eu",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "4195b25d-26be-46cc-b589-66452b88a606"
+        },
+        {
+            "uuid": "f35081e8-6c30-4fc1-8594-c0fbddc4d700",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Administrative State",
+            "configurable": true,
+            "description": "The administrative state of the network slice instance. It describes the permission to use or prohibition against  using the instance, imposed through the OAM services.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "ENUM",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "142bd34f-78a8-4d3c-b5d6-a1f1a72e36d4",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "0",
+                        "alias": "LOCKED"
+                    }
+                },
+                {
+                    "uuid": "827b514d-ec16-4f7f-9223-a8aaa47a8c85",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "1",
+                        "alias": "UNLOCKED"
+                    }
+                },
+                {
+                    "uuid": "86b0c1fb-d580-4324-a371-204f69fd3207",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "2",
+                        "alias": "SHUTTINGDOWN"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "f35081e8-6c30-4fc1-8594-c0fbddc4d700"
+        },
+        {
+            "uuid": "80a449a0-46c0-4f72-83c4-ba05254a2df0",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Id",
+            "configurable": true,
+            "description": "The ID of the Network Slice",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "f8377823-f88c-4d24-abff-dafbba9bce53",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:23:09.086598Z",
+                        "startDateTime": "2025-10-15T16:23:09.086597Z"
+                    },
+                    "value": {
+                        "value": "5gasp.eu",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "80a449a0-46c0-4f72-83c4-ba05254a2df0"
+        },
+        {
+            "uuid": "c08e80ca-1b54-4835-a9bf-be4d83f2e166",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "KPI Monitoring : KPI List",
+            "configurable": true,
+            "description": "Represents performance monitoring.\nAn attribute specifies the name list of KQIs and KPIs available  for performance monitoring.\nThe various periodicities should be expressed as \"KQI#1,KPI#1,KPI#2\".\n",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "c08e80ca-1b54-4835-a9bf-be4d83f2e166"
+        },
+        {
+            "uuid": "409510b1-ae59-43e4-8a43-4a0d40532e8f",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Latency : DL",
+            "configurable": true,
+            "description": "The packet transmission latency (milliseconds) through the RAN, CN, and TN part of 5G network, used to evaluate utilization performance of the end-to-end network slice instance.\nUnit: milliseconds",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "3dace1cc-55bf-46bd-90ef-0c78611240f9",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:22:51.742445Z",
+                        "startDateTime": "2025-10-15T16:22:51.742444Z"
+                    },
+                    "value": {
+                        "value": "5",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "409510b1-ae59-43e4-8a43-4a0d40532e8f"
+        },
+        {
+            "uuid": "c0535498-cacb-4fdd-b4ef-ed83a6646294",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "S-NSSAI : SD",
+            "configurable": true,
+            "description": "Slice Differentiator. If not needed, the value can be set to FFFFFF.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "TEXT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "c0535498-cacb-4fdd-b4ef-ed83a6646294"
+        },
+        {
+            "uuid": "bbb99461-6858-4f4f-9f62-23d411ccfe44",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Activity Factor",
+            "configurable": true,
+            "description": "An attribute specifies the percentage value of the \n        amount of simultaneous active UEs to the total number of UEs where \n        active means the UEs are exchanging data with the network\n(Units: decimal) ",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "FLOAT",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "bbb99461-6858-4f4f-9f62-23d411ccfe44"
+        },
+        {
+            "uuid": "d290c32c-0ab8-4e6b-82e6-2259700078fb",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Deterministic Communication : UL : Periodicity",
+            "configurable": true,
+            "description": "This parameter provides the UL periodicity supported by the network slice.\nThis parameter must be present when the “Availability” is set to Supported.\n(Units: ms)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "d290c32c-0ab8-4e6b-82e6-2259700078fb"
+        },
+        {
+            "uuid": "c229c6dd-8c1e-4d66-89d8-0c3baee8f44d",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Priority Label",
+            "configurable": true,
+            "description": "Specifies a label that consumer would assign a value on an instance of network slice subnet. The management system takes the value of this attribute into account. The effect of this attribute value to the subject managed entity is not standardized",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "c229c6dd-8c1e-4d66-89d8-0c3baee8f44d"
+        },
+        {
+            "uuid": "8538ced5-57d8-4b13-b987-7d1987ddbddc",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "UE Mobility Level",
+            "configurable": true,
+            "description": "The mobility level of UE accessing the network slice instance.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "ENUM",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "3dee3fbd-c796-4400-961e-7c784984cac5",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "STATIONARY",
+                        "alias": "STATIONARY"
+                    }
+                },
+                {
+                    "uuid": "0c43c4d7-f71c-422a-ba91-846fc460a49e",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "FULLY_MOBILITY",
+                        "alias": "FULLY_MOBILITY"
+                    }
+                },
+                {
+                    "uuid": "338a852b-152f-47ac-b0c3-a63499b2f255",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "RESTRICTED_MOBILITY",
+                        "alias": "RESTRICTED_MOBILITY"
+                    }
+                },
+                {
+                    "uuid": "aa667d47-cab6-4e2d-8acb-b0d0b76edad0",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "NOMADIC",
+                        "alias": "NOMADIC"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "8538ced5-57d8-4b13-b987-7d1987ddbddc"
+        },
+        {
+            "uuid": "2548b7f8-b1a5-4610-8287-efcea05566a2",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Delay Tolerance : Support",
+            "configurable": true,
+            "description": "An attribute specifies the properties of service delivery \n        flexibility, especially for the vertical services that are not \n        chasing a high system performance.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "ENUM",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "cf58b015-b5ce-4020-bcf5-62dbacd065b0",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "SUPPORTED",
+                        "alias": "SUPPORTED"
+                    }
+                },
+                {
+                    "uuid": "b272734f-b67f-4c98-87f9-0cbeaef0969b",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "NOT_SUPPORTED",
+                        "alias": "NOT_SUPPORTED"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "2548b7f8-b1a5-4610-8287-efcea05566a2"
+        },
+        {
+            "uuid": "efb3af55-0b5d-40cd-b25d-59d6b272eaae",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "UL Throughput Per UE : Maximum Throughput",
+            "configurable": true,
+            "description": "This attribute defines data rate supported by the network slice per UE\n(Unit: kbits/s)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "91e195f4-c179-4e57-8083-460f0ed9520c",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:22:33.919483Z",
+                        "startDateTime": "2025-10-15T16:22:33.919481Z"
+                    },
+                    "value": {
+                        "value": "50000",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "efb3af55-0b5d-40cd-b25d-59d6b272eaae"
+        },
+        {
+            "uuid": "f7fedae0-6c0e-4f85-bf50-f648f37616ce",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Availability",
+            "configurable": true,
+            "description": "he availability requirement for a network slice instance, expressed as a percentage.",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "ce65188f-401c-4a97-be79-c2d39294cdd0",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                },
+                {
+                    "uuid": "bea5765e-9395-4a42-b2ac-19193199fe98",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": null
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "f7fedae0-6c0e-4f85-bf50-f648f37616ce"
+        },
+        {
+            "uuid": "1a30ac93-f32f-4f71-b480-bbf70f668740",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Deterministic Communication : UL : Availability",
+            "configurable": true,
+            "description": null,
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "ENUM",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "20d094b9-9f5e-4609-aad5-cf037ce683a2",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "NOT_SUPPORTED",
+                        "alias": "NOT_SUPPORTED"
+                    }
+                },
+                {
+                    "uuid": "cdcceafa-6614-451a-afbc-636d3b0f81fb",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": false,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "TEXT",
+                    "validFor": {
+                        "endDateTime": "2043-12-31T23:59:59.999Z",
+                        "startDateTime": "2024-01-01T00:00:00.001Z"
+                    },
+                    "value": {
+                        "value": "SUPPORTED",
+                        "alias": "SUPPORTED"
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "1a30ac93-f32f-4f71-b480-bbf70f668740"
+        },
+        {
+            "uuid": "33fed88d-c73b-4a3a-9f4f-35e0d4515132",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "UL Throughput Per Slice : Maximum Throughput",
+            "configurable": true,
+            "description": "This attribute defines achievable data rate of the network slice in uplink that is available ubiquitously across the coverage area of the slice.\n(Unit: kbits/s)",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "b25fc913-663a-4046-8e39-f56edb48c7ce",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:22:21.241936Z",
+                        "startDateTime": "2025-10-15T16:22:21.241935Z"
+                    },
+                    "value": {
+                        "value": "50000",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "33fed88d-c73b-4a3a-9f4f-35e0d4515132"
+        },
+        {
+            "uuid": "72b80a70-dcdb-4f54-8a5f-3f1ba9ec94c5",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "Max. Number Of PDU Sessions: Number of PDU Sessions",
+            "configurable": true,
+            "description": "Represents the maximum number of \n        concurrent PDU sessions supported by the network slice",
+            "extensible": null,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 0,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "72b80a70-dcdb-4f54-8a5f-3f1ba9ec94c5"
+        },
+        {
+            "uuid": "80f532f6-49a6-4b94-8921-34383958e701",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecCharacteristic",
+            "href": null,
+            "name": "UL Throughput Per Slice : Guaranteed Throughput",
+            "configurable": true,
+            "description": "This attribute defines achievable data rate of the network slice in uplink that is available ubiquitously across the coverage area of the slice.\n(Unit: kbits/s)",
+            "extensible": false,
+            "isUnique": null,
+            "maxCardinality": 1,
+            "minCardinality": 1,
+            "regex": null,
+            "valueType": "INTEGER",
+            "serviceSpecCharRelationship": [],
+            "serviceSpecCharacteristicValue": [
+                {
+                    "uuid": "2fff001c-252a-404d-a27a-1ae08296a67e",
+                    "@baseType": "BaseEntity",
+                    "@schemaLocation": null,
+                    "@type": null,
+                    "href": null,
+                    "isDefault": true,
+                    "rangeInterval": null,
+                    "regex": null,
+                    "unitOfMeasure": null,
+                    "valueFrom": null,
+                    "valueTo": null,
+                    "valueType": "INTEGER",
+                    "validFor": {
+                        "endDateTime": "2045-10-15T16:22:16.164659Z",
+                        "startDateTime": "2025-10-15T16:22:16.164656Z"
+                    },
+                    "value": {
+                        "value": "50000",
+                        "alias": null
+                    }
+                }
+            ],
+            "validFor": {
+                "endDateTime": "2043-12-31T23:59:59.999Z",
+                "startDateTime": "2024-01-01T00:00:00.001Z"
+            },
+            "@valueSchemaLocation": null,
+            "id": "80f532f6-49a6-4b94-8921-34383958e701"
+        }
+    ],
+    "serviceSpecRelationship": [
+        {
+            "uuid": "14ce38dc-fbb2-4014-86f6-0dcb670c8685",
+            "@baseType": "BaseRootEntity",
+            "@schemaLocation": null,
+            "@type": "org.etsi.osl.tmf.scm633.model.ServiceSpecRelationship",
+            "href": null,
+            "name": "3GPPP Network Slice @ ITAv (RFS)",
+            "id": "533fa63c-9a6a-4bf7-a8f4-875ca5cd230f",
+            "relationshipType": null,
+            "role": null,
+            "validFor": null
+        }
+    ],
+    "targetServiceSchema": null,
+    "id": "a7e853bb-3570-448a-8967-80ba8a4ea5a9"
+}
