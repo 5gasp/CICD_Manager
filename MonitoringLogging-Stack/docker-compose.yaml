@@ -1,0 +1,63 @@
+version: "3.9"
+
+services:
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./prometheus/targets:/etc/prometheus/targets
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    # Prometheus datasource uid: prometheus-main
+
+  target-update-api:
+    build:
+      context: ./targets_update_api
+      dockerfile: Dockerfile
+    container_name: target-update-api
+    ports:
+      - "9091:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PROMETHEUS_TARGETS_FOLDER=/app/targets
+    volumes:
+      - ./prometheus/targets:/app/targets
+    depends_on:
+      - prometheus
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:7.8.1
+    ports:
+      - 9200:9200
+    environment:
+      discovery.type: 'single-node'
+      xpack.security.enabled: 'true'
+      ELASTIC_PASSWORD: 'password' 
+      # Default Username: elastic
+      ES_JAVA_OPTS: '-Xmx2g -Xms2g'
+
+  kibana:
+    container_name: kibana
+    image: kibana:7.8.1
+    volumes:
+      - ./kibana/kibana.yaml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
