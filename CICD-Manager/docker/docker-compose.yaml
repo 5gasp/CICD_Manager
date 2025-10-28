@@ -1,0 +1,37 @@
+version: "3"
+services:
+  #ci_cd_manager:
+  #  image: 5gasp:ci_cd_manager
+  #  depends_on:
+  #    - "db"
+  #  ports:
+  #    - 8000:80
+  #  volumes:
+  #    - ./conf_files/config.ini:/app/config.ini
+  #    - ./conf_files/testbeds_information.yaml:/app/static/testbeds_information.yaml
+
+  results_repository:
+    image: bogem/ftp
+    container_name: ci-cd-results-repository
+    ports:
+      - "20:20"
+      - "21:21"
+      - "47400-47470:47400-47470"
+    environment:
+      - FTP_USER=ftp-user
+      - FTP_PASS=ftp-password
+      - PASV_ADDRESS=10.255.28.74
+    volumes:
+      - ./docker_data/ftp:/home/vsftpd
+
+  db:
+    image: postgres:latest
+    container_name: ci-cd-postgres-db
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=5gasp
+    volumes:
+      - ./docker_data/data:/var/lib/postgresql/data
