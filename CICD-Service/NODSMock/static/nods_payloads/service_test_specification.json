@@ -1,0 +1,87 @@
+{
+  "uuid": "685baabd-aa97-4276-bd69-897e3c144a28",
+  "lastUpdate": "2022-05-13T14:26:06Z",
+  "@baseType": "BaseRootEntity",
+  "@schemaLocation": null,
+  "@type": "BaseEntity",
+  "href": null,
+  "name": "Bandwidth Test (Experimental)",
+  "description": "Test the bandwidth between two VMs (Given to ITAv)",
+  "lifecycleStatus": "In design",
+  "version": "0.1.0",
+  "validFor": null,
+  "id": "685baabd-aa97-4276-bd69-897e3c144a28",
+  "isBundle": null,
+  "attachment": [
+    {
+      "uuid": "d2e1af8c-a988-46d9-81cf-d03f7043aa18",
+      "atReferredType": null,
+      "@baseType": "BaseEntity",
+      "@schemaLocation": null,
+      "@type": null,
+      "href": null,
+      "name": "testing-descriptor.yaml",
+      "id": "d2e1af8c-a988-46d9-81cf-d03f7043aa18",
+      "attachmentType": null,
+      "content": null,
+      "description": null,
+      "mimeType": null,
+      "url": "/serviceTestManagement/v4/serviceTestSpecification/685baabd-aa97-4276-bd69-897e3c144a28/attachment/e54018c0-db87-4c91-b1a0-7cd187a75503/testing-descriptor.yaml",
+      "size": null,
+      "validFor": null,
+      "@referredType": null
+    },
+    {
+      "uuid": "d2e1af8c-a988-46d9-81cf-d03f7043aa18",
+      "atReferredType": null,
+      "@baseType": "BaseEntity",
+      "@schemaLocation": null,
+      "@type": null,
+      "href": null,
+      "name": "bandwidth.tar.gz",
+      "id": "d2e1af8c-a988-46d9-81cf-d03f7043aa18",
+      "attachmentType": null,
+      "content": null,
+      "description": null,
+      "mimeType": null,
+      "url": "/serviceTestManagement/v4/serviceTestSpecification/685baabd-aa97-4276-bd69-897e3c144a28/attachment/e54018c0-db87-4c91-b1a0-7cd187a75503/bandwidth.tar.gz",
+      "size": null,
+      "validFor": null,
+      "@referredType": null
+    }
+  ],
+  "constraint": [],
+  "entitySpecRelationship": [],
+  "relatedParty": [
+    {
+      "uuid": "dfe2fa29-d02c-4719-b0e9-3b9722571d54",
+      "@baseType": "BaseRootEntity",
+      "@schemaLocation": null,
+      "@type": "io.openslice.tmf.prm669.model.RelatedParty",
+      "href": null,
+      "name": "admin",
+      "role": "OWNER",
+      "@referredType": "SimpleUsername_Individual",
+      "id": "admin",
+      "extendedInfo": ""
+    }
+  ],
+  "relatedServiceSpecification": [
+    {
+      "@baseType": "BaseEntity",
+      "@schemaLocation": null,
+      "@type": null,
+      "href": null,
+      "name": null,
+      "version": null,
+      "targetServiceSchema": null,
+      "@referredType": null,
+      "id": "fd602da7-62f5-4d31-bd51-ab747da2fb59"
+    }
+  ],
+  "serviceTestSpecRelationship": [],
+  "specCharacteristic": [
+  ],
+  "targetEntitySchema": null,
+  "testMeasureDefinition": []
+}

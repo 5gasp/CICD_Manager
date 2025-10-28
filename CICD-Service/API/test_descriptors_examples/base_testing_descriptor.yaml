@@ -1,0 +1,158 @@
+test_info:
+  netapp_id: OBU 
+  network_service_id: vOBU
+  testbed_id: testbed_itav 
+  description: Infrastructure tests for XYZ NetApp
+
+test_phases:
+  setup:
+    deployments:
+      - deployment_id: 1
+        name: xyz_d1
+        descriptor: xyz_vnf1_vnfd
+        id: none 
+        parameters: 
+          - key: ip_dest
+            value: 1.1.1.1 
+      - deployment_id: 2
+        name: xyz_vnf2
+        descriptor: xyz_vnf2_vnfd
+        id: none 
+        parameters:
+          - key: ip_source 
+            value: 2.2.2.2
+
+    testcases:
+      - testcase_id: 1
+        type: predefined
+        scope: infrastructure
+        name: bandwidth
+        description: Test the bandwidth between the OBU and vOBU
+        parameters:
+          - key: host1_ip
+            value: <deployment_1_ip>
+          - key: host1_username
+            value: ubuntu
+          - key: host1_password
+            value: password
+          - key: host2_ip
+            value: <deployment_2_ip>
+          - key: host2_username
+            value: ubuntu
+          - key: host2_password
+            value: password
+          - key: threshold
+            value: 0.5
+          - key: comparator
+            value: more_than
+      
+      - testcase_id: 2
+        type: predefined
+        scope: infrastructure
+        name: transmission_speed
+        description: Test the transmission speed between the OBU and vOBU
+        parameters:
+          - key: host1_ip
+            value: <deployment_1_ip>
+          - key: host1_username
+            value: ubuntu
+          - key: host1_password
+            value: password
+          - key: host2_ip
+            value: <deployment_2_ip>
+          - key: host2_username
+            value: ubuntu
+          - key: host2_password
+            value: password
+          - key: threshold
+            value: 100
+          - key: comparator
+            value: less_or_equal_than
+
+      - testcase_id: 3
+        type: predefined
+        scope: operational
+        name: packet_loss
+        description: Test the packet loss between the OBU and vOBU
+        parameters:
+          - key: host1_ip
+            value: <deployment_1_ip>
+          - key: host1_username
+            value: ubuntu
+          - key: host1_password
+            value: password
+          - key: host2_ip
+            value: <deployment_2_ip>
+          - key: host2_username
+            value: ubuntu
+          - key: host2_password
+            value: password
+          - key: threshold
+            value: 20
+          - key: comparator
+            value: less_or_equal_than
+
+      - testcase_id: 4
+        type: predefined
+        scope: security
+        name: open_ports
+        description: Test the open ports in the OBU VNF
+        parameters:
+          - key: host
+            value: <deployment_1_ip>
+          - key: expected_open_port
+            value: 22
+          - key: expected_protocol
+            value: tcp
+      
+      - testcase_id: 5
+        type: predefined
+        scope: security
+        name: open_ports
+        description: Test the open ports in the OBU VNF
+        parameters:
+          - key: host
+            value: <deployment_2_ip>
+          - key: expected_open_port
+            value: 22
+          - key: expected_protocol
+            value: tcp
+
+    metrics_collection:
+      - metrics_collection_id: 1
+        parameters:
+            - key: host
+              value: <deployment_1_ip>
+            - key: host_username
+              value: ubuntu
+            - key: host_password
+              value: password
+      - metrics_collection_id: 2
+        parameters:
+            - key: host
+              value: <deployment_2_ip>
+            - key: host_username
+              value: ubuntu
+            - key: host_password
+              value: password
+  execution:
+    - batch_id: 1
+      scope: infrastructure
+      executions:
+        - execution_id: 1
+          name: bandwidth and transmission_speed test
+          testcase_ids: [1,2]
+    - batch_id: 2
+      scope: operational
+      executions:
+      - execution_id: 1
+        name: packet_loss_ratio_test
+        testcase_ids: [3]     
+    - batch_id: 3
+      scope: security
+      executions:
+        - execution_id: 1
+          name: open_ports of OBU
+          testcase_ids: [4, 5]
+
+  

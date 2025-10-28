@@ -1,0 +1,12 @@
+---
+testbeds:
+  testbed_itav:
+    name: Testbed ITAv
+    description: Testbed at IT Aveiro
+    ltr:
+      location: 10.0.12.217:21
+      user: ftp-user
+      password: ftp-password
+  testbed_odins:
+    name: Testbed OdinS
+    description: Testbed at OdinS, Murcia
