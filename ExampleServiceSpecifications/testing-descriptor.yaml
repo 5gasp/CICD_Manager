@@ -1,0 +1,644 @@
+
+
+# VARIABLE TO CONFIGURE
+# 1 -> $_mini_api_ip_server -> {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+# 2 -> $_mini_api_server_url -> http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001
+# 3 -> $_vobu_ip -> {{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}
+# 4 -> $_manager_ip -> {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+# 5 -> $_aggregator_ip -> {{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}
+
+test_info:
+  netapp_id: OdinS-Migrate-NetworkApplication
+  network_service_id: Migrate
+  testbed_id: testbed_itav
+  description: Validation tests for OdinS' Migrate Network Application
+
+metrics_collection:
+  - job_name: surrogates
+    metrics_collection:
+      - type: prometheus
+        collection_endpoint: "{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:9100"
+      - type: prometheus
+        collection_endpoint: "{{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}:9100"
+      - type: prometheus
+        collection_endpoint: "{{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}:9100"
+    viewer:
+      type: grafana
+      dashboard_src: "https://grafana.com/api/dashboards/1860/revisions/41/download"
+      name_for_dashboard: OdinS Migrate NetworkApplication Node Exporter
+
+log_collection:
+  - test_agent_name: ci-cd-test-surrogates
+    type: filebeat
+    viewer: kibana
+
+test_phases:
+    testcases:
+      ##########################################################################
+      ##########################################################################
+      #####                                                                #####
+      #####                        5G READINESS TESTS                      #####
+      #####                                                                #####
+      ##########################################################################
+      ##########################################################################
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #               MiniAPI Configuration                 #
+      #######################################################
+      - testcase_id: 1
+        type: predefined
+        scope: 5g_readiness
+        name: mini_api_configuration
+        description: Configure the Migrate Network Application MiniAPI
+        parameters:
+          - key: configuration_endpoint
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/configure
+          - key: configuration_payload
+            value: "\\'{\\\"variables\\\":{\\\"NEF_IP\\\":\\\"10.255.28.236\\\",\\\"NEF_PORT\\\":8888,\\\"NEF_LOGIN_USERNAME\\\":\\\"admin@my-email.com\\\",\\\"NEF_LOGIN_PASSWORD\\\":\\\"pass\\\",\\\"SUBS_MONITORING_TYPE\\\":\\\"LOCATION_REPORTING\\\", \\\"SUBS_EXTERNAL_ID\\\": \\\"123456789@domain.com\\\", \\\"SUBS_CALLBACK_URL\\\":\\\"https://webhook.site/43d72330-0f8e-4a52-af1c-65c77d9aafd0\\\",\\\"SUBS_MONITORING_EXPIRE_TIME\\\":\\\"2024-03-09T13:18:19.495000+00:00\\\",\\\"UE1_NAME\\\":\\\"My UE\\\",\\\"UE1_DESCRIPTION\\\":\\\"My UE Description\\\",\\\"UE1_IPV4\\\":\\\"10.10.10.10\\\",\\\"UE1_IPV6\\\":\\\"0:0:0:0:0:0:0:0\\\",\\\"UE1_MAC_ADDRESS\\\":\\\"22-00-00-00-00-02\\\",\\\"UE1_SUPI\\\":\\\"202010000000001\\\"}}\\'"
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #              Authentication with 5GS                #
+      #######################################################
+      - testcase_id: 2
+        type: predefined
+        scope: 5g_readiness
+        name: authentication_with_5gs_test
+        description: Validate if the Migrate Network Application can authenticate with the NEF
+        parameters:
+          - key: reporting_api_ip
+            value: 10.255.28.236
+          - key: reporting_api_port
+            value: 3000
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def19Sec9
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #       NEF Monitoring Event Subscription Test        #
+      #######################################################
+      - testcase_id: 3
+        type: predefined
+        scope: 5g_readiness
+        name: nef_monitoring_subscription_test
+        description: Test if the Migrate Network Application can subscribe to monitoring events in the NEF
+        parameters:
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def115G2
+          - key: reporting_api_ip
+            value: 10.255.28.236
+          - key: reporting_api_port
+            value: 3000
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                 NEF UE Handover Test                #
+      #######################################################
+      - testcase_id: 4
+        type: predefined
+        scope: 5g_readiness
+        name: nef_ue_handover_test
+        description: Test if the Migrate Network Application can get handover events from the NEF
+        parameters:
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def115G3
+          - key: reporting_api_ip
+            value: 10.255.28.236
+          - key: reporting_api_port
+            value: 3000
+          - key: ue_supi
+            value: 202010000000001
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                  NEF Handover Test                  #
+      #######################################################
+      - testcase_id: 5
+        type: predefined
+        scope: 5g_readiness
+        name: nef_ue_rsrp_acquisition_test
+        description: Test if the Migrate Network Application can get the RSRP values for a given UE
+        parameters:
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def115G4
+          - key: reporting_api_ip
+            value: 10.255.28.236
+          - key: reporting_api_port
+            value: 3000
+          - key: ue_supi
+            value: 202010000000001
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                NEF UE Path Loss Test                #
+      #######################################################
+      - testcase_id: 6
+        type: predefined
+        scope: 5g_readiness
+        name: nef_ue_path_loss_test
+        description: Test if the Migrate Network Application can get the path losses for a given UE
+        parameters:
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def115G5
+          - key: reporting_api_ip
+            value: 10.255.28.236
+          - key: reporting_api_port
+            value: 3000
+          - key: ue_supi
+            value: 202010000000001
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                NEF Serving Cell Test                #
+      #######################################################
+      - testcase_id: 7
+        type: predefined
+        scope: 5g_readiness
+        name: nef_serving_cell_info_test
+        description: Test if the Migrate Network Application can get the serving cell for a given UE
+        parameters:
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def115G6
+          - key: reporting_api_ip
+            value: 10.255.28.236
+          - key: reporting_api_port
+            value: 3000
+          - key: ue_supi
+            value: 202010000000001
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #              NEF QoS Subscription Test              #
+      #######################################################
+      - testcase_id: 8
+        type: predefined
+        scope: 5g_readiness
+        name: nef_qos_subscription_test
+        description: Test if the Migrate Network Application can subscribe to QOS events
+        parameters:
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def115G7
+          - key: reporting_api_ip
+            value: 10.255.28.236
+          - key: reporting_api_port
+            value: 3000
+          - key: monitoring_payload
+            value: "\\'{\\\"ipv4Addr\\\":\\\"10.0.0.1\\\",\\\"notificationDestination\\\":\\\"http://127.0.0.1/callback\\\",\\\"snssai\\\":{\\\"sst\\\":1,\\\"sd\\\":\\\"000001\\\"},\\\"dnn\\\":\\\"province1.mnc01.mcc202.gprs\\\",\\\"qosReference\\\":9,\\\"altQoSReferences\\\":[0],\\\"usageThreshold\\\":{\\\"duration\\\":0,\\\"totalVolume\\\":0,\\\"downlinkVolume\\\":0,\\\"uplinkVolume\\\":0},\\\"qosMonInfo\\\":{\\\"reqQosMonParams\\\":[\\\"DOWNLINK\\\"],\\\"repFreqs\\\":[\\\"EVENT_TRIGGERED\\\"],\\\"latThreshDl\\\":0,\\\"latThreshUl\\\":0,\\\"latThreshRp\\\":0,\\\"waitTime\\\":0,\\\"repPeriod\\\":0}}\\'"
+
+      ##########################################################################
+      ##########################################################################
+      #####                                                                #####
+      #####                          SECURITY TESTS                        #####
+      #####                                                                #####
+      ##########################################################################
+      ##########################################################################
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #               Openstack Port Security               #
+      #######################################################
+      - testcase_id: 9
+        type: predefined
+        scope: security
+        name: openstack_port_security
+        description: Test Port Security
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                      SSL Audit                      #
+      #######################################################
+      - testcase_id: 10
+        type: predefined
+        scope: security
+        name: ssl_audit
+        description: Validate if the offered APIs are protected with SSL
+        parameters:
+          - key: url
+            value: odins.es
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                   SSH Brute-Force                   #
+      #######################################################
+      - testcase_id: 11
+        type: predefined
+        scope: security
+        name: ssh_brute_force
+        description: Test the credentials of the Migrate Network Application VNFs
+        parameters:
+          - key: max_usernames_to_test
+            value: 1
+          - key: max_password_to_test
+            value: 20
+          - key: target_ip
+            value: {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                     Open Ports                      #
+      #######################################################
+      - testcase_id: 12
+        type: predefined
+        scope: security
+        name: open_ports
+        description: Check if the Migrate Network Application VNFs open ports are the ones desired
+        parameters:
+          - key: host
+            value: {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+          - key: expected_open_ports
+            value: 22/tcp,3001/tcp,8070/tcp,9100/tcp
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                      SSH Audit                      #
+      #######################################################
+      - testcase_id: 13
+        type: predefined
+        scope: security
+        name: ssh_audit
+        description: Test the SSH Server Security of the Migrate Network Application VNFs
+        parameters:
+          - key: ssh_host
+            value: {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                 NEF Authentication                  #
+      #######################################################
+      # This test requires that the MiniAPI Configuration is firstly performed
+      - testcase_id: 14
+        type: predefined
+        scope: security
+        name: nef_authentication_test
+        description: Validate if the Migrate Network Application can authenticate with the NEF
+        parameters:
+          - key: reporting_api_ip
+            value: 10.255.28.236
+          - key: reporting_api_port
+            value: 3000
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def19Sec9
+
+      ##########################################################################
+      ##########################################################################
+      #####                                                                #####
+      #####                 PERFOMANCE AND SCALABILITY TESTS               #####
+      #####                                                                #####
+      ##########################################################################
+      ##########################################################################
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #              MiniAPI Configuration UE               #
+      #######################################################
+      - testcase_id: 15
+        type: predefined
+        scope: performance_and_scalability
+        name: mini_api_configuration
+        description: Configure the UE MiniAPI
+        parameters:
+          - key: configuration_endpoint
+            value: http://10.255.28.223:3001/configure
+          - key: configuration_payload
+            value: "\\'{\\\"variables\\\":{\\\"NEF_IP\\\":\\\"10.255.28.236\\\",\\\"NEF_PORT\\\":8888,\\\"NEF_LOGIN_USERNAME\\\":\\\"admin@my-email.com\\\",\\\"NEF_LOGIN_PASSWORD\\\":\\\"pass\\\",\\\"SUBS_MONITORING_TYPE\\\":\\\"LOCATION_REPORTING\\\", \\\"SUBS_EXTERNAL_ID\\\": \\\"123456789@domain.com\\\", \\\"SUBS_CALLBACK_URL\\\":\\\"https://webhook.site/43d72330-0f8e-4a52-af1c-65c77d9aafd0\\\",\\\"SUBS_MONITORING_EXPIRE_TIME\\\":\\\"2024-03-09T13:18:19.495000+00:00\\\",\\\"UE1_NAME\\\":\\\"My UE\\\",\\\"UE1_DESCRIPTION\\\":\\\"My UE Description\\\",\\\"UE1_IPV4\\\":\\\"10.10.10.10\\\",\\\"UE1_IPV6\\\":\\\"0:0:0:0:0:0:0:0\\\",\\\"UE1_MAC_ADDRESS\\\":\\\"22-00-00-00-00-02\\\",\\\"UE1_SUPI\\\":\\\"202010000000001\\\"}}\\'"
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #            NEF Signaling Response time              #
+      #######################################################
+      - testcase_id: 16
+        type: predefined
+        scope: performance_and_scalability
+        name: nef_signaling_performance_response_time_test
+        description: Validate the response time of the endpoint that shall receive the NEF notifications
+        parameters:
+          - key: host
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001
+          - key: endpoint
+            value: /start/nef-signaling
+          - key: max_response_time_threshold_secs
+            value: 5
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #       E2E Single UE Lantency and Throughput         #
+      #######################################################
+      - testcase_id: 17
+        type: predefined
+        scope: performance_and_scalability
+        name: e2e_single_ue_latency_and_throughput_test
+        description: Validate the latency and throughput of the Migrate Network Application VNFs with a singe UE
+        parameters:
+          - key: server_mini_api_start_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def14Perf1
+          - key: server_mini_api_stop_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/stop/Def14Perf1
+          - key: client_mini_api_start_endpoint_to_invoke
+            value: http://10.255.28.223:3001/start/Def14Perf1
+          - key: client_mini_api_results_endpoint_to_invoke
+            value: http://10.255.28.223:3001/results/Def14Perf1
+          - key: iperf_server_ip
+            value: {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+          - key: min_bandwidth_mbps_threshold
+            value: 50
+          - key: max_rtt_ms_threshold
+            value: 20
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #       E2E Multiple UE Lantency and Throughput       #
+      #######################################################
+      - testcase_id: 18
+        type: predefined
+        scope: performance_and_scalability
+        name: e2e_multiple_ue_latency_and_throughput_test
+        description: Validate the latency and throughput of the Migrate Network Application VNFs with multiple UEs
+        parameters:
+          - key: server_mini_api_start_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def14Perf2
+          - key: server_mini_api_stop_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/stop/Def14Perf2
+          - key: client_mini_api_start_endpoint_to_invoke
+            value: http://10.255.28.223:3001/start/Def14Perf2
+          - key: client_mini_api_results_endpoint_to_invoke
+            value: http://10.255.28.223:3001/results/Def14Perf2
+          - key: iperf_server_ip
+            value: {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+          - key: min_bandwidth_mbps_threshold
+            value: 100
+          - key: max_rtt_ms_threshold
+            value: 20
+          - key: ue_count
+            value: 50
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #       NEF Signling - Min. Requests Per Second       #
+      #######################################################
+      - testcase_id: 19
+        type: predefined
+        scope: performance_and_scalability
+        name: nef_signaling_performance_requests_per_second_test
+        description: Validate if the minimum number of requests per second is the one desired for the endpoint that shall receive the NEF notifications
+        parameters:
+          - key: host
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001
+          - key: endpoint
+            value: /
+          - key: min_threshold
+            value: 5
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #           NEF Signling - Max Connections            #
+      #######################################################
+      - testcase_id: 20
+        type: predefined
+        scope: performance_and_scalability
+        name: nef_signaling_performance_maximum_connections_test
+        description: Validate how many connections can the Migrate Network Application NEF notification endpoint supports
+        parameters:
+          - key: load_test_host
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001
+          - key: load_test_endpoint
+            value: /
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def14Perf7
+          - key: mini_api_endpoint_to_invoke_cleanup
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/stop/Def14Perf7
+          - key: mini_api_endpoint_to_invoke_results
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/results/Def14Perf7
+          - key: connections_minimum_threshold
+            value: 5
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #           Web Performance Static Pages            #
+      #######################################################
+      - testcase_id: 21
+        type: predefined
+        scope: performance_and_scalability
+        name: web_performance_static_page
+        description: Validate the performance of an offered static page
+        parameters:
+          - key: target
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/
+          - key: web_speed_net_threshold_bps
+            value: 1000000
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #           API Performance Response Time             #
+      #######################################################
+      - testcase_id: 22
+        type: predefined
+        scope: performance_and_scalability
+        name: api_performance_response_time
+        description: Validate the response time of the Migrate Network Application APIs
+        parameters:
+          - key: api_target
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/
+          - key: threshold_ms
+            value: 1000
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #        API Performance Requests Per Second          #
+      #######################################################
+      - testcase_id: 23
+        type: predefined
+        scope: performance_and_scalability
+        name: api_performance_requests_per_second
+        description: Validate how many requests can the Migrate Network Application APIs support, per second
+        parameters:
+          - key: host
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001
+          - key: endpoint
+            value: /
+          - key: http_method
+            value: GET
+          - key: min_threshold
+            value: 10
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                  Max Connections                    #
+      #######################################################
+      - testcase_id: 24
+        type: predefined
+        scope: performance_and_scalability
+        name: maximum_number_of_connections_test
+        description: Validate how many connections can the Migrate Network Application support
+        parameters:
+          - key: load_test_host
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001
+          - key: load_test_endpoint
+            value: /
+          - key: load_test_http_method
+            value: GET
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def14Perf11
+          - key: mini_api_endpoint_to_invoke_cleanup
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/stop/Def14Perf11
+          - key: mini_api_endpoint_to_invoke_results
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/results/Def14Perf11
+          - key: connections_minimum_threshold
+            value: 10
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #        Network Applicaiton Performance RTT          #
+      #######################################################
+      - testcase_id: 25
+        type: predefined
+        scope: performance_and_scalability
+        name: network_application_performance_rtt
+        description: Validate the RTT for the communication with the CITS Network Application
+        parameters:
+          - key: target
+            value: {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+          - key: threshold_ms
+            value: 500
+
+      #######################################################
+      #                   Pre-Defined Test                  #
+      #                  Hops Until Target                  #
+      #######################################################
+      - testcase_id: 26
+        type: predefined
+        scope: performance_and_scalability
+        name: hops_until_target_test
+        description: Validate the number of hops between the Migrate Network Application and a given target
+        parameters:
+          - key: target
+            value: 10.255.28.223
+          - key: mini_api_endpoint_to_invoke
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/start/Def14Perf13
+          - key: mini_api_endpoint_to_invoke_results
+            value: http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001/results/Def14Perf13
+          - key: max_hops_threshold
+            value: 20
+
+      ##########################################################################
+      ##########################################################################
+      #                                                                        #
+      #                            DEVELOPER-DEFINED                           #
+      #                                                                        #
+      ##########################################################################
+      ##########################################################################
+
+      #######################################################
+      #                Developer-Defined Test               #
+      #                  API REQUEST TEST 1                 #
+      #######################################################
+      - testcase_id: 27
+        type: developer-defined
+        scope: operational
+        name: api_request_test
+        description: Test if the Network Application's vOBU is Available
+        parameters:
+          - key: provider_ip
+            value: {{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}
+          - key: provider_port
+            value: 12341
+
+      #######################################################
+      #                Developer-Defined Test               #
+      #                  API REQUEST TEST 2                 #
+      #######################################################
+      - testcase_id: 28
+        type: developer-defined
+        scope: operational
+        name: api_request_test
+        description: Test if the Network Application's Manager is Available
+        parameters:
+          - key: provider_ip
+            value: {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+          - key: provider_port
+            value: 8070
+
+      #######################################################
+      #                Developer-Defined Test               #
+      #                  API REQUEST TEST 3                 #
+      #######################################################
+      - testcase_id: 29
+        type: developer-defined
+        scope: operational
+        name: api_request_test
+        description: Test if the Network Application's Aggregator is Available
+        parameters:
+          - key: provider_ip
+            value: {{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}
+          - key: provider_port
+            value: 8090
+
+      #######################################################
+      #                Developer-Defined Test               #
+      #                 DATABASE READY TEST                 #
+      #######################################################
+      - testcase_id: 30
+        type: developer-defined
+        scope: operational
+        name: database_ready_test
+        description: Test if the Network Application's vOBU Database is Ready
+        parameters:
+          - key: provider_ip
+            value: {{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}
+          - key: provider_port
+            value: 12341
+
+      #######################################################
+      #                Developer-Defined Test               #
+      #                    HTTP BURST TEST                  #
+      #######################################################
+      - testcase_id: 31
+        type: developer-defined
+        scope: operational
+        name: http_burst_test
+        description: Test if the Network Application's Aggregator can Handle a Burst of HTTP Requests
+        parameters:
+          - key: provider_ip
+            value: {{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}
+          - key: provider_port
+            value: 8090
+
+      #######################################################
+      #                Developer-Defined Test               #
+      #                  PACKAGE CHECK TEST                 #
+      #######################################################
+      - testcase_id: 32
+        type: developer-defined
+        scope: operational
+        name: package_check_test
+        description: Test if the Network Application's Manager has all Required Software Dependencies
+        parameters:
+          - key: target_ip
+            value: {{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}
+
+  execution:
+    - batch_id: 1
+      scope: 5g_readiness
+      executions:
+        - execution_id: 1
+          name: 5g_readiness_tests
+          testcase_ids: [1, 2, 3, 4, 5, 6, 7] # 8 was removed
+    - batch_id: 2
+      scope: security
+      executions:
+        - execution_id: 1
+          name: security_tests
+          testcase_ids: [9, 10, 11, 12, 13, 1, 14]
+    - batch_id: 3
+      scope: performance_and_scalability
+      executions:
+        - execution_id: 1
+          name: performance_and_scalability_tests
+          #testcase_ids: [15, 1, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
+          testcase_ids: [15, 1, 16, 19, 20, 21, 22, 23, 24, 25, 26]
+    - batch_id: 4
+      scope: operational
+      executions:
+        - execution_id: 1
+          name: operational_tests
+          testcase_ids: [27, 28, 29, 30, 31, 32]
