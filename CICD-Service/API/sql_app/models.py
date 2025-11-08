@@ -20,12 +20,16 @@
 # generic imports
 from email.policy import default
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
-from sqlalchemy import Column, Integer, DateTime, Enum
+from sqlalchemy import Column, Integer, DateTime, Enum as SQLEnum
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import JSONB
+from enum import Enum
+
 import datetime
 
 # custom imports
 from .database import Base
+from aux import constants as Constants
 
 
 class CI_CD_Agent(Base):
@@ -75,10 +79,13 @@ class Test_Instance(Base):
 	test_log_location = Column(String)
 	test_results_location = Column(String)
 	nods_id = Column(String)
+	testing_descriptor = Column(JSONB)
+	service_test_specification_id = Column(String)
+	created_at = Column(DateTime, default=datetime.datetime.utcnow)
+	finished_at = Column(DateTime, nullable=True)
 
 	def as_dict(self):
 		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
 
 class Test_Status(Base):
 	__tablename__ = "test_status"
@@ -86,7 +93,12 @@ class Test_Status(Base):
 	id = Column(Integer, primary_key=True, index=True)
 	timestamp =  Column(DateTime, default=datetime.datetime.utcnow)
 	test_id = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
-	state = Column(String, nullable=False)
+	state = Column(
+		SQLEnum(Constants.TestStatus),
+		default=Constants.TestStatus.SUBMITTED_TO_CI_CD_MANAGER,
+		nullable=False
+	)
+	description = Column(String, nullable=True)
 	success = Column(Boolean, nullable=False)
 
 

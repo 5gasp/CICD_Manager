@@ -47,6 +47,9 @@ sys.path.insert(0, parentdir)
 
 # custom imports
 import aux.utils as Utils
+from tasks.broker import broker
+from tasks import workers
+
 router = APIRouter()
 
 # Logger
@@ -270,3 +273,57 @@ async def create_service_test(
                 data=[])
     #return Utils.create_response(status_code=200, success=True, message=f"IXXXX", data=[])
     return TestRouters.new_test(rendered_descriptor, nods_id, loaded_tests_dict, testing_artifacts_location, db, background_tasks)
+
+
+
+@router.post(
+    "/test",
+    tags=["TMF-653"],
+    summary="Creates a Service Test",
+    description="Creates a Service Test, given a Valid TMF-653 Payload file, and execute the associated tests",
+)
+async def test(
+    serviceTestParsed: tmf653_schemas.ServiceTest_Create,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    task = await workers.test.kiq(serviceTestParsed)
+    # Wait for the result.
+    result = await task.wait_result(timeout=10)
+
+    if not result.is_err:
+        test_instance = result.return_value
+        return Utils.create_response(success=True,
+            message=f"A new testing job is being created",
+            data={
+                "test_id": test_instance.id,
+                "testbed_id": test_instance.testbed_id,
+                "netapp_id": test_instance.netapp_id,
+                "network_service_id": test_instance.network_service_id,
+                "build_number": test_instance.build,
+                "access_token": test_instance.access_token,
+            }
+        )
+    else:
+        logging.error("Error found while executing task.")
+        logging.error(f"Error type: {type(result.error).__name__}")
+        logging.error(f"Error message: {result.error}")
+        return Utils.create_response(
+            success=False,
+            message=f"Error in Creating Testing Process: {result.error}"
+        )
+
+    #return Utils.create_response(success=True,
+    #    message=f"A new build job is being created",
+    #    data={
+    #        "test_id": test_instance.id,
+    #        "testbed_id": test_instance.testbed_id,
+    #        "netapp_id": test_instance.netapp_id,
+    #        "network_service_id": test_instance.network_service_id,
+    #        "build_number": test_instance.build,
+    #        "access_token": test_instance.access_token
+    #    }
+    #)
+
+
+

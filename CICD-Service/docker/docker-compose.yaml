@@ -1,15 +1,15 @@
 version: "3"
 services:
-  ci_cd_manager:
-    build: .
-    image: 5gasp:ci_cd_manager
-    depends_on:
-      - "db"
-    ports:
-      - 8000:80
-    volumes:
-      - ./conf_files/config.ini:/app/config.ini
-      - ./conf_files/testbeds_information.yaml:/app/static/testbeds_information.yaml
+  #ci_cd_manager:
+  #  build: .
+  #  image: 5gasp:ci_cd_manager
+  #  depends_on:
+  #    - "db"
+  #  ports:
+  #    - 8000:80
+  #  volumes:
+  #    - ./conf_files/config.ini:/app/config.ini
+  #    - ./conf_files/testbeds_information.yaml:/app/static/testbeds_information.yaml
 
   results_repository:
     image: bogem/ftp
@@ -36,3 +36,26 @@ services:
       - POSTGRES_DB=5gasp
     volumes:
       - ./docker_data/data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ci-cd-rabbitmq
+    ports:
+      # AMQP protocol
+      - "5672:5672"
+      # Management UI
+      - "15672:15672" 
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - ./docker_data/rabbitmq:/var/lib/rabbitmq
+  
+  redis:
+    image: redis:latest
+    container_name: ci-cd-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./docker_data/redis:/data

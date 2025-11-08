@@ -51,6 +51,7 @@ def load_config():
         Constants.MR_LOCATION = "http://10.255.28.74:8086" # config['METRICS-REPOSITORY']['InfluxDB_Location']
         Constants.MR_DB = "telegraf" # config['METRICS-REPOSITORY']['DB_Name']
         Constants.NODS_HOST = config['NODS']['Host']
+        print("NODS Host:", Constants.NODS_HOST)
         Constants.NODS_USER = config['NODS']['User']
         Constants.NODS_PASSWORD = config['NODS']['Password']
         Constants.TRVD_HOST = config['TRVD']['Host']

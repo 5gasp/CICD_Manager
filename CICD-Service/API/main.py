@@ -39,6 +39,7 @@ import aux.startup as Startup
 import aux.utils as Utils
 from sql_app import models
 import wrappers.jenkins.constants as JenkinsConstants
+from tasks.broker import broker
 
 
 
@@ -187,4 +188,9 @@ async def startup_event():
         logging.critical(3)
         db.close()
         return exit(7)
+    print("Starting TaskIQ broker...")
+    await broker.startup()
     
+@app.on_event("shutdown")
+async def on_shutdown():
+    await broker.shutdown()

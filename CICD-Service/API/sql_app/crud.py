@@ -14,7 +14,7 @@ import string
 # generic imports
 from os import access, name
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 # custom imports
 from . import models
@@ -23,6 +23,8 @@ from aux import auth
 from sql_app.CRUD import agents as agents_crud
 from exceptions.auth import *
 from exceptions.agents import *
+from aux import constants as Constants
+
 # Logger
 logging.basicConfig(
     format="%(module)-15s:%(levelname)-10s| %(message)s",
@@ -125,9 +127,17 @@ def get_all_testbeds(db: Session, skip: int = 0, limit: int = 500):
 # ------------ Test Instances ------------ #
 # ---------------------------------------- #
 
-def create_test_instance(db: Session, netapp_id: str, network_service_id: str, testbed_id: str, extra_information: str = None, nods_id:str = None):
+def create_test_instance(db: Session, netapp_id: str, network_service_id: str, testbed_id: str, service_test_specification_id: str, testing_descriptor: dict = None, extra_information: str = None, nods_id:str = None):
     current_build = get_last_build_of_test_instance(db, netapp_id, network_service_id) + 1
-    test_instance = models.Test_Instance(netapp_id=netapp_id, network_service_id=network_service_id, build=current_build, testbed_id=testbed_id, access_token=''.join(random.choice(string.ascii_lowercase) for i in range(16)))
+    test_instance = models.Test_Instance(
+        netapp_id=netapp_id,
+        network_service_id=network_service_id,
+        build=current_build,
+        testbed_id=testbed_id,
+        testing_descriptor=testing_descriptor,
+        service_test_specification_id=service_test_specification_id,
+        access_token=''.join(random.choice(string.ascii_lowercase) for i in range(16))
+    )
     if extra_information:
         test_instance.extra_information = extra_information
     if nods_id:
@@ -135,9 +145,24 @@ def create_test_instance(db: Session, netapp_id: str, network_service_id: str, t
     db.add(test_instance)
     db.commit()
     db.refresh(test_instance)
+
+    create_test_status(
+        db=db,
+        test_id=test_instance.id,
+        state=Constants.TestStatus.SUBMITTED_TO_CI_CD_MANAGER,
+    )
+    
     logging.info(f"Created test instance for netapp_id '{netapp_id}' and network_service_id '{network_service_id}'.")
     return test_instance
 
+
+def update_test_instance_testing_descriptor(db: Session, test_id: int, testing_descriptor: str):
+    db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id).first()
+    db_test_instance.testing_descriptor = testing_descriptor
+    db.commit()
+    db.refresh(db_test_instance)
+    logging.info(f"Updated testing_descriptor on test instance {db_test_instance.id}.")
+    return db_test_instance
 
 def update_test_instance_extra_info(db: Session, test_id: int, extra_information: str):
     db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_id).first()
@@ -146,6 +171,12 @@ def update_test_instance_extra_info(db: Session, test_id: int, extra_information
     db.refresh(db_test_instance)
     logging.info(f"Updated extra information on test instance {db_test_instance.id}.")
     return db_test_instance
+
+def get_all_test_instances(db: Session):
+    return db.query(models.Test_Instance).all()
+
+
+
 
 
 def get_test_instance(db: Session, test_id: int, access_token: str = None):
@@ -197,8 +228,8 @@ def get_ci_cd_agent_given_test_instance_id(db: Session, test_instance_id: int):
 # -------------- Test Status ------------- #
 # ---------------------------------------- #
 
-def create_test_status(db: Session, test_id: int, state: str, success: bool):
-    test_status = models.Test_Status(test_id=test_id, state=state.upper(), success=success)
+def create_test_status(db: Session, test_id: int, state: str, description: str = None ,success: bool = True):
+    test_status = models.Test_Status(test_id=test_id, state=state, description=description, success=success)
     db.add(test_status)
     db.commit()
     db.refresh(test_status)
@@ -329,11 +360,14 @@ def get_developer_defined_test_for_test_instance(db: Session,
 # ------------ Test Information ---------- #
 # ---------------------------------------- #
 
-def get_test_info_by_testbed_id(db: Session, testbed_id: int):
-    # models.Test_Variables.testvariable_id == models.Test_Information.id
-    test_info_instance = db.query(models.Test_Information).filter(
-        models.Test_Information.testbed_id == testbed_id)
-    return test_info_instance.all()
+def get_test_info_by_testbed_id(db: Session, testbed_id: str):
+    return (
+        db.query(models.Test_Information)
+        .options(joinedload(models.Test_Information.testinfo_variables)
+                 .joinedload(models.Test_Variables.possible_options))
+        .filter(models.Test_Information.testbed_id == testbed_id)
+        .all()
+    )
 
 def is_testinfo_valid(db: Session, test_info_instances: models.Test_Information,
 testinfo_data:testinfo_schemas.TestInformation):
