@@ -36,18 +36,21 @@ def parse_log_collection_info(db, test_id, log_collection_info):
                 f"{Constants.KIBANA_PORT}/app/logs/stream?logFilter=" +\
                 f"(expression:'test_agent_name:\"{agent_name}\"'," +\
                 "kind:kuery)&logPosition=(streamLive:!t)"
+            
             logging.info(
-                f"Kibana URL for agent {agent_name}: {kibana_url}"
+                f"Generated Kibana URL for agent {agent_name}: {kibana_url}"
             )
             crud.create_logs_dasboard(
                 db, test_id, kibana_url, Constants.KIBANA_USERNAME,
                 Constants.KIBANA_PASSWORD
             )
+    return True, []
         
 def parse_metrics_collection_info(db, test_id, metrics_collection_info):
     # TODO: Implement additional logic to handle metrics collection
     # For now only supports prometheus (and badly - just to get results for a paper)
-    # This code is fucking trash, but it works for the paper
+    # This code is trash, but it works for the paper
+    errors = []
     for metrics_collection_obj in metrics_collection_info:
         targets = []
         job_name = metrics_collection_obj["job_name"]
@@ -68,12 +71,16 @@ def parse_metrics_collection_info(db, test_id, metrics_collection_info):
                         db, test_id, grafana_url, Constants.GRAFANA_USERNAME,
                         Constants.GRAFANA_PASSWORD
                     )
-        
+            else:
+                errors.append(
+                    f"Failed to register Prometheus/Grafana targets for endpoint: {metric_collection['collection_endpoint']}"
+                )
         except Exception as e:
-            logging.error(
-                f"Error while processing metrics collection for test {test_id}: {str(e)}"
-            )
+            msg = f"Error while processing metrics collection for test {test_id}: {str(e)}"
+            logging.error(msg)
+            errors.append(msg)
             continue
+    return len(errors) == 0, errors
                 
         
 def register_prometheus_targets(job_name, targets):
@@ -85,9 +92,8 @@ def register_prometheus_targets(job_name, targets):
         }
         
         headers = {'Content-Type': 'application/json'}
-        response = requests.request(
-            "POST",
-            Constants.PROMETHEUS_TARGET_UPDATE_API,
+        response = requests.post(
+            f"{Constants.PROMETHEUS_TARGET_UPDATE_API}/targets",
             headers=headers,
             data=json.dumps(payload)
         )

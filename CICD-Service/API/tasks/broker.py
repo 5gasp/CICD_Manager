@@ -14,27 +14,13 @@ broker = AioPikaBroker(
         )
     )
 
-scheduler = TaskiqScheduler(
-    broker=broker,
-    sources=[LabelScheduleSource(broker)],
-)
+#scheduler = TaskiqScheduler(
+#    broker=broker,
+#    sources=[LabelScheduleSource(broker)],
+#)
 
 
-
-
-import tasks.workers
-import tasks.workers2
-
-async def ticker_loop():
-    await broker.startup()
-    try:
-        while True:
-            await heavy_task2.kiq()
-            await asyncio.sleep(30)
-    finally:
-        await broker.shutdown()
-
-if __name__ == "__main__":
-    asyncio.run(ticker_loop())
+import tasks.initial_test_validation
+import tasks.lcm_engine
 
 

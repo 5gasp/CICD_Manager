@@ -48,7 +48,7 @@ sys.path.insert(0, parentdir)
 # custom imports
 import aux.utils as Utils
 from tasks.broker import broker
-from tasks import workers
+from tasks import initial_test_validation
 
 router = APIRouter()
 
@@ -287,7 +287,7 @@ async def test(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
 ):
-    task = await workers.test.kiq(serviceTestParsed)
+    task = await initial_test_validation.test.kiq(serviceTestParsed)
     # Wait for the result.
     result = await task.wait_result(timeout=10)
 

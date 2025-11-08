@@ -151,9 +151,6 @@ async def initial_test_validation(
         service_test_specification=service_test_specification
     )
 
-
-
-
 @broker.task
 async def validate_testbed(test_instance_id: int, testbed_id:str):
 
@@ -280,9 +277,6 @@ async def validate_testing_descriptor(test_instance_id: int, testing_descriptor:
             success=success
         )
 
-    
-
-
 @broker.task
 async def get_testing_descriptor(service_test_specification: dict):
     
@@ -368,16 +362,12 @@ def get_service_test_spec(service_test_specification_id: str):
 
 def render_characteristics(serviceTestParsed: tmf653_schemas.ServiceTest_Create):
     characteristics = {}
-    #nods_id = None
     for characteristic in serviceTestParsed.characteristic:
-        # NODS_ID to later on patch data on NODS
-        #if characteristic.name == "NODS_ServiceTest_ID":
-        #    nods_id=characteristic.value['value']
         characteristics[characteristic.name] = { 
             'id': characteristic.id, 
             'name': characteristic.name, 
             'valueType': characteristic.valueType,
             'value': characteristic.value
         }
-    print("Characteristics Rendered Length:", len(characteristics))
+    logging.debug("Characteristics Rendered Length:", len(characteristics))
     return characteristics
