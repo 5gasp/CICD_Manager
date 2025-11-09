@@ -31,6 +31,10 @@ import datetime
 from .database import Base
 from aux import constants as Constants
 
+class AgentType(Enum):
+    TESTBED = "Testbed"
+    CUSTOM = "Custom"
+
 
 class CI_CD_Agent(Base):
 	__tablename__ = "ci_cd_nodes"
@@ -42,12 +46,31 @@ class CI_CD_Agent(Base):
 	testbed_id = Column(String, ForeignKey("testbeds.id"), nullable=False)
 	communication_token = Column(String)
 	is_online = Column(Boolean)
+	# Type of CI/CD Node: Testbed or Custom
+	type = Column(SQLEnum(AgentType), default=AgentType.TESTBED ,nullable=False) 
+	# Service Order ID
+	service_order = Column(String)
+	# Test Instance ID assigned to this CI/CD Node (only for custom
+	test_instance = Column(Integer, ForeignKey("test_instances.id"), nullable=True)
+	# Provisioning start time - only applies to custom CI/CD nodes
+	provisioning_started_time = Column(DateTime)
+	# Provisioning end time - only applies to custom CI/CD nodes
+	provisioning_finished_time = Column(DateTime)
 
 	def as_dict(self):
-		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+		result = {}
+		for c in self.__table__.columns:
+			value = getattr(self, c.name)
+			# Handle enum columns (like AgentType)
+			if isinstance(value, Enum):
+				result[c.name] = value.name 
+			else:
+				result[c.name] = value
+		return result
+
 
 	def as_dict_without_password(self):
-		dic = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+		dic = self.as_dict()
 		dic.pop("password")
 		# dic.pop("communication_token")
 		return dic

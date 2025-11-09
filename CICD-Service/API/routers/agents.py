@@ -265,8 +265,9 @@ def get_agents(skip: int = 0, limit: int = 500, token: str = Depends(auth.oauth2
         if "ADMIN" not in roles:
             raise NotEnoughPrivileges(login_username, 'register_new_user')
         ci_cd_nodes = CRUD_Agents.get_all_nodes(db, skip=skip, limit=limit)
+        print("CI/CD Nodes:", [n.as_dict_without_password() for n in ci_cd_nodes])
         return Utils.create_response(success=True, message="Got all CI/CD Nodes", data=[n.as_dict_without_password() for n in ci_cd_nodes])
     except Exception as e:
         logging.error(e)
-        return Utils.create_response(status_code=401, success=False, errors=[e.message]) 
+        return Utils.create_response(status_code=401, success=False, errors=[e]) 
 
