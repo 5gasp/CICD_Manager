@@ -1,0 +1,13 @@
+testbed_itav:
+  ran:
+    agents:
+      - service_specification_uuid: "9d374b89-96fc-4cf6-97a0-ef6958609cf0"
+        monitoring: true
+      - service_specification_uuid: "9d374b89-96fc-4cf6-97a0-ef6958609cf0"
+        monitoring: false
+  near_network_app:
+    agents:
+      - service_specification_uuid: "8d12f23c-09c5-44db-9bf4-03805c91ea07"
+        monitoring: true
+      - service_specification_uuid: "8d12f23c-09c5-44db-9bf4-03805c91ea07"
+        monitoring: false

@@ -19,6 +19,10 @@ import logging
 import yaml
 import requests
 from pydantic import BaseModel
+import json
+from datetime import datetime, timezone, timedelta
+import re
+import base64
 # custom imports
 import aux.constants as Constants
 from sql_app import crud
@@ -72,7 +76,6 @@ def load_testbeds_to_db(session, testbed_info_file):
 
 
 def load_test_info(db, tests_info_file):
-    print("HERE")
     with open(tests_info_file) as mfile:
         tests_data = yaml.load(mfile, Loader=yaml.FullLoader)
         Constants.TEST_INFO = tests_data
@@ -186,5 +189,124 @@ def patch_results(token,nods_id,data):
     logging.info("patching data result on NODS")
     url =  f'{Constants.NODS_HOST}/tmf-api/serviceTestManagement/v4/serviceTest/{nods_id}'
     response = requests.patch(url=url,headers=headers,json=data)
-    print(response.text)
+    logging.info(response.text)
     return True,response
+
+
+def order_service(token, service_spec_uuid):
+    # Start date in UTC
+    start_date_utc = datetime.now(timezone.utc)
+    # End date: 1 day later
+    end_date_utc = start_date_utc + timedelta(days=1)
+    # Format as ISO 8601 with milliseconds and 'Z' for UTC
+    start_date_iso_string = start_date_utc.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    end_date_iso_string = end_date_utc.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
+    payload = json.dumps({
+        "orderItem": [
+            {
+            "service": {
+                "serviceSpecification": {
+                "id": service_spec_uuid
+                },
+                "serviceCharacteristic": []
+            },
+            "action": "add"
+            }
+        ],
+        "requestedStartDate": start_date_iso_string,
+        "requestedCompletionDate": end_date_iso_string
+    })
+
+    response = requests.post(
+        url = f"{Constants.NODS_HOST}/tmf-api/serviceOrdering/v4/serviceOrder",
+        headers={
+            'Content-Type': 'application/json',
+            'Authorization': f"Bearer {token}"
+        },
+        data=payload
+    )
+
+    response.raise_for_status()
+    service_order_uuid = response.json()["uuid"]
+
+    if acknowledge_service_order(token, service_order_uuid):
+        return service_order_uuid
+    return None
+
+def acknowledge_service_order(token, service_order_uuid):
+
+    response = requests.patch(
+        url = f"{Constants.NODS_HOST}/tmf-api/serviceOrdering/v4/serviceOrder/{service_order_uuid}",
+        headers={
+            'Content-Type': 'application/json',
+            'Authorization': f"Bearer {token}"
+        },
+        data=json.dumps(
+            {"state": "ACKNOWLEDGED"}
+        )
+    )
+
+    response.raise_for_status()
+    if response.json()["state"] == "ACKNOWLEDGED":
+        return True
+    
+    return False
+
+def get_testing_agent_rfs(token, service_order_uuid):
+    response = requests.get(
+        url=f"{Constants.NODS_HOST}/tmf-api/serviceOrdering/v4/serviceOrder/{service_order_uuid}",
+        headers={'Authorization': f"Bearer {token}"},
+    )
+    
+    response.raise_for_status()
+
+    svc_order_data = response.json()
+    if svc_order_data["state"] == "COMPLETED":
+        for supporting_svc in svc_order_data["orderItem"][0]["service"]["supportingService"]:
+            svc_data = get_service_data(token, supporting_svc["id"])
+            if svc_data["@type"] == "ResourceFacingService":
+                return process_testing_agent_data(svc_data)
+    else:
+        logging.info(f"Service Order is not completed. Current state: {svc_order_data['state']}")
+    return None
+
+def get_service_data(token, service_id):
+    response = requests.get(
+        url=f"{Constants.NODS_HOST}/tmf-api/serviceInventory/v4/service/{service_id}",
+        headers={'Authorization': f"Bearer {token}"},
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def process_testing_agent_data(svc_data):
+    username, password, node_port, ip = None, None, None, None
+
+    for characteristic in svc_data["serviceCharacteristic"]:
+        if characteristic["name"].endswith("jenkins.jenkins-admin-password"):
+            password = base64.b64decode(characteristic["value"]["value"]).decode('utf-8')
+
+        elif characteristic["name"].endswith("jenkins.jenkins-admin-user"):
+            username = base64.b64decode(characteristic["value"]["value"]).decode('utf-8')
+
+        elif characteristic["name"].endswith("jenkins.ports") :
+            match = re.search(r'nodePort=(\d+)', characteristic["value"]["value"])
+            if match:
+                node_port = match.group(1)
+
+        elif characteristic["name"] == "clusterMasterURL":
+            match = re.search(r'https?://([\d.]+)', characteristic["value"]["value"])
+            if match:
+                ip = match.group(1)
+
+        if username and password and node_port and ip:
+            break
+
+    url = f"http://{ip}:{node_port}/"
+    #print("Testing Agent Credentials:")
+    #print("Username:", username)
+    #print("Password:", password)
+    #print("URL:", url)
+    return url, username, password
+

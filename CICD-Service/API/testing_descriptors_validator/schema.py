@@ -21,7 +21,9 @@ VALIDATION_SCHEMA = {
             }
         }
     },
-'metrics_collection': {
+
+    # New top-level metrics_collection
+    'metrics_collection': {
         'required': False,
         'type': 'list',
         'schema': {
@@ -68,175 +70,104 @@ VALIDATION_SCHEMA = {
             }
         }
     },
-    'test_phases': {
-        'required': True,
-        'type': 'dict',
+    # New top-level custom testing agents
+    'custom_testing_agents': {
+        'required': False,
+        'type': 'list',
         'schema': {
-            'setup': {
-                'required': True,
-                'type': 'dict',
-                'schema': {
-                    'deployments': {
-                        'required': True,
-                        'type': 'list',
+            'type': 'dict',
+            'schema': {
+                'testing_agent_name': {'required': True, 'type': 'string'},
+                'placement': {'required': True, 'type': 'string'},
+                'monitoring': {'required': True,'type': 'boolean'}
+            }
+        }
+    },
+
+    # testcases
+    'testcases': {
+        'required': True,
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'testcase_id': {
+                    'required': True,
+                    'type': 'integer'
+                },
+                'name': {
+                    'required': True,
+                    'type': 'string'
+                },
+                'description': {
+                    'required': False,
+                    'type': 'string'
+                },
+                'type': {
+                    'required': True,
+                    'type': 'string'
+                },
+                'scope': {
+                    'required': True,
+                    'type': 'string'
+                },
+                'name': {
+                    'required': True,
+                    'type': 'string'
+                },
+                'parameters': {
+                    'required': False,
+                    'type': 'list',
+                    'schema': {
+                        'type': 'dict',
                         'schema': {
-                            'type': 'dict',
-                            'schema': {
-                                'deployment_id': {
-                                    'required': True,
-                                    'type': 'integer'
-                                },
-                                'name': {
-                                    'required': True,
-                                    'type': 'string'
-                                },
-                                'descriptor': {
-                                    'required': True,
-                                    'type': 'string'
-                                },
-                                'id': {
-                                    'required': True,
-                                    'type': 'string'
-                                },
-                                'parameters': {
-                                    'required': False,
-                                    'type': 'list',
-                                    'schema': {
-                                        'type': 'dict',
-                                        'schema': {
-                                            'key': {
-                                                'required': True,
-                                                'type': 'string'
-                                            },
-                                            'value': {
-                                                'required': True,
-                                            },
-                                        },
-                                    },
-                                }
+                            'key': {
+                                'required': True,
+                                'type': 'string'
                             },
-                        },
-                    },
-                    'testcases': {
-                        'required': True,
-                        'type': 'list',
-                        'schema': {
-                            'type': 'dict',
-                            'schema': {
-                                'testcase_id': {
-                                    'required': True,
-                                    'type': 'integer'
-                                },
-                                'name': {
-                                    'required': True,
-                                    'type': 'string'
-                                },
-                                'description': {
-                                    'required': False,
-                                    'type': 'string'
-                                },
-                                'type': {
-                                    'required': True,
-                                    'type': 'string'
-                                },
-                                'scope': {
-                                    'required': True,
-                                    'type': 'string'
-                                },
-                                'name': {
-                                    'required': True,
-                                    'type': 'string'
-                                },
-                                'parameters': {
-                                    'required': False,
-                                    'type': 'list',
-                                    'schema': {
-                                        'type': 'dict',
-                                        'schema': {
-                                            'key': {
-                                                'required': True,
-                                                'type': 'string'
-                                            },
-                                            'value': {
-                                                'required': True,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    'metrics_collection': {
-                        'required': False,
-                        'type': 'list',
-                        'schema': {
-                            'type': 'dict',
-                            'schema': {
-                                'metrics_collection_id': {
-                                    'required': True,
-                                    'type': 'integer'
-                                },
-                                'description': {
-                                    'required': False,
-                                    'type': 'string'
-                                },
-                                'parameters': {
-                                    'required': True,
-                                    'type': 'list',
-                                    'schema': {
-                                        'type': 'dict',
-                                        'schema': {
-                                            'key': {
-                                                'required': True,
-                                                'type': 'string'
-                                            },
-                                            'value': {
-                                                'required': True,
-                                            },
-                                        },
-                                    },
-                                },
+                            'value': {
+                                'required': True,
                             },
                         },
                     },
                 },
             },
-            'execution': {
-                'required': True,
-                'type': 'list',
-                'schema': {
-                    'type': 'dict',
+        },
+    },
+    'execution': {
+        'required': True,
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'required': True,
+            'schema': {
+                'batch_id': {
                     'required': True,
+                    'type': 'integer'
+                },
+                'scope': {
+                    'required': True,
+                    'type': 'string'
+                },
+                'executions': {
+                    'required': True,
+                    'type': 'list',
                     'schema': {
-                        'batch_id': {
-                            'required': True,
-                            'type': 'integer'
-                        },
-                        'scope': {
-                            'required': True,
-                            'type': 'string'
-                        },
-                        'executions': {
-                            'required': True,
-                            'type': 'list',
-                            'schema': {
-                                'type': 'dict',
+                        'type': 'dict',
+                        'schema': {
+                            'execution_id': {
+                                'required': True,
+                                'type': 'integer'
+                            },
+                            'name': {
+                                'required': False,
+                                'type': 'string'
+                            },
+                            'testcase_ids': {
+                                'required': False,
+                                'type': 'list',
                                 'schema': {
-                                    'execution_id': {
-                                        'required': True,
-                                        'type': 'integer'
-                                    },
-                                    'name': {
-                                        'required': False,
-                                        'type': 'string'
-                                    },
-                                    'testcase_ids': {
-                                        'required': False,
-                                        'type': 'list',
-                                        'schema': {
-                                            'type': 'integer',
-                                        },
-                                    },
+                                    'type': 'integer',
                                 },
                             },
                         },

@@ -14,6 +14,7 @@ import random
 import string
 # generic imports
 from os import access
+import datetime
 
 from sqlalchemy.orm import Session
 
@@ -45,6 +46,65 @@ def create_ci_cd_agent(db: Session, agent: ci_cd_manager_schemas.CI_CD_Agent_Cre
     return db_ci_cd_agent
 
 
+def create_custom_ci_cd_agent(
+        db: Session,
+        testbed_id: str,
+        service_order: str,
+        name: str,
+        test_instance_id: int,
+        provisioning_started_time: datetime.datetime
+    ):
+    db_ci_cd_agent = models.CI_CD_Agent(
+        testbed_id=testbed_id,
+        type=models.AgentType.CUSTOM,
+        service_order=service_order,
+        name=name,
+        test_instance=test_instance_id,
+        provisioning_started_time = provisioning_started_time
+    )
+    db.add(db_ci_cd_agent)
+    db.commit()
+    db.refresh(db_ci_cd_agent)
+    logging.info(f"Created Custom CI/CD Agent with Id {db_ci_cd_agent.id}")
+    return db_ci_cd_agent
+
+def update_custom_ci_cd_agent(
+    db: Session,
+    # Fields used for filtering
+    test_instance_id: int,
+    service_order: str,
+    # Fields used for updates
+    url: str,
+    username: str,
+    password: str,
+    provisioning_finished_time: datetime.datetime
+):
+    db_ci_cd_agent = db.query(models.CI_CD_Agent).filter(
+        models.CI_CD_Agent.test_instance == test_instance_id,
+        models.CI_CD_Agent.service_order == service_order,
+        models.CI_CD_Agent.type == models.AgentType.CUSTOM
+    ).first()
+
+    db_ci_cd_agent.url = url
+    db_ci_cd_agent.username = username
+    db_ci_cd_agent.password = password
+    db_ci_cd_agent.provisioning_finished_time = provisioning_finished_time
+    db.commit()
+    db.refresh(db_ci_cd_agent)
+    logging.info(f"Updated Custom CI/CD Agent with id {db_ci_cd_agent.id}")
+    return db_ci_cd_agent
+
+def get_custom_ci_cd_agents_for_test_instance(
+    db: Session,
+    test_instance_id: int,
+):
+    return db.query(models.CI_CD_Agent).filter(
+        models.CI_CD_Agent.test_instance == test_instance_id,
+        models.CI_CD_Agent.type == models.AgentType.CUSTOM
+    ).all()
+
+
+
 def delete_ci_cd_agent(db: Session, agent_id: int):
     db_ci_cd_agent = db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.id == agent_id).first()
     if not db_ci_cd_agent:
@@ -56,8 +116,11 @@ def delete_ci_cd_agent(db: Session, agent_id: int):
     db.delete(db_ci_cd_agent)
     db.commit()
     logging.info(f"Deleted CI/CD Agent with Id {db_ci_cd_agent.id}")
-    
 
+def get_custom_ci_cd_agents(db: Session):
+    return db.query(models.CI_CD_Agent).filter(
+        models.CI_CD_Agent.type == models.AgentType.CUSTOM
+    ).all()
 
 def get_ci_cd_node_by_id(db: Session, id: int):
     return db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.id == id).first()

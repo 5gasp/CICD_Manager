@@ -67,10 +67,10 @@ class Test_Descriptor_Validator:
         try:
             executed_tests_info = []
             executed_tests_descriptor_id = []
-            for execution in self.descriptor_content["test_phases"]["execution"]:
+            for execution in self.descriptor_content["execution"]:
                 for executions in execution["executions"]:
                     executed_tests_descriptor_id +=  executions["testcase_ids"]
-            for test_case in self.descriptor_content["test_phases"]["setup"]["testcases"]:
+            for test_case in self.descriptor_content["testcases"]:
                 if test_case["testcase_id"] in executed_tests_descriptor_id:
                     executed_tests_info.append(test_case)     
         except Exception as e:

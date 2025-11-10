@@ -1,5 +1,5 @@
 from tasks.broker import broker
-from tasks import metrics_and_logs, test_cases
+from tasks import metrics_and_logs, test_cases, testing_agents
 import aux.utils as Utils
 from aux import startup
 from sql_app.database import SessionLocal
@@ -32,15 +32,27 @@ def get_db():
 
 
 def is_next_state(test_statuses: dict, next_state: Constants.TestStatus):
-    return next_state not in test_statuses and test_statuses.get(
-        Constants.TestStatus.TEST_CASES_VALIDATED_FOR_TESTBED, False
-    )
+
+    if next_state in [
+        Constants.TestStatus.DEVELOPER_DEFINED_TESTS_OBTAINED,
+        Constants.TestStatus.APPLICATION_MONITORING_CONFIGURED,
+        Constants.TestStatus.APPLICATION_LOGGING_CONFIGURED,
+        Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_STARTED
+    ]:
+        return next_state not in test_statuses and \
+            Constants.TestStatus.TEST_ENDED not in test_statuses and\
+            test_statuses.get(Constants.TestStatus.TEST_CASES_VALIDATED_FOR_TESTBED, False)
+    elif next_state in [
+        Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED,
+    ]:
+        return next_state not in test_statuses and \
+            Constants.TestStatus.TEST_ENDED not in test_statuses and\
+            test_statuses.get(Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_STARTED, False)
 
 @broker.task(schedule=[{"cron": "*/1 * * * *"}])
 async def lcm_engine() -> int:
     with get_db() as db:
         test_instances = crud.get_all_test_instances(db)
-
         for test_instance in test_instances:
             test_statuses = {
                 test_status.state: test_status.success
@@ -79,7 +91,12 @@ async def lcm_engine() -> int:
                 logging.info(f"Will configure logging for test instance: {test_instance.id}")
                 await metrics_and_logs.configure_logging_for_test_instance.kiq(test_instance.id)
 
-            # Invoke the provisioingng of custom CI/CD agents if not done yet
+            # Invoke the provisionigng of custom CI/CD agents if not done yet
             if is_next_state(test_statuses, Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_STARTED):
                 logging.info(f"Will provisiong the CI/CD Agents for test instance: {test_instance.id}")
-                #task = await testing_artifacts.configure_application_logging_for_test_instance.kiq(test_instance.id)
+                await testing_agents.provision_testing_agents_for_test_instance.kiq(test_instance.id)
+
+            # Verify the  provisionigng of custom CI/CD agents
+            if is_next_state(test_statuses, Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED):
+                logging.info(f"Will check the provisiong the CI/CD Agents for test instance: {test_instance.id}")
+                await testing_agents.confirm_provisioning_of_testing_agents_for_test_instance.kiq(test_instance.id)

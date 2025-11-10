@@ -242,6 +242,13 @@ async def render_and_validate_testing_descriptor(
         )
 
         if not success:
+            crud.create_test_status(
+                db=db,
+                test_id=test_instance_id,
+                state=Constants.TestStatus.TEST_ENDED,
+                description=description,
+                success=success
+            )
             return 
 
         # Send the task to the broker.
@@ -276,6 +283,16 @@ async def validate_testing_descriptor(test_instance_id: int, testing_descriptor:
             description=description,
             success=success
         )
+
+        if not success:
+            crud.create_test_status(
+                db=db,
+                test_id=test_instance_id,
+                state=Constants.TestStatus.TEST_ENDED,
+                description=description,
+                success=success
+            )
+            return 
 
 @broker.task
 async def get_testing_descriptor(service_test_specification: dict):

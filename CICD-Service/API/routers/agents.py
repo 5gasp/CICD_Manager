@@ -33,6 +33,7 @@ from aux import auth
 from exceptions.auth import *
 import aux.utils as Utils
 from wrappers.jenkins.wrapper import Jenkins_Wrapper
+from wrappers.jenkins.configure_agent import configure_agent
 
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -121,59 +122,16 @@ def create_agent(agent: ci_cd_manager_schemas.CI_CD_Agent_Create, token: str = D
 
         if not testbed_instance:
             return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=False, errors=[f"A testbed with the id {agent.testbed_id} does not exists"]) 
+        
         db_ci_cd_agent = CRUD_Agents.create_ci_cd_agent(db=db, agent=agent)
         
-        # Create the Jenkins credentials
-        
-        # LTR-related credentials
-        ret, message = jenkins_wrapper.create_credential(
-            "ltr_user", Constants.FTP_LTR_USER, "ltr_user")
-        if not ret:
-            return Utils.create_response(status_code=400, success=False, errors=[message])
-        
-        ret, message = jenkins_wrapper.create_credential(
-            "ltr_password", Constants.FTP_LTR_PASSWORD, "ltr_password")
-        if not ret:
-            return Utils.create_response(status_code=400, success=False, errors=[message])
-        
-        ret, message = jenkins_wrapper.create_credential(
-            "ltr_location", Constants.FTP_LTR_URL, "ltr_location")
-        if not ret:
-            return Utils.create_response(status_code=400, success=False, errors=[message])
-        
-        
-        # Results Repository-related credentials
-        ret, message = jenkins_wrapper.create_credential(
-            "results_ftp_user", Constants.FTP_RESULTS_USER, "results_ftp_user")
-        if not ret:
-            return Utils.create_response(status_code=400, success=False, errors=[message])
-        
-        ret, message = jenkins_wrapper.create_credential(
-            "results_ftp_password", Constants.FTP_RESULTS_PASSWORD, "results_ftp_password")
-        if not ret:
-            return Utils.create_response(status_code=400, success=False, errors=[message])
-        
-        ret, message = jenkins_wrapper.create_credential(
-            "results_ftp_location", Constants.FTP_RESULTS_URL, "results_ftp_location")
-        if not ret:
-            return Utils.create_response(status_code=400, success=False, errors=[message])
-        
-        # Communication Token
-        credential_id = "communication_token"
-        credential_secret = binascii.b2a_hex(os.urandom(16)).decode('ascii')
-        credential_description = "Token used for communication with the CI/CD Manager"
-        ret, message = jenkins_wrapper.create_credential(
-            credential_id, credential_secret, credential_description)
-        if not ret:
-            return Utils.create_response(status_code=400, success=False, errors=[message])
+        success, errors, data = configure_agent(db, db_ci_cd_agent)
 
-        # update communication credential on db
-        CRUD_Agents.update_communication_token(db, db_ci_cd_agent.id, credential_secret)
-        
-        ret = db_ci_cd_agent.as_dict_without_password()
-        ret["communication_token"] = credential_secret
-        
-        return Utils.create_response(status_code=HTTPStatus.CREATED, success=True, message="Created CI/CD Agent", data=ret)
+        if success:
+            return Utils.create_response(status_code=HTTPStatus.CREATED, success=success, message="Created CI/CD Agent", data=data)
+        else:
+            return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=success, errors=errors)
+
     except Exception as e:
         logging.error(e)
         return Utils.create_response(status_code=HTTPStatus.BAD_REQUEST, success=False, errors=[str(e)]) 

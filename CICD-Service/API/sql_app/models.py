@@ -50,6 +50,8 @@ class CI_CD_Agent(Base):
 	type = Column(SQLEnum(AgentType), default=AgentType.TESTBED ,nullable=False) 
 	# Service Order ID
 	service_order = Column(String)
+	# Name - only applies to custom agents
+	name = Column(String)
 	# Test Instance ID assigned to this CI/CD Node (only for custom
 	test_instance = Column(Integer, ForeignKey("test_instances.id"), nullable=True)
 	# Provisioning start time - only applies to custom CI/CD nodes

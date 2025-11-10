@@ -84,7 +84,7 @@ async def obtain_dev_defined_test_cases_for_test_instance(test_instance_id: int)
 
         developer_defined_tests = [testcase["name"] 
             for testcase 
-            in test_instance["testing_descriptor"]['test_phases']['setup']['testcases'] 
+            in test_instance["testing_descriptor"]['testcases'] 
             if testcase["type"] == 'developer-defined'
         ]
 
