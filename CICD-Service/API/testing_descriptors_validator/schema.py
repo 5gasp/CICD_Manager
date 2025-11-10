@@ -149,6 +149,10 @@ VALIDATION_SCHEMA = {
                     'required': True,
                     'type': 'string'
                 },
+                'testing_agent': {
+                    'required': False,
+                    'type': 'string'
+                },
                 'executions': {
                     'required': True,
                     'type': 'list',

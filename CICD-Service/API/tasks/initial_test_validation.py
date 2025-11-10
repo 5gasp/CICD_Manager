@@ -142,7 +142,10 @@ async def initial_test_validation(
             )
 
     # Store Deployment Info in FTP
-    await save_deployment_info_in_ftp.kiq(characteristics=characteristics)
+    await save_deployment_info_in_ftp.kiq(
+        test_instance_id=test_instance_id,
+        characteristics=characteristics
+    )
 
     # Render Testing Descriptor
     await render_and_validate_testing_descriptor.kiq(
@@ -336,7 +339,7 @@ async def get_testing_descriptor(service_test_specification: dict):
         return None
 
 @broker.task
-async def save_deployment_info_in_ftp(characteristics: dict):
+async def save_deployment_info_in_ftp(test_instance_id: int, characteristics: dict):
     logging.debug("Storing Deployment Information in FTP...")
     testing_artifacts_location = \
         testing_artifacts.store_deployment_information_in_ftp(
@@ -344,6 +347,12 @@ async def save_deployment_info_in_ftp(characteristics: dict):
                 Constants.TMF_SERVICE_TEST_DEPLOYMENT_INFO_KEY
                 ]["value"]["value"],
             nods_id=characteristics["NODS_ServiceTest_ID"]['value']['value']
+        )
+    with get_db() as db:
+        crud.create_testing_artifact(
+            db, 
+            test_instance_id,
+            testing_artifacts_location
         )
     logging.info("Deployment Information stored in FTP at: "
         f"{testing_artifacts_location}"

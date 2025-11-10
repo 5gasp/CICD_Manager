@@ -242,6 +242,8 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
         True
     )
 
+    # HERE -> CREATE TESTING CONFIGS
+
     # Check if the CI/CD Node for this test is already registered
     logging.info(f"Will gather the testbed's CI/CD Agent...")
     testbeds_ci_cd_agents = CRUD_Agents.get_ci_cd_agents_by_testbed(

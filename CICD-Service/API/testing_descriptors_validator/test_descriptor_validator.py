@@ -142,4 +142,27 @@ class Test_Descriptor_Validator:
     def validate_structure(self):
         validator = Validator()
         validator.validate(self.descriptor_content, schema.VALIDATION_SCHEMA)
-        return validator.errors
+        errors = validator.errors
+       
+        # Get all custom testing agents
+        existing_testing_agents = ["default" , "testbed_default"] + [
+                agent["testing_agent_name"]
+                for agent
+                in self.descriptor_content["custom_testing_agents"]
+            ]
+        
+        # Get the execution testing agents
+        execution_testing_agents =  [
+            batch.get("testing_agent", "default")
+            for batch in self.descriptor_content["execution"]
+        ]
+
+        invalid_agents = [
+            agent for agent in execution_testing_agents
+            if agent not in existing_testing_agents
+        ]
+
+        if len(invalid_agents) > 0:
+            errors["execution_testing_agents"] = f"Invalid Testing Agents: {invalid_agents}"
+        
+        return errors

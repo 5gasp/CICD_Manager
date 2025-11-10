@@ -626,18 +626,21 @@ testcases:
 execution:
   - batch_id: 1
     scope: 5g_readiness
+    testing_agent: ran_agent
     executions:
       - execution_id: 1
         name: 5g_readiness_tests
         testcase_ids: [1, 2, 3, 4, 5, 6, 7] # 8 was removed
   - batch_id: 2
     scope: security
+    testing_agent: testbed_default
     executions:
       - execution_id: 1
         name: security_tests
         testcase_ids: [9, 10, 11, 12, 13, 1, 14]
   - batch_id: 3
     scope: performance_and_scalability
+    testing_agent: near_app_agent
     executions:
       - execution_id: 1
         name: performance_and_scalability_tests
