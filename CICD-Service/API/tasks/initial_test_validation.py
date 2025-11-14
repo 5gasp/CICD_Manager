@@ -136,7 +136,7 @@ async def initial_test_validation(
             crud.create_test_status(
                 db=db,
                 test_id=test_instance_id,
-                state=Constants.TestStatus.TEST_ENDED,
+                state=Constants.TestStatus.TESTING_PROCESS_ENDED,
                 description=description,
                 success=success
             )
@@ -248,7 +248,7 @@ async def render_and_validate_testing_descriptor(
             crud.create_test_status(
                 db=db,
                 test_id=test_instance_id,
-                state=Constants.TestStatus.TEST_ENDED,
+                state=Constants.TestStatus.TESTING_PROCESS_ENDED,
                 description=description,
                 success=success
             )
@@ -291,7 +291,7 @@ async def validate_testing_descriptor(test_instance_id: int, testing_descriptor:
             crud.create_test_status(
                 db=db,
                 test_id=test_instance_id,
-                state=Constants.TestStatus.TEST_ENDED,
+                state=Constants.TestStatus.TESTING_PROCESS_ENDED,
                 description=description,
                 success=success
             )

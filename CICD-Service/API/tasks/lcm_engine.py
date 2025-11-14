@@ -1,5 +1,5 @@
 from tasks.broker import broker
-from tasks import metrics_and_logs, test_cases, testing_agents
+from tasks import metrics_and_logs, test_cases, testing_agents, testing_stages
 import aux.utils as Utils
 from aux import startup
 from sql_app.database import SessionLocal
@@ -40,63 +40,81 @@ def is_next_state(test_statuses: dict, next_state: Constants.TestStatus):
         Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_STARTED
     ]:
         return next_state not in test_statuses and \
-            Constants.TestStatus.TEST_ENDED not in test_statuses and\
+            Constants.TestStatus.TESTING_PROCESS_ENDED not in test_statuses and\
             test_statuses.get(Constants.TestStatus.TEST_CASES_VALIDATED_FOR_TESTBED, False)
-    elif next_state in [
-        Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED,
-    ]:
+    
+    elif next_state == Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED:
         return next_state not in test_statuses and \
-            Constants.TestStatus.TEST_ENDED not in test_statuses and\
+            Constants.TestStatus.TESTING_PROCESS_ENDED not in test_statuses and\
             test_statuses.get(Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_STARTED, False)
+    
+    elif next_state == Constants.TestStatus.TEST_CASES_VALIDATED_FOR_TESTBED:
+        return next_state not in test_statuses and \
+            Constants.TestStatus.TESTING_DESCRIPTOR_VALIDATED in test_statuses and \
+            Constants.TestStatus.TESTING_PROCESS_ENDED not in test_statuses
+    
+    elif next_state == Constants.TestStatus.TESTING_PROCESS_STAGES_CONFIGURED:
+        return next_state not in test_statuses and \
+            Constants.TestStatus.TESTING_PROCESS_ENDED not in test_statuses and\
+            test_statuses.get(Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED, False)
+    
+def get_updated_test_statuses(test_instance):
+    with get_db() as db:
+        return {
+            test_status.state: test_status.success
+            for test_status
+            in crud.get_test_status_given_test_id(db, test_instance.id)
+        }
+
 
 @broker.task(schedule=[{"cron": "*/1 * * * *"}])
 async def lcm_engine() -> int:
+    test_instances = []
     with get_db() as db:
         test_instances = crud.get_all_test_instances(db)
-        for test_instance in test_instances:
-            test_statuses = {
-                test_status.state: test_status.success
-                for test_status
-                in crud.get_test_status_given_test_id(db, test_instance.id)
-            }
-           
-            # Invoke the registration of test cases if not done yet
-            if Constants.TestStatus.TESTING_DESCRIPTOR_VALIDATED in test_statuses and \
-                Constants.TestStatus.TEST_CASES_VALIDATED_FOR_TESTBED not in test_statuses and \
-                Constants.TestStatus.TEST_ENDED not in test_statuses:
-                logging.info(f"Will register the testcases for test instance: {test_instance.id}")
-                test_cases.register_test_cases_for_test_instance(test_instance.id)
-                # Refresh test statuses to force the next stages to take place in the same cycle
-                test_statuses = {
-                    test_status.state: test_status.success
-                    for test_status
-                    in crud.get_test_status_given_test_id(db, test_instance.id)
-                }
-            
-            # Invoke the downloading of developer defined tests if not done yet
-            if is_next_state(test_statuses, Constants.TestStatus.DEVELOPER_DEFINED_TESTS_OBTAINED):
-                logging.info(
-                    f"Will download dev-defined test cases for test "
-                    f"instance: {test_instance.id}"
-                )
-                await test_cases.obtain_dev_defined_test_cases_for_test_instance.kiq(test_instance.id)
 
-            # Invoke the configuration of monitoring if not done yet
-            if is_next_state(test_statuses, Constants.TestStatus.APPLICATION_MONITORING_CONFIGURED):
-                logging.info(f"Will configure monitoring for test instance: {test_instance.id}")
-                await metrics_and_logs.configure_monitoring_for_test_instance.kiq(test_instance.id)
+    for test_instance in test_instances:
+        test_statuses = get_updated_test_statuses(test_instance)
+        
+        # Invoke the registration of test cases if not done yet
+        if is_next_state(test_statuses, Constants.TestStatus.TEST_CASES_VALIDATED_FOR_TESTBED):
+            logging.info(f"Will register the testcases for test instance: {test_instance.id}")
+            test_cases.register_test_cases_for_test_instance(test_instance.id)
+            # Refresh test statuses to force the next stages to take place in the same cycle
+            test_statuses = get_updated_test_statuses(test_instance)
+        
+        # Invoke the downloading of developer defined tests if not done yet
+        if is_next_state(test_statuses, Constants.TestStatus.DEVELOPER_DEFINED_TESTS_OBTAINED):
+            logging.info(
+                f"Will download dev-defined test cases for test "
+                f"instance: {test_instance.id}"
+            )
+            await test_cases.obtain_dev_defined_test_cases_for_test_instance.kiq(test_instance.id)
 
-            # Invoke the configuration of logging if not done yet
-            if is_next_state(test_statuses, Constants.TestStatus.APPLICATION_LOGGING_CONFIGURED):
-                logging.info(f"Will configure logging for test instance: {test_instance.id}")
-                await metrics_and_logs.configure_logging_for_test_instance.kiq(test_instance.id)
+        # Invoke the configuration of monitoring if not done yet
+        if is_next_state(test_statuses, Constants.TestStatus.APPLICATION_MONITORING_CONFIGURED):
+            logging.info(f"Will configure monitoring for test instance: {test_instance.id}")
+            await metrics_and_logs.configure_monitoring_for_test_instance.kiq(test_instance.id)
 
-            # Invoke the provisionigng of custom CI/CD agents if not done yet
-            if is_next_state(test_statuses, Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_STARTED):
-                logging.info(f"Will provisiong the CI/CD Agents for test instance: {test_instance.id}")
-                await testing_agents.provision_testing_agents_for_test_instance.kiq(test_instance.id)
+        # Invoke the configuration of logging if not done yet
+        if is_next_state(test_statuses, Constants.TestStatus.APPLICATION_LOGGING_CONFIGURED):
+            logging.info(f"Will configure logging for test instance: {test_instance.id}")
+            await metrics_and_logs.configure_logging_for_test_instance.kiq(test_instance.id)
 
-            # Verify the  provisionigng of custom CI/CD agents
-            if is_next_state(test_statuses, Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED):
-                logging.info(f"Will check the provisiong the CI/CD Agents for test instance: {test_instance.id}")
-                await testing_agents.confirm_provisioning_of_testing_agents_for_test_instance.kiq(test_instance.id)
+        # Invoke the provisionigng of custom CI/CD agents if not done yet
+        if is_next_state(test_statuses, Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_STARTED):
+            logging.info(f"Will provisiong the CI/CD Agents for test instance: {test_instance.id}")
+            await testing_agents.provision_testing_agents_for_test_instance.kiq(test_instance.id)
+
+        # Verify the  provisionigng of custom CI/CD agents
+        if is_next_state(test_statuses, Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED):
+            logging.info(f"Will check the provisiong the CI/CD Agents for test instance: {test_instance.id}")
+            testing_agents.confirm_provisioning_of_testing_agents_for_test_instance(test_instance.id)
+            # Refresh test statuses to force the next stages to take place in the same cycle
+            test_statuses = get_updated_test_statuses(test_instance)
+        
+        # Configure testing stafes
+        if is_next_state(test_statuses, Constants.TestStatus.TESTING_PROCESS_STAGES_CONFIGURED):
+            logging.info(f"Will configure testing stages for test instance: {test_instance.id}")
+            await testing_stages.create_test_stages.kiq(test_instance.id, test_instance.testbed_id,  test_instance.testing_descriptor)
+

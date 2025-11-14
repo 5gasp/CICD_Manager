@@ -1,0 +1,219 @@
+
+
+# VARIABLE TO CONFIGURE
+# 1 -> $_mini_api_ip_server -> {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+# 2 -> $_mini_api_server_url -> http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001
+# 3 -> $_vobu_ip -> {{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}
+# 4 -> $_manager_ip -> {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+# 5 -> $_aggregator_ip -> {{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}
+
+test_info:
+  netapp_id: OdinS-Migrate-NetworkApplication
+  network_service_id: Migrate
+  testbed_id: testbed_itav
+  description: Validation tests for OdinS' Migrate Network Application
+
+metrics_collection:
+  - job_name: surrogates
+    metrics_collection:
+      - type: prometheus
+        collection_endpoint: "{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:9100"
+      - type: prometheus
+        collection_endpoint: "{{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}:9100"
+      - type: prometheus
+        collection_endpoint: "{{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}:9100"
+    viewer:
+      type: grafana
+      dashboard_src: "https://grafana.com/api/dashboards/1860/revisions/41/download"
+      name_for_dashboard: OdinS Migrate NetworkApplication Node Exporter
+
+log_collection:
+  - test_agent_name: ci-cd-test-surrogates
+    type: filebeat
+    viewer: kibana
+
+custom_testing_agents:
+  - testing_agent_name: ran_agent
+    placement: ran
+    monitoring: false
+
+
+testcases:
+
+  ##########################################################################
+  ##########################################################################
+  #####                                                                #####
+  #####                          SECURITY TESTS                        #####
+  #####                                                                #####
+  ##########################################################################
+  ##########################################################################
+
+  #######################################################
+  #                   Pre-Defined Test                  #
+  #               Openstack Port Security               #
+  #######################################################
+  - testcase_id: 1
+    type: predefined
+    scope: security
+    name: openstack_port_security
+    description: Test Port Security
+
+  #######################################################
+  #                   Pre-Defined Test                  #
+  #                      SSL Audit                      #
+  #######################################################
+  - testcase_id: 2
+    type: predefined
+    scope: security
+    name: ssl_audit
+    description: Validate if the offered APIs are protected with SSL
+    parameters:
+      - key: url
+        value: odins.es
+
+  #######################################################
+  #                   Pre-Defined Test                  #
+  #                     Open Ports                      #
+  #######################################################
+  - testcase_id: 3
+    type: predefined
+    scope: security
+    name: open_ports
+    description: Check if the Migrate Network Application VNFs open ports are the ones desired
+    parameters:
+      - key: host
+        value: {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+      - key: expected_open_ports
+        value: 22/tcp,3001/tcp,8070/tcp,9100/tcp
+
+  #######################################################
+  #                   Pre-Defined Test                  #
+  #                      SSH Audit                      #
+  #######################################################
+  - testcase_id: 4
+    type: predefined
+    scope: security
+    name: ssh_audit
+    description: Test the SSH Server Security of the Migrate Network Application VNFs
+    parameters:
+      - key: ssh_host
+        value: {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+
+
+  ##########################################################################
+  ##########################################################################
+  #                                                                        #
+  #                            DEVELOPER-DEFINED                           #
+  #                                                                        #
+  ##########################################################################
+  ##########################################################################
+
+  #######################################################
+  #                Developer-Defined Test               #
+  #                  API REQUEST TEST 1                 #
+  #######################################################
+  - testcase_id: 5
+    type: developer-defined
+    scope: operational
+    name: api_request_test
+    description: Test if the Network Application's vOBU is Available
+    parameters:
+      - key: provider_ip
+        value: {{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}
+      - key: provider_port
+        value: 12341
+
+  #######################################################
+  #                Developer-Defined Test               #
+  #                  API REQUEST TEST 2                 #
+  #######################################################
+  - testcase_id: 6
+    type: developer-defined
+    scope: operational
+    name: api_request_test
+    description: Test if the Network Application's Manager is Available
+    parameters:
+      - key: provider_ip
+        value: {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+      - key: provider_port
+        value: 8070
+
+  #######################################################
+  #                Developer-Defined Test               #
+  #                  API REQUEST TEST 3                 #
+  #######################################################
+  - testcase_id: 7
+    type: developer-defined
+    scope: operational
+    name: api_request_test
+    description: Test if the Network Application's Aggregator is Available
+    parameters:
+      - key: provider_ip
+        value: {{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}
+      - key: provider_port
+        value: 8090
+
+  #######################################################
+  #                Developer-Defined Test               #
+  #                 DATABASE READY TEST                 #
+  #######################################################
+  - testcase_id: 8
+    type: developer-defined
+    scope: operational
+    name: database_ready_test
+    description: Test if the Network Application's vOBU Database is Ready
+    parameters:
+      - key: provider_ip
+        value: {{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}
+      - key: provider_port
+        value: 12341
+
+  #######################################################
+  #                Developer-Defined Test               #
+  #                    HTTP BURST TEST                  #
+  #######################################################
+  - testcase_id: 9
+    type: developer-defined
+    scope: operational
+    name: http_burst_test
+    description: Test if the Network Application's Aggregator can Handle a Burst of HTTP Requests
+    parameters:
+      - key: provider_ip
+        value: {{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}
+      - key: provider_port
+        value: 8090
+
+  #######################################################
+  #                Developer-Defined Test               #
+  #                  PACKAGE CHECK TEST                 #
+  #######################################################
+  - testcase_id: 10
+    type: developer-defined
+    scope: operational
+    name: package_check_test
+    description: Test if the Network Application's Manager has all Required Software Dependencies
+    parameters:
+      - key: target_ip
+        value: {{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}
+
+execution:
+  - batch_id: 1
+    scope: security
+    testing_agent: testbed_default
+    executions:
+      - execution_id: 1
+        name: security_tests
+        testcase_ids: [1,2,3,4]
+  - batch_id: 2
+    scope: security_ran
+    testing_agent: ran_agent
+    executions:
+      - execution_id: 1
+        name: security_tests
+        testcase_ids: [1,2,3,4]
+  - batch_id: 3
+    scope: operational
+    executions:
+      - execution_id: 1
+        name: operational_tests
+        testcase_ids: [5,6,7,8,9,10]

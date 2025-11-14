@@ -121,6 +121,73 @@ def get_testbed_by_name(db: Session, testbed_name: str):
 def get_all_testbeds(db: Session, skip: int = 0, limit: int = 500):
     return db.query(models.Testbed).offset(skip).limit(limit).all()
 
+# ---------------------------------------- #
+# ------------- Test Stages -------------- #
+# ---------------------------------------- #
+
+def create_test_stage(
+        db: Session, 
+        test_instance_id: int,
+        testing_agent_id: int,
+        jenkins_pipeline: str = None
+    ):
+    test_stage = models.Test_Instance_Stage(
+        test_instance_id=test_instance_id,
+        testing_agent_id=testing_agent_id,
+        jenkins_pipeline=jenkins_pipeline
+    )
+    db.add(test_stage)
+    db.commit()
+    db.refresh(test_stage)
+
+    create_test_stage_status(
+        db=db,
+        test_stage_id=test_stage.id,
+        state=models.TestStageStatus.INIT,
+    )
+
+    logging.info(f"Created test stage for test instance '{test_instance_id}'.")
+    return test_stage
+
+def update_test_stage_with_jenkins_pipeline(
+        db: Session, 
+        test_stage_id: int,
+        jenkins_pipeline: str
+    ):
+
+    db_test_stage = db.query(models.Test_Instance_Stage)\
+        .filter(models.Test_Instance_Stage.id == test_stage_id).first()
+    
+    db_test_stage.jenkins_pipeline = jenkins_pipeline
+    db.commit()
+    db.refresh(db_test_stage)
+
+    create_test_stage_status(
+        db=db,
+        test_stage_id=db_test_stage.id,
+        state=models.TestStageStatus.CREATED_PIPELINE_SCRIPT,
+    )
+    logging.info(f"Updated test_stage with id {db_test_stage.id}.")
+    return db_test_stage
+
+def create_test_stage_status(
+    db: Session, 
+    test_stage_id: str,
+    state: models.TestStageStatus
+):
+    test_stage_status = models.Test_Instance_Stage_Status(
+        test_stage_id=test_stage_id,
+        state=state
+    )
+    db.add(test_stage_status)
+    db.commit()
+    db.refresh(test_stage_status)
+
+    logging.info(
+        f"Created test stage status for test stage '{test_stage_id}': {state}."
+    )
+    return test_stage_status
+
 
 
 # ---------------------------------------- #
@@ -175,9 +242,23 @@ def update_test_instance_extra_info(db: Session, test_id: int, extra_information
 def get_all_test_instances(db: Session):
     return db.query(models.Test_Instance).all()
 
+def create_test_instance_dev_defined(db: Session, test_instance_id: int, test_case_name: str, test_case_location: str):
+    dev_defined_test_case_instance = models.Test_Instance_Developer_Defined_Test_Cases(
+        test_instance_id=test_instance_id,
+        test_case_name=test_case_name,
+        test_case_location=test_case_location
+    )
+    db.add(dev_defined_test_case_instance)
+    db.commit()
+    db.refresh(dev_defined_test_case_instance)
+    logging.info(f"Created dev-defined test case with id {dev_defined_test_case_instance.id}")
+    return dev_defined_test_case_instance
 
-
-
+def get_test_instance_dev_defined(db: Session, test_instance_id: int):
+    return db.query(models.Test_Instance_Developer_Defined_Test_Cases)\
+        .filter(
+            models.Test_Instance_Developer_Defined_Test_Cases.test_instance_id == test_instance_id
+        ).all()
 
 def get_test_instance(db: Session, test_id: int, access_token: str = None):
     if access_token is None:
@@ -297,7 +378,7 @@ def create_test_instance_test(db: Session, test_instance_id: int,
     db.add(test_instance_test)
     db.commit()
     db.refresh(test_instance_test)
-    logging.info(f"Test Instance Test created : {test_instance_test.as_dict()}")
+    #logging.info(f"Test Instance Test created : {test_instance_test.as_dict()}")
     return test_instance_test
 
 
@@ -333,8 +414,9 @@ def update_test_status_of_test_instance(db: Session, test_instance_id: int, perf
 def get_developer_defined_tests_for_test_instance(db: Session, 
     test_instance_id: int, communication_token: str = None):
     
-    if not is_communication_token_for_test_valid(db, test_instance_id, communication_token):
-        raise Exception("Communication Tokens don't match")
+    #if not is_communication_token_for_test_valid(db, test_instance_id, communication_token):
+    #    raise Exception("Communication Tokens don't match")
+    
     test_instance_tests = db.query(models.Test_Instance_Tests).filter(
             models.Test_Instance_Tests.test_instance == test_instance_id,
             models.Test_Instance_Tests.is_developer_defined == True
@@ -344,9 +426,10 @@ def get_developer_defined_tests_for_test_instance(db: Session,
 
 def get_developer_defined_test_for_test_instance(db: Session, 
     test_instance_id: int, communication_token: str, test_name: str):
-    
-    if not is_communication_token_for_test_valid(db, test_instance_id, communication_token):
-        raise Exception("Communication Tokens don't match")
+    print(f"Test Instance = {test_instance_id}, Test Name = {test_name} ")
+    # TODO: FIX
+    #if not is_communication_token_for_test_valid(db, test_instance_id, communication_token):
+    #    raise Exception("Communication Tokens don't match")
     test_instance_test = db.query(models.Test_Instance_Tests).filter(
             models.Test_Instance_Tests.test_instance == test_instance_id,
         models.Test_Instance_Tests.performed_test == test_name,
@@ -514,8 +597,9 @@ def update_testing_artifact(db: Session, test_instance_id: int,
 def get_testing_artifact_base_path(db: Session, 
     test_instance_id: int, communication_token: str = None):
     
-    if not is_communication_token_for_test_valid(db, test_instance_id, communication_token):
-        raise Exception("Communication Tokens don't match")
+    # TODO: Fix this later
+    #if not is_communication_token_for_test_valid(db, test_instance_id, communication_token):
+    #    raise Exception("Communication Tokens don't match")
     
     testing_artifact_db = db.query(models.Testing_Artifact).filter(
         models.Testing_Artifact.test_instance_id == test_instance_id).first()

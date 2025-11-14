@@ -131,6 +131,11 @@ def get_ci_cd_agents_by_testbed(db: Session, testbed_id: str):
     if not testbed_id: return None
     return db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.testbed_id == testbed_id).all()
 
+def get_default_ci_cd_agents_by_testbed(db: Session, testbed_id: str):
+    testbed_id =  db.query(models.Testbed).filter(models.Testbed.id == testbed_id).first().id
+    if not testbed_id: return None
+    return db.query(models.CI_CD_Agent).filter(models.CI_CD_Agent.testbed_id == testbed_id, models.CI_CD_Agent.type == models.AgentType.TESTBED).all()
+
 
 def get_all_nodes(db: Session, skip: int = 0, limit: int = 500):
     return db.query(models.CI_CD_Agent).offset(skip).limit(limit).all()

@@ -72,7 +72,7 @@ def validate_test_cases_for_test_instance(test_instance_id: int):
             crud.create_test_status(
                 db=db,
                 test_id=test_instance_id,
-                state=Constants.TestStatus.TEST_ENDED,
+                state=Constants.TestStatus.TESTING_PROCESS_ENDED,
                 description="Test ended due to invalid test cases.",
                 success=False
             )
@@ -115,6 +115,15 @@ async def obtain_dev_defined_test_cases_for_test_instance(test_instance_id: int)
                 # Obtain developer defined tests
                 dev_defined_obtained_tests = dev_defined_test_helpers.load_developer_defined_tests(
                     token, developer_defined_tests, attachments, test_instance["nods_id"])
+                
+                # Store Test Location in Database
+                for name, location in dev_defined_obtained_tests.items():
+                    crud.create_test_instance_dev_defined(
+                        db=db,
+                        test_instance_id=test_instance_id,
+                        test_case_name=name,
+                        test_case_location=location
+                    )
 
                 crud.create_test_status(
                     db=db,
@@ -135,7 +144,7 @@ async def obtain_dev_defined_test_cases_for_test_instance(test_instance_id: int)
                 crud.create_test_status(
                     db=db,
                     test_id=test_instance_id,
-                    state=Constants.TestStatus.TEST_ENDED,
+                    state=Constants.TestStatus.TESTING_PROCESS_ENDED,
                     description=f"Unable to Obtain the Developer Defined Tests from NODS - {e}",
                     success=False
                 )

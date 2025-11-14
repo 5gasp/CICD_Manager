@@ -34,38 +34,54 @@ logging.basicConfig(
 )
 
 class Jenkins_Pipeline_Configuration:
-    
-    def __init__(self, jenkins_script_str, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information,  test_instance_id, testbed_id):
+
+    def __init__(
+        self,
+        jenkins_script_str=None,
+        executed_tests_info=None,
+        available_tests=None,
+        descriptor_metrics_collection=None,
+        metrics_collection_information=None,
+        test_instance_id=None,
+        test_stage_id=None,
+        testbed_id=None,
+    ):
         self.jenkins_script_str = jenkins_script_str
         self.executed_tests_info = executed_tests_info
         self.available_tests = available_tests
         self.descriptor_metrics_collection = descriptor_metrics_collection
         self.metrics_collection_information = metrics_collection_information
         self.test_instance_id = test_instance_id
+        self.test_stage_id = test_stage_id
         self.testbed_id = testbed_id
 
 
-    def create_jenkins_pipeline_script(self):
+    def create_jenkins_pipeline(self):
     
         # fill the pipeline script
         self.add_environment_setup_to_jenkins_pipeline_script()
         self.add_obtain_testing_artifacts_to_jenkins_pipeline_script()
-        self.add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self.metrics_collection_information)
-        self.add_metrics_collection_mechanism_to_jenkins_pipeline_script(self.descriptor_metrics_collection, self.metrics_collection_information)
+        #self.add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self.metrics_collection_information)
+        #self.add_metrics_collection_mechanism_to_jenkins_pipeline_script(self.descriptor_metrics_collection, self.metrics_collection_information)
         self.add_obtain_and_perform_tests_to_jenkins_pipeline_script(self.executed_tests_info, self.available_tests)
         self.add_publish_results_to_jenkins_pipeline_script()
         self.add_cleanup_environment_commands_to_jenkins_pipeline_script()
 
         # update test instance id
         self.jenkins_script_str = self.jenkins_script_str.replace("<test_id>", str(self.test_instance_id))
+        # update test stage id
+        self.jenkins_script_str = self.jenkins_script_str.replace("<stage_id>", str(self.test_stage_id))
         # update CI/CD location
         self.jenkins_script_str = self.jenkins_script_str.replace("<ci_cd_manager_url_test_status_url>", Constants.CI_CD_MANAGER_URL+"/tests/test-status")
         self.jenkins_script_str = self.jenkins_script_str.replace("<ci_cd_manager_url_publish_test_results>", Constants.CI_CD_MANAGER_URL+"/tests/publish-test-results")
-        config = JenkinsConstants.BASE_PIPELINE
-        config = config.replace("add_pipeline_configuration_here", self.jenkins_script_str)
 
-        return config
-  
+        #config = JenkinsConstants.BASE_PIPELINE
+        #config = config.replace("add_pipeline_configuration_here", self.jenkins_script_str)
+        return self.jenkins_script_str
+    
+    def get_jenkins_pipeline_script_from_pipeline_content(self, pipeline_content):
+        config = JenkinsConstants.BASE_PIPELINE
+        return config.replace("add_pipeline_configuration_here", pipeline_content)
 
     def add_environment_setup_to_jenkins_pipeline_script(self):
         setup_environment_commands = [
@@ -99,7 +115,6 @@ class Jenkins_Pipeline_Configuration:
         # robot tests
         test_to_perform = None
         for test_info in executed_tests_info:
-            print(test_info)
             test_id = test_info["name"]
             test_dir = None
             
@@ -214,62 +229,62 @@ class Jenkins_Pipeline_Configuration:
         return self.__update_jenkins_script("<cleanup_environment>", cleanup_environment_commands)
 
 
-    def add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self, metrics_collection_information):
-        obtain_metrics_environment = [
-            f"ltr_user = credentials('ltr_user')",
-            f"ltr_password = credentials('ltr_password')",
-            f"ltr_location = credentials('ltr_location')"
-        ]
+#    def add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self, metrics_collection_information):
+#        obtain_metrics_environment = [
+#            f"ltr_user = credentials('ltr_user')",
+#            f"ltr_password = credentials('ltr_password')",
+#            f"ltr_location = credentials('ltr_location')"
+#        ]
+#
+#        obtain_metrics_collection_file_commands = []
+#        metrics_dir = metrics_collection_information["metrics_collection"]["ftp_base_location"]
+#        obtain_metrics_collection_file_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ltr_user:$ltr_password@$ltr_location/{metrics_dir}'")
+#        self.__update_jenkins_script("<obtain_metrics_collection_files>", obtain_metrics_collection_file_commands)
+#        self.__update_jenkins_script("<obtain_metrics_environment>", obtain_metrics_environment)
 
-        obtain_metrics_collection_file_commands = []
-        metrics_dir = metrics_collection_information["metrics_collection"]["ftp_base_location"]
-        obtain_metrics_collection_file_commands.append(f"sh 'wget -r -l 0 --tries=5 -P ~/test_repository/\"$JOB_NAME\" -nH ftp://$ltr_user:$ltr_password@$ltr_location/{metrics_dir}'")
-        self.__update_jenkins_script("<obtain_metrics_collection_files>", obtain_metrics_collection_file_commands)
-        self.__update_jenkins_script("<obtain_metrics_environment>", obtain_metrics_environment)
 
-
-    def add_metrics_collection_mechanism_to_jenkins_pipeline_script(self, descriptor_metrics_collection, metrics_collection_information):
-
-        if not descriptor_metrics_collection:
-            self.__update_jenkins_script("<start_metrics_collection>", ["sh 'echo \"No metrics to collect\"'"])
-            self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "start")
-            self.__update_jenkins_script("<end_metrics_collection>", ["sh 'echo \"No metrics collected\"'"])
-            self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "stop")
-            return
-            
-        needed_python_modules =[
-            "scp==0.14.1",
-            "robotframework==4.1.1",
-        ]
-        execute_metrics_collection_commands = []
-        execute_metrics_collection_commands.append(f"sh 'python3 -m pip install {' '.join(needed_python_modules)}'")
-        # robot tests
-        metrics_to_collect = {}        
-        for metrics_collection in descriptor_metrics_collection:
-            metrics_collection_id = "metrics_collection"
-            metrics_dir = metrics_collection_information["metrics_collection"]["ftp_base_location"]
-            metrics_filename = metrics_collection_information["metrics_collection"]["test_filename"]
-            # save test location. needed to run the test
-            metrics_to_collect[metrics_collection_id] = str(os.path.join("~/test_repository/\"$JOB_NAME\"", metrics_dir, metrics_filename))
-            # save env to export
-            export_variables_commands = []
-            for parameter in metrics_collection["parameters"]:
-                key = f"{metrics_collection_id}_{parameter['key']}"
-                value = parameter['value']
-                export_variables_commands.append(f"export {key}={value}")
-            export_variables_commands.append("export metrics_collection_action=<action>")
-            # add metrisc repository info
-            export_variables_commands.append(f"export INFLUX_DB_URL={Constants.MR_LOCATION}")
-            export_variables_commands.append(f"export INFLUX_DB_NAME={Constants.MR_DB}")
-            # envs to one line
-            export_variables_commands_str = " ; ".join(export_variables_commands)
-            execute_metrics_collection_commands.append(f"sh '{ export_variables_commands_str} ;  python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{metrics_collection_id} {metrics_to_collect[metrics_collection_id]}'")
-        
-        
-        self.__update_jenkins_script("<start_metrics_collection>", execute_metrics_collection_commands)
-        self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "start")
-        self.__update_jenkins_script("<end_metrics_collection>", execute_metrics_collection_commands)
-        self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "stop")
+#    def add_metrics_collection_mechanism_to_jenkins_pipeline_script(self, descriptor_metrics_collection, metrics_collection_information):
+#
+#        if not descriptor_metrics_collection:
+#            self.__update_jenkins_script("<start_metrics_collection>", ["sh 'echo \"No metrics to collect\"'"])
+#            self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "start")
+#            self.__update_jenkins_script("<end_metrics_collection>", ["sh 'echo \"No metrics collected\"'"])
+#            self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "stop")
+#            return
+#            
+#        needed_python_modules =[
+#            "scp==0.14.1",
+#            "robotframework==4.1.1",
+#        ]
+#        execute_metrics_collection_commands = []
+#        execute_metrics_collection_commands.append(f"sh 'python3 -m pip install {' '.join(needed_python_modules)}'")
+#        # robot tests
+#        metrics_to_collect = {}        
+#        for metrics_collection in descriptor_metrics_collection:
+#            metrics_collection_id = "metrics_collection"
+#            metrics_dir = metrics_collection_information["metrics_collection"]["ftp_base_location"]
+#            metrics_filename = metrics_collection_information["metrics_collection"]["test_filename"]
+#            # save test location. needed to run the test
+#            metrics_to_collect[metrics_collection_id] = str(os.path.join("~/test_repository/\"$JOB_NAME\"", metrics_dir, metrics_filename))
+#            # save env to export
+#            export_variables_commands = []
+#            for parameter in metrics_collection["parameters"]:
+#                key = f"{metrics_collection_id}_{parameter['key']}"
+#                value = parameter['value']
+#                export_variables_commands.append(f"export {key}={value}")
+#            export_variables_commands.append("export metrics_collection_action=<action>")
+#            # add metrisc repository info
+#            export_variables_commands.append(f"export INFLUX_DB_URL={Constants.MR_LOCATION}")
+#            export_variables_commands.append(f"export INFLUX_DB_NAME={Constants.MR_DB}")
+#            # envs to one line
+#            export_variables_commands_str = " ; ".join(export_variables_commands)
+#            execute_metrics_collection_commands.append(f"sh '{ export_variables_commands_str} ;  python3 -m robot.run -d ~/test_results/\"$JOB_NAME\"/{metrics_collection_id} {metrics_to_collect[metrics_collection_id]}'")
+#        
+#        
+#        self.__update_jenkins_script("<start_metrics_collection>", execute_metrics_collection_commands)
+#        self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "start")
+#        self.__update_jenkins_script("<end_metrics_collection>", execute_metrics_collection_commands)
+#        self.jenkins_script_str = self.jenkins_script_str.replace("<action>", "stop")
         
         
 

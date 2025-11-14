@@ -35,6 +35,7 @@ import xml.etree.ElementTree as ET
 import json
 import ftplib
 import io
+import re
 
 # import from parent directory
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -114,6 +115,8 @@ async def get_test_status(netapp_id: str, network_service_id: str , db: Session 
     description="When the CI Agent is performing the tests, it will use this endpoint to update their status.",
 )
 async def update_test_status(test_status: ci_cd_manager_schemas.Test_Status_Update,  db: Session = Depends(get_db)):
+    print("Test_Status_Update:", test_status)
+    return Utils.create_response()
     try:
         crud.create_test_status_ci_cd_agent(db, test_status)            
         return Utils.create_response()
@@ -321,19 +324,26 @@ def new_test(test_descriptor_data, nods_id, developer_defined_tests,
         is_developer_defined = False
         developer_defined_test_filepath = None
         if executed_test["type"] == "predefined":
-            # db required info
+            # db required info 
+            # DONE
             performed_test = f"{executed_test['name']}-test-id-{executed_test['testcase_id']}"
             # add extra parameters
+            # DONE
             executed_test["full_name"] = f"{executed_test['name']}-test-id-{executed_test['testcase_id']}"
             
         elif executed_test["type"] == "developer-defined":
             # db required info
+            # DONE
             performed_test = f"dev-defined-{executed_test['name']}-test-id-{executed_test['testcase_id']}"
+            # DONE
             is_developer_defined = True
             developer_defined_test_filepath = developer_defined_tests[executed_test['name']]
             # add extra parameters
+            # DONE
             executed_test["location"] = developer_defined_tests[executed_test['name']]
+            # DONE
             executed_test["test_instance_id"] = test_instance.id
+            # DONE
             executed_test["full_name"] = f"dev-defined-{executed_test['name']}-test-id-{executed_test['testcase_id']}"
         
         test_instance_test = crud.create_test_instance_test(
@@ -434,7 +444,8 @@ summary="Publish test results",
 description="After the validation process this endpoint will be used to submit the results to the CI/CD Manager ",
 )
 async def publish_test_results(test_results_information: ci_cd_manager_schemas.Test_Results,  db: Session = Depends(get_db)):
-    
+    print("Test_Results:", test_results_information)
+    return Utils.create_response()
     # get test results
     tests = crud.get_tests_of_test_instance(db, test_results_information.test_id)
     tests = [t.performed_test for t in tests]
@@ -594,7 +605,6 @@ async def get_developer_defined_tests(
 
     test_instance_id = test_instance_test.test_instance_id
     communication_token = test_instance_test.communication_token
-
     data = crud.get_developer_defined_tests_for_test_instance(
         db, test_instance_id, communication_token
     )
@@ -616,15 +626,22 @@ async def download_developer_defined_test(
     test_instance_id = test_instance_test.test_instance_id
     communication_token = test_instance_test.communication_token
     developer_defined_test_name = test_instance_test.developer_defined_test_name
+    normalized_developer_defined_test_name = None
+    match = re.search(r"dev-defined-(.*?)-test-id-\d+", developer_defined_test_name)
+    if match:
+        normalized_developer_defined_test_name = match.group(1)
 
-    file_location = crud.get_developer_defined_test_for_test_instance(
-        db, test_instance_id, communication_token, developer_defined_test_name
+
+    print("DEBUG2:", test_instance_test.test_instance_id, test_instance_test.communication_token, test_instance_test.developer_defined_test_name, normalized_developer_defined_test_name)
+    dev_defined_tests = crud.get_test_instance_dev_defined(
+        db, test_instance_test.test_instance_id
     )
-    print(file_location)
-    test_content = dev_defined_test_helpers.download_test_from_ftp(file_location)
-    
-    
-    return Response(test_content, media_type="application/tar+gzip")
+    for dev_defined_test in dev_defined_tests:
+        if dev_defined_test.test_case_name == normalized_developer_defined_test_name:
+            test_content = dev_defined_test_helpers.download_test_from_ftp(
+                dev_defined_test.test_case_location
+            )
+            return Response(test_content, media_type="application/tar+gzip")
 
 
 

@@ -118,7 +118,7 @@ async def provision_testing_agents_for_test_instance(test_instance_id: int):
                     crud.create_test_status(
                         db=db,
                         test_id=test_instance_id,
-                        state=Constants.TestStatus.TEST_ENDED,
+                        state=Constants.TestStatus.TESTING_PROCESS_ENDED,
                         description=description,
                         success=False
                     )
@@ -145,8 +145,7 @@ async def provision_testing_agents_for_test_instance(test_instance_id: int):
             )
 
 
-@broker.task
-async def confirm_provisioning_of_testing_agents_for_test_instance(test_instance_id: int):
+def confirm_provisioning_of_testing_agents_for_test_instance(test_instance_id: int):
     custom_agents = None
 
     # Get Testing Descriptor and obtain custom testing agents info
@@ -219,7 +218,7 @@ async def confirm_provisioning_of_testing_agents_for_test_instance(test_instance
                         crud.create_test_status(
                             db=db,
                             test_id=test_instance_id,
-                            state=Constants.TestStatus.TEST_ENDED,
+                            state=Constants.TestStatus.TESTING_PROCESS_ENDED,
                             description=description,
                             success=False
                         )
@@ -256,7 +255,7 @@ def verify_if_agent_provisioning_failed(custom_agent, test_instance_id):
             crud.create_test_status(
                 db=db,
                 test_id=test_instance_id,
-                state=Constants.TestStatus.TEST_ENDED,
+                state=Constants.TestStatus.TESTING_PROCESS_ENDED,
                 description=description,
                 success=False
             )

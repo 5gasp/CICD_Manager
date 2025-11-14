@@ -19,12 +19,11 @@
 
 # generic imports
 from email.policy import default
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text
 from sqlalchemy import Column, Integer, DateTime, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSONB
 from enum import Enum
-
 import datetime
 
 # custom imports
@@ -34,6 +33,18 @@ from aux import constants as Constants
 class AgentType(Enum):
     TESTBED = "Testbed"
     CUSTOM = "Custom"
+
+class TestStageStatus(Enum):
+	INIT = "INIT"
+	CREATED_PIPELINE_SCRIPT = "CREATED_PIPELINE_SCRIPT"
+	SUBMITTED_PIPELINE_SCRIPT = "SUBMITTED_PIPELINE_SCRIPT"
+	ENVIRONMENT_SETUP_CI_CD_AGENT = "ENVIRONMENT_SETUP_CI_CD_AGENT"
+	OBTAINED_TESTS_ON_CI_CD_AGENT = "OBTAINED_TESTS_ON_CI_CD_AGENT"
+	PERFORMED_TESTS_ON_CI_CD_AGENT = "PERFORMED_TESTS_ON_CI_CD_AGENT"
+	PUBLISHED_TEST_RESULTS = "PUBLISHED_TEST_RESULTS"
+	CLEANED_TEST_ENVIRONMENT = "CLEANED_TEST_ENVIRONMENT"
+	TEST_ENDED = "TEST_ENDED"
+
 
 
 class CI_CD_Agent(Base):
@@ -66,6 +77,9 @@ class CI_CD_Agent(Base):
 			# Handle enum columns (like AgentType)
 			if isinstance(value, Enum):
 				result[c.name] = value.name 
+			# Handle datetime objects
+			elif isinstance(value, datetime.datetime):
+				result[c.name] = value.isoformat()
 			else:
 				result[c.name] = value
 		return result
@@ -108,6 +122,44 @@ class Test_Instance(Base):
 	service_test_specification_id = Column(String)
 	created_at = Column(DateTime, default=datetime.datetime.utcnow)
 	finished_at = Column(DateTime, nullable=True)
+
+	def as_dict(self):
+		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class Test_Instance_Stage(Base):
+	__tablename__ = "test_instance_stages"
+	id = Column(Integer, primary_key=True, index=True)
+	test_instance_id = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
+	testing_agent_id = Column(Integer, ForeignKey("ci_cd_nodes.id"), nullable=False)
+	jenkins_pipeline = Column(Text)
+	def as_dict(self):
+		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class Test_Instance_Stage_Status(Base):
+	__tablename__ = "test_instance_stage_status"
+
+	id = Column(Integer, primary_key=True, index=True)
+	timestamp =  Column(DateTime, default=datetime.datetime.utcnow)
+	test_stage_id = Column(Integer, ForeignKey("test_instance_stages.id"), nullable=False)
+	state = Column(
+		SQLEnum(TestStageStatus),
+		default=TestStageStatus.INIT,
+		nullable=False
+	)
+
+	def as_dict(self):
+		dic =  {c.name: getattr(self, c.name) for c in self.__table__.columns}
+		dic["timestamp"] = self.timestamp.isoformat()
+		return dic
+
+
+
+class Test_Instance_Developer_Defined_Test_Cases(Base):
+	__tablename__ = "test_instance_dev_defined_test_cases"
+	id = Column(Integer, primary_key=True, index=True)
+	test_instance_id = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
+	test_case_name = Column(String, nullable=False)
+	test_case_location = Column(String, nullable=False)
 
 	def as_dict(self):
 		return {c.name: getattr(self, c.name) for c in self.__table__.columns}

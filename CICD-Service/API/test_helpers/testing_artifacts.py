@@ -144,6 +144,8 @@ def get_default_testing_artifact_from_ftp(artifact):
             f"@{ftp_location}"\
             f"{Constants.DEFAULT_5GASP_TESTING_ARTIFACTS_FTP_ROOT_PATH}"\
             f"/{artifact}"
+        
+        print("Testing Artifact URL:", url)
 
         # Todo -> Fix this mess later
         mime_type = None

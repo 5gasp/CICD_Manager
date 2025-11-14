@@ -18,7 +18,7 @@
 
 
 # generic imports
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel, Field
 import datetime
 
@@ -101,6 +101,7 @@ class Test_Instance(Test_Instance_Base):
 
 class Test_Status_Base(BaseModel):
     test_id: int = Field(..., example=1)
+    stage_id: Optional[int] = Field(None, example=1)
     state: str = Field(..., example="ENVIRONMENT_SETUP_CI_CD_AGENT")
     success: bool
 
@@ -121,6 +122,7 @@ class Test_Status(Test_Status_Base):
 
 class Test_Results(BaseModel):
     test_id: int
+    stage_id: Optional[int] = Field(None, example=1)
     ftp_results_directory: str
     communication_token: str
 
