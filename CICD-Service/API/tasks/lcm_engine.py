@@ -57,6 +57,17 @@ def is_next_state(test_statuses: dict, next_state: Constants.TestStatus):
         return next_state not in test_statuses and \
             Constants.TestStatus.TESTING_PROCESS_ENDED not in test_statuses and\
             test_statuses.get(Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED, False)
+
+    elif next_state == Constants.TestStatus.TESTING_PROCESS_ENDED:
+        return next_state not in test_statuses and \
+            Constants.TestStatus.TESTING_PROCESS_ENDED not in test_statuses and\
+            test_statuses.get(Constants.TestStatus.TESTING_PROCESS_STAGES_CONFIGURED, False)
+
+    elif next_state == Constants.TestStatus.TEST_ENDED:
+        return next_state not in test_statuses and \
+            Constants.TestStatus.TEST_ENDED not in test_statuses and\
+            test_statuses.get(Constants.TestStatus.PUBLISHED_TEST_RESULTS, False)
+
     
 def get_updated_test_statuses(test_instance):
     with get_db() as db:
@@ -113,8 +124,19 @@ async def lcm_engine() -> int:
             # Refresh test statuses to force the next stages to take place in the same cycle
             test_statuses = get_updated_test_statuses(test_instance)
         
-        # Configure testing stafes
+        # Configure testing stages
         if is_next_state(test_statuses, Constants.TestStatus.TESTING_PROCESS_STAGES_CONFIGURED):
             logging.info(f"Will configure testing stages for test instance: {test_instance.id}")
             await testing_stages.create_test_stages.kiq(test_instance.id, test_instance.testbed_id,  test_instance.testing_descriptor)
+            # Refresh test statuses to force the next stages to take place in the same cycle
+            test_statuses = get_updated_test_statuses(test_instance)
+
+        if is_next_state(test_statuses, Constants.TestStatus.TESTING_PROCESS_ENDED):
+            logging.info(f"Will start testing stages for test instance: {test_instance.id}")
+            await testing_stages.process_test_stages.kiq(test_instance.id)
+
+        if is_next_state(test_statuses, Constants.TestStatus.TEST_ENDED):
+            logging.info(f"Will start testing stages for test instance: {test_instance.id}")
+            await testing_stages.check_if_test_stages_ended.kiq(test_instance.id)
+
 

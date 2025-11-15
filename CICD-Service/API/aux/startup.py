@@ -36,9 +36,9 @@ def load_config():
         Constants.FTP_RESULTS_USER = config['RESULTS_FTP']['User']
         Constants.FTP_RESULTS_PASSWORD = config['RESULTS_FTP']['Password']
         Constants.FTP_RESULTS_URL = config['RESULTS_FTP']['Url']
-        Constants.FTP_LTR_USER = "ftp-user" #config['LTR_FTP']['User']
-        Constants.FTP_LTR_PASSWORD = "ftp-password" #config['LTR_FTP']['Password']
-        Constants.FTP_LTR_URL = "10.255.28.75:21" #config['LTR_FTP']['Url']
+        Constants.FTP_LTR_USER = config['LTR_FTP']['User']
+        Constants.FTP_LTR_PASSWORD = config['LTR_FTP']['Password']
+        Constants.FTP_LTR_URL = config['LTR_FTP']['Url'] #"10.255.28.74:21"
         Constants.CI_CD_MANAGER_URL = config['CI_CD_MANAGER']['Url']
         Constants.TEST_INFO_FILEPATH = "static/test_information.yaml" #config['DESCRIPTORS_LOCATION']['Tests_Information_Descriptor_Filepath']
         Constants.TESTBED_INFO_FILEPATH = "static/testbeds_information.yaml" # config['DESCRIPTORS_LOCATION']['Testbeds_Information_Descriptor_Filepath']

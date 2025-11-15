@@ -39,11 +39,13 @@ class TestStageStatus(Enum):
 	CREATED_PIPELINE_SCRIPT = "CREATED_PIPELINE_SCRIPT"
 	SUBMITTED_PIPELINE_SCRIPT = "SUBMITTED_PIPELINE_SCRIPT"
 	ENVIRONMENT_SETUP_CI_CD_AGENT = "ENVIRONMENT_SETUP_CI_CD_AGENT"
+	OBTAINED_TESTING_ARTIFACTS_FILES = "OBTAINED_TESTING_ARTIFACTS_FILES"
 	OBTAINED_TESTS_ON_CI_CD_AGENT = "OBTAINED_TESTS_ON_CI_CD_AGENT"
 	PERFORMED_TESTS_ON_CI_CD_AGENT = "PERFORMED_TESTS_ON_CI_CD_AGENT"
 	PUBLISHED_TEST_RESULTS = "PUBLISHED_TEST_RESULTS"
 	CLEANED_TEST_ENVIRONMENT = "CLEANED_TEST_ENVIRONMENT"
 	TEST_ENDED = "TEST_ENDED"
+	ERROR = "ERROR"
 
 
 
@@ -199,21 +201,22 @@ class Testing_Artifact(Base):
 
 
 class Test_Instance_Tests(Base):
-    __tablename__ = "test_instance_tests"   
-    
-    id = Column(Integer, primary_key=True, index=True)    
-    test_instance = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
-    description = Column(String)
-    original_test_name = Column(String, nullable=True)
-    performed_test = Column(String, nullable=False)
-    is_developer_defined = Column(Boolean, default=False)
-    developer_defined_test_filepath = Column(String, default=None)
-    start_time = Column(String)
-    end_time = Column(String)
-    success = Column(Boolean)
+	__tablename__ = "test_instance_tests"   
 
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+	id = Column(Integer, primary_key=True, index=True)
+	test_instance = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
+	test_stage = Column(Integer, ForeignKey("test_instance_stages.id"), nullable=False)
+	description = Column(String)
+	original_test_name = Column(String, nullable=True)
+	performed_test = Column(String, nullable=False)
+	is_developer_defined = Column(Boolean, default=False)
+	developer_defined_test_filepath = Column(String, default=None)
+	start_time = Column(String)
+	end_time = Column(String)
+	success = Column(Boolean)
+
+	def as_dict(self):
+		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Test_Information(Base):

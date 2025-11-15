@@ -76,13 +76,30 @@ class Jenkins_Wrapper:
         return True, ""
 
 
+    #@requires_auth
+    #def get_build_log(self, job_name, build_number):
+    #    try:
+    #        ret = self.jenkins_server.get_build_console_output(job_name, build_number)
+    #    except Exception as e:
+    #        return False, f"Unable to get build logs. Cause: {str(e)}"
+    #    return True, ret
+
     @requires_auth
-    def get_build_log(self, job_name, build_number):
+    def get_build_log(self, job_name, build_number=None):
         try:
-            ret = self.jenkins_server.get_build_console_output(job_name, build_number)
+            # get latest build number if none is provided
+            if build_number is None:
+                job_info = self.jenkins_server.get_job_info(job_name)
+                if "lastBuild" not in job_info or job_info["lastBuild"] is None:
+                    return False, f"No builds found for job '{job_name}'"
+                build_number = job_info["lastBuild"]["number"]
+                print(f"Will obtain the logs of build {build_number}")
+            logs = self.jenkins_server.get_build_console_output(job_name, build_number)
         except Exception as e:
             return False, f"Unable to get build logs. Cause: {str(e)}"
-        return True, ret
+
+        return True, logs
+    
 
 
     @requires_auth

@@ -6,7 +6,7 @@ from test_helpers import test_descriptor_render, testing_artifacts
 from sql_app.database import SessionLocal
 from sqlalchemy.orm import Session
 from contextlib import contextmanager
-from sql_app import crud
+from sql_app import crud, models
 from sql_app.CRUD import agents as agents_crud
 import logging
 import aux.constants as Constants
@@ -36,10 +36,189 @@ def get_db():
         db.close()
 
 @broker.task
-async def create_test_stages(test_instance_id, testbed_id, testing_descriptor):
+async def process_test_stages(test_instance_id):
+    # Get existing test stages and their status
+    test_stages_with_status = {}
+    with get_db() as db:
+        test_stages_with_status = crud.get_test_stages_with_status_for_test_instance(
+            db=db,
+            test_instance_id=test_instance_id
+        )
 
+    all_statuses = {
+        status.state
+        for statuses
+        in test_stages_with_status.values()
+        for status in statuses
+    }
+
+    is_first_stage_being_executed = models.TestStageStatus.SUBMITTED_PIPELINE_SCRIPT not in all_statuses
     
+    # Check if there are test stages being performed
+    candidate_test_stages = []
+    for test_stage, statuses in test_stages_with_status.items():
+        test_stage_states = [s.state for s in statuses]
+        if models.TestStageStatus.SUBMITTED_PIPELINE_SCRIPT in test_stage_states\
+        and models.TestStageStatus.TEST_ENDED not in test_stage_states:
+            # A test stage is being performed and we should wait for it
+            # to be completed
+            logging.info(
+                f"Test Stage {test_stage.id} is still running. Will wait for it to end."
+            )
+            return
+        elif models.TestStageStatus.SUBMITTED_PIPELINE_SCRIPT not in test_stage_states:
+            candidate_test_stages.append(test_stage)
 
+
+    if len(candidate_test_stages) > 0:
+        trigger_test_stage(candidate_test_stages.pop(0), is_first_stage_being_executed)
+
+
+@broker.task
+async def check_if_test_stages_ended(test_instance_id):
+    # Get existing test stages and their status
+    test_stages_with_status = {}
+    with get_db() as db:
+        test_stages_with_status = crud.get_test_stages_with_status_for_test_instance(
+            db=db,
+            test_instance_id=test_instance_id
+        )
+
+    if all(
+        models.TestStageStatus.TEST_ENDED
+        in [s.state for s in statuses]
+        for statuses in test_stages_with_status.values()
+    ):
+        # Update Test Status
+        crud.create_test_status(
+            db=db,
+            test_id=test_instance_id,
+            state=Constants.TestStatus.TEST_ENDED,
+            description=None,
+            success=True
+        )
+
+def trigger_test_stage(test_stage_db, is_first_stage_being_executed):
+    logging.info(f"Will Trigger Test Stage with id '{test_stage_db.id}'")
+
+    testing_agent = None
+    test_instance = None
+    with get_db() as db:
+        # Get testing agent info
+        testing_agent = agents_crud.get_ci_cd_node_by_id(
+            db=db,
+            id=test_stage_db.testing_agent_id
+        )
+        # Get test instance
+        test_instance = crud.get_test_instance(
+            db=db,
+            test_id=test_stage_db.test_instance_id
+        )
+
+    # Define a unique Job Name
+    job_name = f"{test_instance.netapp_id}-{test_instance.network_service_id}" +\
+        f"-{test_instance.id}-{test_stage_db.id}"
+    
+    print("Testing Agent:", testing_agent.as_dict())
+    print("Job Name:", job_name)
+
+    success, description = send_pipeline_to_jenkins(
+        testing_agent,
+        test_stage_db,
+        job_name
+    )
+
+    with get_db() as db:
+        if success:
+            # Update test stage
+            crud.create_test_stage_status(
+                db=db,
+                test_stage_id=test_stage_db.id,
+                state=models.TestStageStatus.CREATED_PIPELINE_SCRIPT
+            )
+            crud.create_test_stage_status(
+                db=db,
+                test_stage_id=test_stage_db.id,
+                state=models.TestStageStatus.SUBMITTED_PIPELINE_SCRIPT
+            )
+
+            if is_first_stage_being_executed:
+                # Update Test Status
+                crud.create_test_status(
+                    db=db,
+                    test_id=test_instance.id,
+                    state=Constants.TestStatus.TESTING_PROCESS_STARTED,
+                    description=description,
+                    success=True
+                )
+
+        else:
+            # Update Test Stage
+            crud.create_test_stage_status(
+                db=db,
+                test_stage_id=test_stage_db.id,
+                state=models.TestStageStatus.ERROR
+            )
+
+            # Update Test Status
+            crud.create_test_status(
+                db=db,
+                test_id=test_instance.id,
+                state=Constants.TestStatus.TESTING_PROCESS_STARTED,
+                description=description,
+                success=False
+            )
+            crud.create_test_status(
+                db=db,
+                test_id=test_instance.id,
+                state=Constants.TestStatus.TESTING_PROCESS_ENDED,
+                description=description,
+                success=False
+            )
+
+def send_pipeline_to_jenkins(testing_agent, test_stage, job_name):
+    try:
+        jenkins_wrapper = Jenkins_Wrapper()
+        ret, message = jenkins_wrapper.connect_to_server(
+            testing_agent.url,
+            testing_agent.username,
+            testing_agent.password
+        )
+
+        if not ret:
+            return False, f"Could not authenticate in agent with URL {testing_agent.url} - {message}"
+        
+        logging.info(f"Successefully accessed agent with URL {testing_agent.url}")
+
+        # Create the Jenkins Script given a pipeline
+        jenkins_script = Jenkins_Pipeline_Configuration()\
+            .get_jenkins_pipeline_script_from_pipeline_content(test_stage.jenkins_pipeline)
+
+        # Create a new job in Jenkins
+        ret, message = jenkins_wrapper.create_new_job(job_name, jenkins_script)
+        if not ret:
+            description = f"Could not submit pipeline in agent with URL {testing_agent.url} - {message}"
+            logging.error(description)
+            return False, description
+        
+        # Trigger Job Execution
+        ret, message = jenkins_wrapper.run_job(job_name)
+        if not ret:
+            description = f"Could not run job in agent with URL {testing_agent.url} - {message}"
+            logging.error(description)
+            return False, description
+        
+        # Success
+        return True, "Pipeline correctly submitted"
+    except Exception as e:
+        description = f"Could not send pipeline to agent with URL {testing_agent.url}. Error: {e}"
+        logging.error(description)
+        return False, description
+
+
+
+@broker.task
+async def create_test_stages(test_instance_id, testbed_id, testing_descriptor):    
     # Get all test cases from testing descriptor
     test_cases = {
         test_case["testcase_id"]: test_case
@@ -102,12 +281,6 @@ async def create_test_stages(test_instance_id, testbed_id, testing_descriptor):
     for stage in stages:
         agent = select_agent(test_instance_id, testbed_id, stage["testing_agent"])
 
-        # Register Test Instance Test Cases
-        register_test_instace_test_cases(
-            test_instance_id=test_instance_id, 
-            test_cases=stage["test_cases"]
-        )
-
         # Create new Testing Stage
         test_stage = create_test_instace_stage(
             test_instance_id=test_instance_id,
@@ -119,8 +292,13 @@ async def create_test_stages(test_instance_id, testbed_id, testing_descriptor):
         if test_stage:
             configured_test_stages.append(test_stage)
 
-        #print("Script:")
-        #print(jenkins_pipeline_config.get_jenkins_pipeline_script_from_pipeline_content(pipeline_content))
+            # Register Test Instance Test Cases
+            register_test_instace_test_cases(
+                test_instance_id=test_instance_id, 
+                test_stage_id=test_stage.id,
+                test_cases=stage["test_cases"]
+            )
+
 
     with get_db() as db: 
         if len(configured_test_stages) == len(stages):
@@ -185,12 +363,13 @@ def create_test_instace_stage(test_instance_id, testbed_id, testing_agent_id, te
 
 
 
-def register_test_instace_test_cases(test_instance_id, test_cases):
+def register_test_instace_test_cases(test_instance_id, test_stage_id, test_cases):
     with get_db() as db: 
         for test_case in test_cases:
             test_instance_test = crud.create_test_instance_test(
                 db=db,
                 test_instance_id=test_instance_id,
+                test_stage_id=test_stage_id,
                 performed_test=test_case["performed_test"],
                 original_test_name= test_case['name'] if \
                     test_case["type"] == "predefined" else "developer-defined",

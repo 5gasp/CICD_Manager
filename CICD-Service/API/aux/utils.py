@@ -189,7 +189,7 @@ def patch_results(token,nods_id,data):
     logging.info("patching data result on NODS")
     url =  f'{Constants.NODS_HOST}/tmf-api/serviceTestManagement/v4/serviceTest/{nods_id}'
     response = requests.patch(url=url,headers=headers,json=data)
-    logging.info(response.text)
+    #logging.info(response.text)
     return True,response
 
 

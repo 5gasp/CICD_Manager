@@ -172,7 +172,7 @@ def update_test_stage_with_jenkins_pipeline(
 
 def create_test_stage_status(
     db: Session, 
-    test_stage_id: str,
+    test_stage_id: int,
     state: models.TestStageStatus
 ):
     test_stage_status = models.Test_Instance_Stage_Status(
@@ -188,6 +188,32 @@ def create_test_stage_status(
     )
     return test_stage_status
 
+def get_test_stages_with_status_for_test_instance(
+    db: Session, 
+    test_instance_id: int,
+):
+    db_test_stages = db.query(models.Test_Instance_Stage)\
+        .filter(models.Test_Instance_Stage.test_instance_id == test_instance_id)\
+        .all()
+    
+    return {
+        db_test_stage: get_test_stage_statuses(db, db_test_stage.id)
+        for db_test_stage
+        in db_test_stages
+    }
+
+def get_test_stage(
+    db: Session, 
+    test_stage_id: int,
+):
+    return db.query(models.Test_Instance_Stage)\
+        .filter(models.Test_Instance_Stage.id == test_stage_id)\
+        .first()
+
+def get_test_stage_statuses(db: Session, test_stage_id: int):
+    return db.query(models.Test_Instance_Stage_Status)\
+        .filter(models.Test_Instance_Stage_Status.test_stage_id == test_stage_id)\
+        .all()
 
 
 # ---------------------------------------- #
@@ -360,12 +386,13 @@ def get_all_test_status_for_test_given_id(db: Session, test_id: int, access_toke
 # ---------------------------------------- #
 
 def create_test_instance_test(db: Session, test_instance_id: int, 
-    performed_test: str, original_test_name: str, description: str,
-    performed_test_results_location: str = None, is_developer_defined=False, 
-    developer_defined_test_filepath = None):
+    test_stage_id: int, performed_test: str, original_test_name: str,
+    description: str, performed_test_results_location: str = None,
+    is_developer_defined=False, developer_defined_test_filepath = None):
     
     test_instance_test = models.Test_Instance_Tests(
         test_instance=test_instance_id,
+        test_stage=test_stage_id,
         performed_test=performed_test,
         original_test_name=original_test_name,
         description=description,
