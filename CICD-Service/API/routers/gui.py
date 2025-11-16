@@ -105,9 +105,12 @@ def get_db():
 async def get_testing_process_status(test_id: int, access_token: str, db: Session = Depends(get_db)):
     try:
         data = crud.get_all_test_status_for_test_given_id(db, test_id, access_token)
+        data = [t.as_dict() for t in data]
+        for status in data:
+            status["state"] = status["state"].value
         if not data:
             return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."]) 
-        return Utils.create_response(data=[status.as_dict() for status in data])
+        return Utils.create_response(data=data)
     except Exception as e:
         logging.error(e)
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't retrieve the tests status."]) 
@@ -179,52 +182,10 @@ async def get_testing_console_log(test_id: int, access_token: str, db: Session =
     tags=["gui"],
     summary="Get test base information",
     description="Get test base information (NetApp id, Testbed, Starting Time, ...)",
-    responses={
-        200: {
-            "content": {
-                "application/json": {
-                    "example": {**Utils.response_dict,
-                    "message": "",
-                    "data": test_info_schemas.TestBaseInformation(
-                        test_id="test_1",  
-                        netapp_id="netapp_1",
-                        network_service_id="net_service_1",
-                        testbed_id="testbed_1",
-                        started_at="yyyy-mm-dd",
-                        test_status="Status"
-                    ).dict()}
-                }
-            }
-        },
-        403: {
-            "content": {
-                "application/json": {
-                    "example": {**Utils.response_dict,
-                    "message": "",
-                    "success": False,
-                    "errors": ["Invalid credentials."]
-                    }
-                }
-            }
-        },
-        400: {
-            "content": {
-                "application/json": {
-                    "example": {**Utils.response_dict,
-                    "message": "",
-                    "success": False,
-                    "errors": ["Couldn't retrieve the test base information."]
-                    }
-                }
-            }
-        }
-    }
 )
 async def get_test_base_information(test_id: int, access_token: str, db: Session = Depends(get_db)):
-    print("access_token", access_token)
     try:
         data = crud.get_test_base_information(db, test_id, access_token)
-        print(data)
         if not data:
             return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."]) 
         return Utils.create_response(data=data)
@@ -282,10 +243,50 @@ async def get_test_base_information(test_id: int, access_token: str, db: Session
 )
 async def get_tests_performed(test_id: int, access_token: str, db: Session = Depends(get_db)):
     try:
-        data = crud.get_tests_of_test_instance(db, test_id, access_token)
+        test_instance = crud.get_test_instance(db, test_id, access_token)    
+        
+
+        data = []
+        test_stages = crud.get_test_stages_with_status_for_test_instance(db, test_id)
+        test_cases = crud.get_tests_of_test_instance(db, test_id, access_token)
+        for test_stage, test_state_statuses in test_stages.items():
+            # Get Console Log
+            results_base_folder = f"{test_instance.netapp_id}-{test_instance.network_service_id}" +\
+                f"-{test_id}-{test_stage.id}"
+            test_console_log = urlopen(
+                f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}" +\
+                f"@{Constants.FTP_RESULTS_URL}/{results_base_folder}/console_log.log"
+            ).read()
+            test_console_log = test_console_log.decode('utf-8')
+            
+            # Get Test Status
+            test_state_statuses = [status.as_dict() for status in test_state_statuses]
+            for test_state_status in test_state_statuses:
+                test_state_status["state"] = test_state_status["state"].value
+
+            test_stage_data = {
+                "id":  test_stage.id,
+                "testing_agent_id": test_stage.testing_agent_id,
+                "pipeline": test_stage.jenkins_pipeline,
+                "console_log": test_console_log,
+                "statuses": test_state_statuses,
+                "test_cases": [
+                    test_case.as_dict()
+                    for test_case in sorted(
+                        test_cases,
+                        key=lambda tc: tc.id
+                    )
+                    if test_case.test_stage == test_stage.id
+                ]
+
+            }
+            data.append(test_stage_data)
+
+        # Sort test stages
+        data = sorted(data, key=lambda ts: ts["id"])
         if not data:
             return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."]) 
-        return Utils.create_response(data=[d.as_dict() for d in data])
+        return Utils.create_response(data=data)
     except Exception as e:
         logging.error(e)
         return Utils.create_response(status_code=400, success=False, errors=["Couldn't retrieve the test performed."]) 
@@ -298,10 +299,12 @@ async def get_tests_performed(test_id: int, access_token: str, db: Session = Dep
     summary="Get Test Output File",
     description="After the validation pipeline, several files are created by the Robot Framework. This endpoint retrieves these files",
 )
-async def get_test_output_file(test_id: int, access_token: str, test_name: str, file_name: str, db: Session = Depends(get_db)):
+async def get_test_output_file(test_id: int, stage_id: int, access_token: str, test_name: str, file_name: str, db: Session = Depends(get_db)):
     test_instance = crud.get_test_instance(db, test_id, access_token)
+    results_base_folder = f"{test_instance.netapp_id}-{test_instance.network_service_id}" +\
+        f"-{test_id}-{stage_id}"
     if not test_instance:
         return Utils.create_response(status_code=403, success=False, errors=["Invalid credentials."]) 
-    test_console_log = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{test_instance.test_results_location}/{test_name}/{file_name}").read()
+    test_console_log = urlopen(f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}@{Constants.FTP_RESULTS_URL}/{results_base_folder}/{test_name}/{file_name}").read()
     test_console_log = test_console_log.decode('utf-8')
     return HTMLResponse(content=test_console_log,  headers={"Access-Control-Allow-Origin": "*"})

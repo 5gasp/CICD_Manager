@@ -13,8 +13,9 @@ from statistics import mode
 import string
 # generic imports
 from os import access, name
-
+from collections import Counter
 from sqlalchemy.orm import Session, joinedload
+import yaml 
 
 # custom imports
 from . import models
@@ -210,6 +211,14 @@ def get_test_stage(
         .filter(models.Test_Instance_Stage.id == test_stage_id)\
         .first()
 
+def get_test_stages_for_test_instance(
+    db: Session, 
+    test_instance_id: int,
+):
+    return db.query(models.Test_Instance_Stage)\
+        .filter(models.Test_Instance_Stage.test_instance_id == test_instance_id)\
+        .all()
+
 def get_test_stage_statuses(db: Session, test_stage_id: int):
     return db.query(models.Test_Instance_Stage_Status)\
         .filter(models.Test_Instance_Stage_Status.test_stage_id == test_stage_id)\
@@ -329,6 +338,13 @@ def get_ci_cd_agent_given_test_instance_id(db: Session, test_instance_id: int):
     ci_cd_node_id = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first().ci_cd_node_id
     return agents_crud.get_ci_cd_node_by_id(db, ci_cd_node_id)
 
+def get_ci_cd_agents_given_test_instance_id(db: Session, test_instance_id: int):
+    test_stages = get_test_stages_for_test_instance(db, test_instance_id)
+    return [
+        agents_crud.get_ci_cd_node_by_id(db, test_stage.testing_agent_id)
+        for test_stage
+        in test_stages
+    ]
 
 
 # ---------------------------------------- #
@@ -651,19 +667,62 @@ def is_communication_token_for_test_valid(db: Session, test_instance_id: int, co
 
 
 def get_test_base_information(db: Session, test_instance_id: int, access_token: str = None):
-    data = {}
     if __validate_test_instance_access_token(db, test_instance_id, access_token):
         db_test_instance = db.query(models.Test_Instance).filter(models.Test_Instance.id == test_instance_id).first()      
         all_test_status = get_all_test_status_for_test_given_id(db, test_instance_id)
         starting_time = all_test_status[0].timestamp
         test_status = all([ts.success for ts in all_test_status])
-        return {
-            "test_id": db_test_instance.id,
-            "netapp_id": db_test_instance.netapp_id,
-            "network_service_id": db_test_instance.network_service_id,
-            "testbed_id": db_test_instance.testbed_id,
-            "started_at": str(starting_time),
-            "test_status": test_status,
+        
+        # Involved Testing Agents
+        testing_agents = set(get_ci_cd_agents_given_test_instance_id(db, test_instance_id))
+        test_cases = get_tests_of_test_instance(db, test_instance_id, access_token)
+        test_stages = get_test_stages_for_test_instance(db, test_instance_id)
+
+        testing_agents_info = []
+        for testing_agent in testing_agents:
+
+            agent_stages = [
+                stage
+                for stage
+                in test_stages
+                if stage.testing_agent_id == testing_agent.id
+            ]
+
+            testing_agents_info.append(
+                {
+                    "testing_agent_id": testing_agent.id,
+                    "testing_agent_type": testing_agent.type.value.upper() if testing_agent.type == models.AgentType.CUSTOM else "TESTBED_DEFAULT",
+                    "performed_testing_stages": len(agent_stages),
+                    "performed_test_cases": len({
+                        test_case.performed_test
+                        for test_case
+                        in test_cases
+                        if test_case.test_stage in [stage.id for stage in agent_stages]
+                    }),
+                    "name": testing_agent.name if testing_agent.type == models.AgentType.CUSTOM else "Not Applicable",
+                    "service_order": testing_agent.service_order if testing_agent.type == models.AgentType.CUSTOM else "Not Applicable",
+                    "url": testing_agent.url,
+                    "username": testing_agent.username if testing_agent.type == models.AgentType.CUSTOM else "Not Disclosed",
+                    "password": testing_agent.password if testing_agent.type == models.AgentType.CUSTOM else "Not Disclosed",
+                }
+            )
+
+        all_test_status = [t.as_dict() for t in all_test_status]
+        for status in all_test_status:
+            status["state"] = status["state"].value
+
+        return { 
+            "test_instance": {
+                "test_id": db_test_instance.id,
+                "netapp_id": db_test_instance.netapp_id,
+                "network_service_id": db_test_instance.network_service_id,
+                "testbed_id": db_test_instance.testbed_id,
+                "started_at": str(starting_time),
+                "overall_test_status": test_status,
+                "test_status": all_test_status,
+                "testing_descriptor": yaml.dump(db_test_instance.testing_descriptor)
+            },
+            "test_agents": testing_agents_info
         }
 
 def __validate_test_instance_access_token(db: Session, test_instance_id: int, access_token: str = None):
