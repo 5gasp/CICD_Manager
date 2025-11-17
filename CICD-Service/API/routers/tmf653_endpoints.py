@@ -121,163 +121,160 @@ async def validate_test_descriptor(test_descriptor:UploadFile = File(...) , db: 
     return Utils.create_response(success=True, message=f"The test Descriptor has been validated")
     
 
+#@router.post(
+#    "/tmf-api/serviceTestManagement/v4/serviceTest",
+#    tags=["TMF-653"],
+#    summary="Creates a Service Test",
+#    description="Creates a Service Test, given a Valid TMF-653 Payload file, and execute the associated tests",
+#    responses={
+#        200: {
+#            "content": {
+#                "application/json": {
+#                    "example": {**Utils.response_dict,
+#                    "message": "A new build job was created",
+#                     "data": {
+#                            "test_id": 1,
+#                            "testbed_id" : "testbed_itav",
+#                            "netapp_id": "OBU",
+#                            "network_service_id": "vOBU",
+#                            "job_name": "testjob", 
+#                            "build_number": 1,
+#                            "access_token": "12345abcde"}
+#                }
+#            }
+#        }}
+#        ,
+#        400: {
+#            "content": {
+#                "application/json": {
+#                    "example": {**Utils.response_dict,
+#                    "message": "",
+#                    "success": False,
+#                    "errors": ["Payload does not follow TMF653 Standard",
+#                    "Unable to parse the submitted file",
+#                    "Invalid Testing Descriptor format",
+#                    "The selected testbed doesn't exist.",
+#                    "Error on validating test parameters",
+#                    "No CI/CD Agent Available",
+#                    "Couldn't create pipeline script"
+#                    ]}
+#                }
+#            }
+#        }
+#    }
+#)
+#async def create_service_test(
+#        serviceTestParsed: tmf653_schemas.ServiceTest_Create,
+#        background_tasks: BackgroundTasks,
+#        db: Session = Depends(get_db),
+#    ):
+#    logging.info(f"serviceTestParsed:{str(serviceTestParsed)}")
+#    # Get Service Test Characteristics
+#    characteristics = {}
+#    nods_id = None
+#    for characteristic in serviceTestParsed.characteristic:
+#        # NODS_ID to later on patch data on NODS
+#        if characteristic.name == "NODS_ServiceTest_ID":
+#            nods_id=characteristic.value['value']
+#        characteristics[characteristic.name] = { 
+#            'id': characteristic.id, 
+#            'name': characteristic.name, 
+#            'valueType': characteristic.valueType,
+#            'value': characteristic.value
+#        }
+#
+#    logging.info("serviceTestParsed:", serviceTestParsed.__dict__)
+#
+#    #2  ->Get the Service Test Specification Id
+#    service_test_specification_id = serviceTestParsed.testSpecification.id
+#    #service_test_specification_href = serviceTestParsed.testSpecification.href
+#    
+#    #2.2 - Authenticate with the NODS
+#    success, token =  Utils.get_nods_token()
+#    #2.3 -> Query the Service Test Specification Endpoint
+#    try:
+#        success, response = Utils.get_serviceTestSpecification(token=token,_id=service_test_specification_id)
+#        if not success:
+#            return Utils.create_response(status_code=400, success=False, message=f"{response}", data=[])
+#    except Exception as e:
+#        return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
+#    
+#    logging.info("Service Test Specification:")
+#    logging.info(response)
+#
+#    logging.info("Retrieved Service Test Specification")
+#    
+#    
+#    #3 ->  Get the attachments (testing descriptor)
+#    attachments = {attachment['name']: attachment['url']
+#        for attachment 
+#        in response['attachment']
+#    }
+#    try:
+#        valid_testing_descriptor_filename = [ attachment_name for attachment_name in attachments.keys() if "yaml" in attachment_name][0]
+#        attachment_url = attachments[valid_testing_descriptor_filename]
+#        success, response = Utils.get_serviceTestDescriptor(token=token,url=attachment_url)
+#        descriptors_text = response.text
+#        if not success:
+#            logging.errors("There was an error obtianining the Service Test "\
+#                f"Descritptor {response}")
+#            return Utils.create_response(status_code=400, success=False, message=f"{response}", data=[])
+#    except Exception as e:
+#        return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
+#         
+#    logging.info(f"Retrieved the Testing Descriptor from {attachment_url}")
+#    
+#    
+#    # 4 -> Render Descriptor
+#    
+#    # 4.1 -> Get deployment information
+#    logging.info("Gathering Deployment Information")
+#    
+#    characteristics_render = test_descriptor_render.CharacteristicsRender(
+#        characteristics=characteristics,
+#        testing_descriptor_text=descriptors_text
+#    )
+#    rendered_descriptor = None
+#    testing_artifacts_location = None
+#    try:        
+#        # Get deployment info and store it in FTP
+#        testing_artifacts_location = \
+#            testing_artifacts_helper.store_deployment_information_in_ftp(
+#                deployment_info=characteristics_render.deployment_information,
+#                nods_id=nods_id
+#            )
+#        # Render Testing Descriptors Tags
+#        rendered_descriptor = characteristics_render\
+#            .get_rendered_testing_descritptor()
+#    except Exception as e:
+#        logging.error(f"Failed to Render the Descriptor. Reason: {e}")
+#        return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
+#
+#    logging.info(f"Rendered the descriptor")
+#
+#    # 5 -> Get the developer defined tests
+#    developer_defined_tests = [testcase["name"] 
+#        for testcase 
+#        in rendered_descriptor['test_phases']['setup']['testcases'] 
+#        if testcase["type"] == 'developer-defined'
+#    ]
+#    
+#    loaded_tests_dict = None
+#    if len(developer_defined_tests) > 0:
+#        logging.info(f"Found {len(developer_defined_tests)} developer defined tests")
+#        logging.info("Developer Defined Tests:" + str(developer_defined_tests))
+#    
+#        try:
+#            loaded_tests_dict = dev_defined_test_helpers.load_developer_defined_tests(
+#                token, developer_defined_tests, attachments, nods_id)
+#        except Exception as e:
+#            return Utils.create_response(status_code=400, success=False, 
+#                message=f"Unable to Obtain the Developer Defined Tests from NODS -{e}",
+#                data=[])
+#    #return Utils.create_response(status_code=200, success=True, message=f"IXXXX", data=[])
+#    return TestRouters.new_test(rendered_descriptor, nods_id, loaded_tests_dict, testing_artifacts_location, db, background_tasks)
 @router.post(
     "/tmf-api/serviceTestManagement/v4/serviceTest",
-    tags=["TMF-653"],
-    summary="Creates a Service Test",
-    description="Creates a Service Test, given a Valid TMF-653 Payload file, and execute the associated tests",
-    responses={
-        200: {
-            "content": {
-                "application/json": {
-                    "example": {**Utils.response_dict,
-                    "message": "A new build job was created",
-                     "data": {
-                            "test_id": 1,
-                            "testbed_id" : "testbed_itav",
-                            "netapp_id": "OBU",
-                            "network_service_id": "vOBU",
-                            "job_name": "testjob", 
-                            "build_number": 1,
-                            "access_token": "12345abcde"}
-                }
-            }
-        }}
-        ,
-        400: {
-            "content": {
-                "application/json": {
-                    "example": {**Utils.response_dict,
-                    "message": "",
-                    "success": False,
-                    "errors": ["Payload does not follow TMF653 Standard",
-                    "Unable to parse the submitted file",
-                    "Invalid Testing Descriptor format",
-                    "The selected testbed doesn't exist.",
-                    "Error on validating test parameters",
-                    "No CI/CD Agent Available",
-                    "Couldn't create pipeline script"
-                    ]}
-                }
-            }
-        }
-    }
-)
-async def create_service_test(
-        serviceTestParsed: tmf653_schemas.ServiceTest_Create,
-        background_tasks: BackgroundTasks,
-        db: Session = Depends(get_db),
-    ):
-    logging.info(f"serviceTestParsed:{str(serviceTestParsed)}")
-    # Get Service Test Characteristics
-    characteristics = {}
-    nods_id = None
-    for characteristic in serviceTestParsed.characteristic:
-        # NODS_ID to later on patch data on NODS
-        if characteristic.name == "NODS_ServiceTest_ID":
-            nods_id=characteristic.value['value']
-        characteristics[characteristic.name] = { 
-            'id': characteristic.id, 
-            'name': characteristic.name, 
-            'valueType': characteristic.valueType,
-            'value': characteristic.value
-        }
-
-    logging.info("serviceTestParsed:", serviceTestParsed.__dict__)
-
-    #2  ->Get the Service Test Specification Id
-    service_test_specification_id = serviceTestParsed.testSpecification.id
-    #service_test_specification_href = serviceTestParsed.testSpecification.href
-    
-    #2.2 - Authenticate with the NODS
-    success, token =  Utils.get_nods_token()
-    #2.3 -> Query the Service Test Specification Endpoint
-    try:
-        success, response = Utils.get_serviceTestSpecification(token=token,_id=service_test_specification_id)
-        if not success:
-            return Utils.create_response(status_code=400, success=False, message=f"{response}", data=[])
-    except Exception as e:
-        return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
-    
-    logging.info("Service Test Specification:")
-    logging.info(response)
-
-    logging.info("Retrieved Service Test Specification")
-    
-    
-    #3 ->  Get the attachments (testing descriptor)
-    attachments = {attachment['name']: attachment['url']
-        for attachment 
-        in response['attachment']
-    }
-    try:
-        valid_testing_descriptor_filename = [ attachment_name for attachment_name in attachments.keys() if "yaml" in attachment_name][0]
-        attachment_url = attachments[valid_testing_descriptor_filename]
-        success, response = Utils.get_serviceTestDescriptor(token=token,url=attachment_url)
-        descriptors_text = response.text
-        if not success:
-            logging.errors("There was an error obtianining the Service Test "\
-                f"Descritptor {response}")
-            return Utils.create_response(status_code=400, success=False, message=f"{response}", data=[])
-    except Exception as e:
-        return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
-         
-    logging.info(f"Retrieved the Testing Descriptor from {attachment_url}")
-    
-    
-    # 4 -> Render Descriptor
-    
-    # 4.1 -> Get deployment information
-    logging.info("Gathering Deployment Information")
-    
-    characteristics_render = test_descriptor_render.CharacteristicsRender(
-        characteristics=characteristics,
-        testing_descriptor_text=descriptors_text
-    )
-    rendered_descriptor = None
-    testing_artifacts_location = None
-    try:        
-        # Get deployment info and store it in FTP
-        testing_artifacts_location = \
-            testing_artifacts_helper.store_deployment_information_in_ftp(
-                deployment_info=characteristics_render.deployment_information,
-                nods_id=nods_id
-            )
-        # Render Testing Descriptors Tags
-        rendered_descriptor = characteristics_render\
-            .get_rendered_testing_descritptor()
-    except Exception as e:
-        logging.error(f"Failed to Render the Descriptor. Reason: {e}")
-        return Utils.create_response(status_code=400, success=False, message=f"{e}", data=[])
-
-    logging.info(f"Rendered the descriptor")
-
-    # 5 -> Get the developer defined tests
-    developer_defined_tests = [testcase["name"] 
-        for testcase 
-        in rendered_descriptor['test_phases']['setup']['testcases'] 
-        if testcase["type"] == 'developer-defined'
-    ]
-    
-    loaded_tests_dict = None
-    if len(developer_defined_tests) > 0:
-        logging.info(f"Found {len(developer_defined_tests)} developer defined tests")
-        logging.info("Developer Defined Tests:" + str(developer_defined_tests))
-    
-        try:
-            loaded_tests_dict = dev_defined_test_helpers.load_developer_defined_tests(
-                token, developer_defined_tests, attachments, nods_id)
-        except Exception as e:
-            return Utils.create_response(status_code=400, success=False, 
-                message=f"Unable to Obtain the Developer Defined Tests from NODS -{e}",
-                data=[])
-    #return Utils.create_response(status_code=200, success=True, message=f"IXXXX", data=[])
-    return TestRouters.new_test(rendered_descriptor, nods_id, loaded_tests_dict, testing_artifacts_location, db, background_tasks)
-
-
-
-@router.post(
-    "/test",
     tags=["TMF-653"],
     summary="Creates a Service Test",
     description="Creates a Service Test, given a Valid TMF-653 Payload file, and execute the associated tests",
