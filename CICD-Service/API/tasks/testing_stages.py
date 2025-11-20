@@ -131,11 +131,11 @@ def trigger_test_stage(test_stage_db, is_first_stage_being_executed):
     with get_db() as db:
         if success:
             # Update test stage
-            crud.create_test_stage_status(
-                db=db,
-                test_stage_id=test_stage_db.id,
-                state=models.TestStageStatus.CREATED_PIPELINE_SCRIPT
-            )
+            #crud.create_test_stage_status(
+            #    db=db,
+            #    test_stage_id=test_stage_db.id,
+            #    state=models.TestStageStatus.CREATED_PIPELINE_SCRIPT
+            #)
             crud.create_test_stage_status(
                 db=db,
                 test_stage_id=test_stage_db.id,
@@ -309,6 +309,8 @@ async def create_test_stages(test_instance_id, testbed_id, testing_descriptor):
                 description=f"{len(configured_test_stages)} Test Stages were configured",
                 success=True
             )
+            from tasks.lcm_engine import lcm_engine
+            await lcm_engine.kiq()
         else:
             description = "Could not create Test Stages"
             # Update Test Status

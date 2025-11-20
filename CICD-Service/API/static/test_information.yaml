@@ -1043,6 +1043,33 @@ tests:
           can_be_injected_by_the_nods: True
           type: str
 
+    dummy_2MB_test:
+      id: dummy_2MB_test
+      name: Dummy 2MB Test
+      description: Dummy 2MB Test
+      ftp_base_location: tests/dummy_2MB_test/
+      test_filename: dummy_2MB_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 2
+      def: def19.Sec.3
+      test_conditions: [5]
+
+    dummy_5MB_test:
+      id: dummy_5MB_test
+      name: Dummy 5MB Test
+      description: Dummy 5MB Test
+      ftp_base_location: tests/dummy_5MB_test/
+      test_filename: dummy_5MB_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 5
+      axis: 2
+      def: def19.Sec.3
+      test_conditions: [5]
   ######################################################################################################################
   ##                                                                                                                  ##
   ##                                                                                                                  ##

@@ -144,12 +144,14 @@ async def provision_testing_agents_for_test_instance(test_instance_id: int):
                 success=True
             )
 
-
-def confirm_provisioning_of_testing_agents_for_test_instance(test_instance_id: int):
+@broker.task
+async def confirm_provisioning_of_testing_agents_for_test_instance(test_instance_id: int):
     custom_agents = None
+    test_instance = None
 
     # Get Testing Descriptor and obtain custom testing agents info
     with get_db() as db:
+        test_instance = crud.get_test_instances_by_id(db, test_instance_id)
         custom_agents = agents_crud.get_custom_ci_cd_agents_for_test_instance(
             db=db,
             test_instance_id=test_instance_id
@@ -158,11 +160,19 @@ def confirm_provisioning_of_testing_agents_for_test_instance(test_instance_id: i
     # TODO: Authentication with the NODS should be a decorator
     success, token =  Utils.get_nods_token()
 
+    total_agents_configured = 0
+
     for custom_agent in custom_agents:
         logging.info(
             f"Will validate if Custom Agent '{custom_agent.name}' "\
             "is already provisioned"
         )
+
+        # Check if agent has been configured
+        # If so, it must have an URL
+        if custom_agent.url:
+            total_agents_configured += 1
+            continue
 
         try:
             # Get the Testing Agents Info NODS
@@ -179,12 +189,38 @@ def confirm_provisioning_of_testing_agents_for_test_instance(test_instance_id: i
             else:
                 url, username, password = agent_data
                 description = f"Custom Agent '{custom_agent.name}' has the following " +\
-                    f"characteristics: url={url}, username={username}, password={password}"
+                    f"characteristics: url={url}, username={username}, password={password}."
                 logging.info(description)
                 
+                # Get metrics collection information for agent
+                testbed_custom_agents = testing_agents_config[test_instance["testbed_id"]]
+                for testing_agent_info in test_instance["testing_descriptor"].get("custom_testing_agents", []):
+
+                    if testing_agent_info["testing_agent_name"] == custom_agent.name:
+                        placement = testing_agent_info["placement"]
+                        monitoring = testing_agent_info["monitoring"]
+
+                        # Find matching agent spec in testbed_itav
+                        for spec in testbed_custom_agents.get(placement, {}).get("agents", []):
+                            if spec["monitoring"] == monitoring:
+                                metrics_collection_info = spec["metrics_collection"]
+                                # Measure monitoring configuration times
+                                start = datetime.now()
+                                with get_db() as db:
+                                    metrics_and_logs.parse_metrics_collection_info(
+                                        db=db,
+                                        test_id=test_instance_id,
+                                        metrics_collection_info=metrics_collection_info
+                                    )
+                                end = datetime.now()
+                                elapsed_ms = (end - start).total_seconds() * 1000
+                                description += f" Monitoring Configured in {elapsed_ms} ms."
+                                break
+                
+
                 with get_db() as db:
                     # Update Agent in Database
-                    db_custom_agent = agents_crud.update_custom_ci_cd_agent(
+                    custom_agent = agents_crud.update_custom_ci_cd_agent(
                         db=db,
                         test_instance_id=test_instance_id,
                         service_order=custom_agent.service_order,
@@ -194,14 +230,19 @@ def confirm_provisioning_of_testing_agents_for_test_instance(test_instance_id: i
                         provisioning_finished_time=datetime.now(timezone.utc)
                     )
 
-                    success, errors, data = configure_agent(db, db_custom_agent)
+                    success, errors, data = configure_agent(db, custom_agent)
+                    total_agents_configured += 1
 
+                    logging.info(
+                        f"{total_agents_configured} out of {len(custom_agents)} Testing Agents " +\
+                        "have been configured."
+                    )
                     if success:
                         # Update Test Status
                         crud.create_test_status(
                             db=db,
                             test_id=test_instance_id,
-                            state=Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED,
+                            state=Constants.TestStatus.CUSTOM_CI_CD_AGENT_CONFIGURED,
                             description=description,
                             success=success
                         )
@@ -224,10 +265,22 @@ def confirm_provisioning_of_testing_agents_for_test_instance(test_instance_id: i
                         )
 
         except Exception as e:
-            description = "Could not obtain Testing Agent's Info for 10 minutes - {e}"
+            description = f"Could not obtain Testing Agent's Info for 10 minutes - {e}"
             logging.error(description)
             verify_if_agent_provisioning_failed(custom_agent, test_instance_id)
 
+    if total_agents_configured == len(custom_agents):
+        # Update Test Status
+        crud.create_test_status(
+            db=db,
+            test_id=test_instance_id,
+            state=Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED,
+            description=f"The following Testing Agents have been configured:  {[a.name for a in custom_agents]}",
+            success=success
+        )
+        from tasks.lcm_engine import lcm_engine
+        await lcm_engine.kiq()
+        
 
 def verify_if_agent_provisioning_failed(custom_agent, test_instance_id):
     # If the agent was deployed more than 10 min ago -> error

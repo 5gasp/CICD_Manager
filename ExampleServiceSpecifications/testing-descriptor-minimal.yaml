@@ -8,7 +8,7 @@
 # 5 -> $_aggregator_ip -> {{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}
 
 test_info:
-  netapp_id: OdinS-Migrate-NetworkApplication
+  netapp_id: OdinS-NetworkApplication
   network_service_id: Migrate
   testbed_id: testbed_itav
   description: Validation tests for OdinS' Migrate Network Application
@@ -32,10 +32,13 @@ log_collection:
     type: filebeat
     viewer: kibana
 
-custom_testing_agents:
-  - testing_agent_name: ran_agent
-    placement: ran
-    monitoring: false
+#custom_testing_agents:
+#  - testing_agent_name: ran_agent
+#    placement: ran
+#    monitoring: true
+#  - testing_agent_name: near_app
+#    placement: near_network_app
+#    monitoring: true
 
 
 testcases:
@@ -197,23 +200,23 @@ testcases:
         value: {{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}
 
 execution:
-  - batch_id: 1
-    scope: security
-    testing_agent: testbed_default
-    executions:
-      - execution_id: 1
-        name: security_tests
-        testcase_ids: [1,2,3,4]
-  - batch_id: 2
-    scope: security_ran
-    testing_agent: ran_agent
-    executions:
-      - execution_id: 1
-        name: security_tests
-        testcase_ids: [1,2,3,4]
+#  - batch_id: 1
+#    scope: security
+#    testing_agent: near_app
+#    executions:
+#      - execution_id: 1
+#        name: security_tests
+#        testcase_ids: [1,2,3,4]
+#  - batch_id: 2
+#    scope: security_ran
+#    testing_agent: ran_agent
+#    executions:
+#      - execution_id: 1
+#        name: security_tests
+#        testcase_ids: [1,2,3,4]
   - batch_id: 3
     scope: operational
     executions:
       - execution_id: 1
         name: operational_tests
-        testcase_ids: [5,6,7,8,9,10]
+        testcase_ids: [1,1,1,1,1]

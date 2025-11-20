@@ -77,7 +77,6 @@ def get_updated_test_statuses(test_instance):
             in crud.get_test_status_given_test_id(db, test_instance.id)
         }
 
-
 @broker.task(schedule=[{"cron": "*/1 * * * *"}])
 async def lcm_engine() -> int:
     test_instances = []
@@ -101,31 +100,42 @@ async def lcm_engine() -> int:
                 f"instance: {test_instance.id}"
             )
             await test_cases.obtain_dev_defined_test_cases_for_test_instance.kiq(test_instance.id)
+            # Refresh test statuses to force the next stages to take place in the same cycle
+            test_statuses = get_updated_test_statuses(test_instance)
 
         # Invoke the configuration of monitoring if not done yet
         if is_next_state(test_statuses, Constants.TestStatus.APPLICATION_MONITORING_CONFIGURED):
             logging.info(f"Will configure monitoring for test instance: {test_instance.id}")
             await metrics_and_logs.configure_monitoring_for_test_instance.kiq(test_instance.id)
+            # Refresh test statuses to force the next stages to take place in the same cycle
+            test_statuses = get_updated_test_statuses(test_instance)
 
         # Invoke the configuration of logging if not done yet
         if is_next_state(test_statuses, Constants.TestStatus.APPLICATION_LOGGING_CONFIGURED):
             logging.info(f"Will configure logging for test instance: {test_instance.id}")
             await metrics_and_logs.configure_logging_for_test_instance.kiq(test_instance.id)
+            # Refresh test statuses to force the next stages to take place in the same cycle
+            test_statuses = get_updated_test_statuses(test_instance)
 
         # Invoke the provisionigng of custom CI/CD agents if not done yet
         if is_next_state(test_statuses, Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_STARTED):
             logging.info(f"Will provisiong the CI/CD Agents for test instance: {test_instance.id}")
             await testing_agents.provision_testing_agents_for_test_instance.kiq(test_instance.id)
+            # Refresh test statuses to force the next stages to take place in the same cycle
+            test_statuses = get_updated_test_statuses(test_instance)
 
         # Verify the  provisionigng of custom CI/CD agents
         if is_next_state(test_statuses, Constants.TestStatus.CUSTOM_CI_CD_AGENTS_PROVISIONED_ENDED):
             logging.info(f"Will check the provisiong the CI/CD Agents for test instance: {test_instance.id}")
-            testing_agents.confirm_provisioning_of_testing_agents_for_test_instance(test_instance.id)
+            await testing_agents.confirm_provisioning_of_testing_agents_for_test_instance.kiq(test_instance.id)
             # Refresh test statuses to force the next stages to take place in the same cycle
             test_statuses = get_updated_test_statuses(test_instance)
         
         # Configure testing stages
-        if is_next_state(test_statuses, Constants.TestStatus.TESTING_PROCESS_STAGES_CONFIGURED):
+        if is_next_state(
+            get_updated_test_statuses(test_instance),
+            Constants.TestStatus.TESTING_PROCESS_STAGES_CONFIGURED
+        ):
             logging.info(f"Will configure testing stages for test instance: {test_instance.id}")
             await testing_stages.create_test_stages.kiq(test_instance.id, test_instance.testbed_id,  test_instance.testing_descriptor)
             # Refresh test statuses to force the next stages to take place in the same cycle
@@ -134,9 +144,13 @@ async def lcm_engine() -> int:
         if is_next_state(test_statuses, Constants.TestStatus.TESTING_PROCESS_ENDED):
             logging.info(f"Will start testing stages for test instance: {test_instance.id}")
             await testing_stages.process_test_stages.kiq(test_instance.id)
+            # Refresh test statuses to force the next stages to take place in the same cycle
+            test_statuses = get_updated_test_statuses(test_instance)
 
         if is_next_state(test_statuses, Constants.TestStatus.TEST_ENDED):
             logging.info(f"Will start testing stages for test instance: {test_instance.id}")
             await testing_stages.check_if_test_stages_ended.kiq(test_instance.id)
+            # Refresh test statuses to force the next stages to take place in the same cycle
+            test_statuses = get_updated_test_statuses(test_instance)
 
 

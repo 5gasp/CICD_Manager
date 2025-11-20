@@ -106,6 +106,7 @@ async def get_testing_process_status(test_id: int, access_token: str, db: Sessio
     try:
         data = crud.get_all_test_status_for_test_given_id(db, test_id, access_token)
         data = [t.as_dict() for t in data]
+        data.sort(key=lambda x: x["timestamp"])
         for status in data:
             status["state"] = status["state"].value
         if not data:

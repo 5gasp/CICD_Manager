@@ -1,0 +1,58 @@
+
+
+# VARIABLE TO CONFIGURE
+# 1 -> $_mini_api_ip_server -> {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+# 2 -> $_mini_api_server_url -> http://{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:3001
+# 3 -> $_vobu_ip -> {{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}
+# 4 -> $_manager_ip -> {{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}
+# 5 -> $_aggregator_ip -> {{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}
+
+test_info:
+  netapp_id: OdinS-NetworkApplication
+  network_service_id: Migrate
+  testbed_id: testbed_itav
+  description: Validation tests for OdinS' Migrate Network Application
+
+metrics_collection:
+  - job_name: surrogates
+    metrics_collection:
+      - type: prometheus
+        collection_endpoint: "{{deployment_info|migrate_nsd_2|vnf1|mgmt-vnf-eth0-ext|ip-address}}:9100"
+      - type: prometheus
+        collection_endpoint: "{{deployment_info|migrate_nsd_2|vnf2|vobu-vnf-eth0-ext|ip-address}}:9100"
+      - type: prometheus
+        collection_endpoint: "{{deployment_info|migrate_nsd_2|vnf3|agg-vnf-eth0-ext|ip-address}}:9100"
+    viewer:
+      type: grafana
+      dashboard_src: "https://grafana.com/api/dashboards/1860/revisions/41/download"
+      name_for_dashboard: OdinS Migrate NetworkApplication Node Exporter
+
+log_collection:
+  - test_agent_name: ci-cd-test-surrogates
+    type: filebeat
+    viewer: kibana
+
+#custom_testing_agents:
+#  - testing_agent_name: ran_agent
+#    placement: ran
+#    monitoring: true
+#  - testing_agent_name: near_app
+#    placement: near_network_app
+#    monitoring: true
+
+
+testcases:
+
+  - testcase_id: 1
+    type: predefined
+    scope: dummy
+    name: dummy_2MB_test
+    description: Dummy 2MB test
+
+execution:
+  - batch_id: 1
+    scope: dummy
+    executions:
+      - execution_id: 1
+        name: dummy_tests
+        testcase_ids: [1,1,1,1,1]

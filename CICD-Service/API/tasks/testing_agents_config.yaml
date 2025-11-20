@@ -3,11 +3,32 @@ testbed_itav:
     agents:
       - service_specification_uuid: "9d374b89-96fc-4cf6-97a0-ef6958609cf0"
         monitoring: true
+        metrics_collection:
+          - job_name: surrogates
+            metrics_collection:
+              - type: prometheus
+                collection_endpoint: "<agent_location>:9100"
+            viewer:
+              type: grafana
+              dashboard_src: "https://grafana.com/api/dashboards/1860/revisions/41/download"
+              name_for_dashboard: ITAv RAN Testing Agent 
+
       - service_specification_uuid: "9d374b89-96fc-4cf6-97a0-ef6958609cf0"
         monitoring: false
+  
   near_network_app:
     agents:
       - service_specification_uuid: "8d12f23c-09c5-44db-9bf4-03805c91ea07"
         monitoring: true
+        metrics_collection:
+          - job_name: surrogates
+            metrics_collection:
+              - type: prometheus
+                collection_endpoint: "<agent_location>:9100"
+            viewer:
+              type: grafana
+              dashboard_src: "https://grafana.com/api/dashboards/1860/revisions/41/download"
+              name_for_dashboard: ITAv Near Network App Testing Agent 
+
       - service_specification_uuid: "8d12f23c-09c5-44db-9bf4-03805c91ea07"
         monitoring: false

@@ -10,6 +10,7 @@ from sql_app import crud
 import logging
 import aux.constants as Constants
 from testing_descriptors_validator.test_descriptor_validator import Test_Descriptor_Validator
+from tasks.lcm_engine import lcm_engine
 
 startup.load_config()
 
@@ -286,6 +287,7 @@ async def validate_testing_descriptor(test_instance_id: int, testing_descriptor:
             description=description,
             success=success
         )
+        await lcm_engine.kiq() 
 
         if not success:
             crud.create_test_status(
@@ -295,7 +297,8 @@ async def validate_testing_descriptor(test_instance_id: int, testing_descriptor:
                 description=description,
                 success=success
             )
-            return 
+
+        
 
 @broker.task
 async def get_testing_descriptor(service_test_specification: dict):

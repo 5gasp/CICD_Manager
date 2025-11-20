@@ -57,7 +57,10 @@ def parse_metrics_collection_info(db, test_id, metrics_collection_info):
         viewer = metrics_collection_obj["viewer"]
         for metric_collection in metrics_collection_obj["metrics_collection"]:
             if metric_collection['type'] == 'prometheus':
-                targets.append(metric_collection['collection_endpoint'])
+                endpoint = metric_collection['collection_endpoint']
+                # TODO: Hardcoded Stuff for Experiments
+                endpoint = endpoint.replace("<agent_location>", "10.255.28.74")
+                targets.append(endpoint)
         try:
             if register_prometheus_targets(job_name, targets):
                 if viewer["type"] == "grafana":

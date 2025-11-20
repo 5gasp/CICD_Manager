@@ -148,7 +148,7 @@ class Test_Descriptor_Validator:
         existing_testing_agents = ["default" , "testbed_default"] + [
                 agent["testing_agent_name"]
                 for agent
-                in self.descriptor_content["custom_testing_agents"]
+                in self.descriptor_content.get("custom_testing_agents",[])
             ]
         
         # Get the execution testing agents

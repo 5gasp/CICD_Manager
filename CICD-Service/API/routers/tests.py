@@ -174,6 +174,26 @@ async def update_test_status(test_status: ci_cd_manager_schemas.Test_Status_Upda
             description=None,
             success=True
         )
+    
+    elif (
+        models.TestStageStatus(test_status.state) == models.TestStageStatus.TEST_ENDED  
+        and
+        all(
+            models.TestStageStatus.TEST_ENDED
+            in [s.state for s in statuses]
+            for statuses in test_stages_with_status.values()
+        )
+        and
+        Constants.TestStatus.TEST_ENDED not in test_instance_statuses
+    ):
+        logging.info("Will end the test!")
+        crud.create_test_status(
+            db=db,
+            test_id=test_status.test_id,
+            state=Constants.TestStatus.TEST_ENDED,
+            description=None,
+            success=True
+        )
     return Utils.create_response()
 
 
