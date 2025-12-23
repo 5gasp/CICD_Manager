@@ -150,3 +150,4 @@ Thumbs.db
 #5GASP
 config.ini
 docker/docker_data/*
+API/config.ini
