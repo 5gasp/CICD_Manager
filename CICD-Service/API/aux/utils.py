@@ -197,7 +197,7 @@ def order_service(token, service_spec_uuid):
     # Start date in UTC
     start_date_utc = datetime.now(timezone.utc)
     # End date: 1 day later
-    end_date_utc = start_date_utc + timedelta(days=1)
+    end_date_utc = start_date_utc + timedelta(days=45)
     # Format as ISO 8601 with milliseconds and 'Z' for UTC
     start_date_iso_string = start_date_utc.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     end_date_iso_string = end_date_utc.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"

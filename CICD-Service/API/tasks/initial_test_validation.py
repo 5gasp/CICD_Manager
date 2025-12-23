@@ -204,11 +204,12 @@ async def render_and_validate_testing_descriptor(
             success=success
         )
 
+        
         if not success:
             return 
         
         # Render Testing Descriptor with Characteristics
-        logging.debug("Rendering Testing Descriptor with Characteristics...")
+        logging.info("Rendering Testing Descriptor with Characteristics...")
         characteristics_render = test_descriptor_render.CharacteristicsRender(
             characteristics=characteristics,
             testing_descriptor_text=descriptors_text
@@ -244,6 +245,7 @@ async def render_and_validate_testing_descriptor(
             description=description,
             success=success
         )
+
 
         if not success:
             crud.create_test_status(
@@ -287,16 +289,18 @@ async def validate_testing_descriptor(test_instance_id: int, testing_descriptor:
             description=description,
             success=success
         )
-        await lcm_engine.kiq() 
-
         if not success:
             crud.create_test_status(
                 db=db,
                 test_id=test_instance_id,
-                state=Constants.TestStatus.TESTING_PROCESS_ENDED,
+                state=Constants.TestStatus.TEST_ENDED,
                 description=description,
                 success=success
             )
+        
+        await lcm_engine.kiq() 
+
+        
 
         
 

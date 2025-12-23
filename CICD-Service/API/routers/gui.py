@@ -254,12 +254,16 @@ async def get_tests_performed(test_id: int, access_token: str, db: Session = Dep
             # Get Console Log
             results_base_folder = f"{test_instance.netapp_id}-{test_instance.network_service_id}" +\
                 f"-{test_id}-{test_stage.id}"
-            test_console_log = urlopen(
-                f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}" +\
-                f"@{Constants.FTP_RESULTS_URL}/{results_base_folder}/console_log.log"
-            ).read()
-            test_console_log = test_console_log.decode('utf-8')
-            
+            test_console_log = "Not Available Yet"
+            try:
+                test_console_log = urlopen(
+                    f"ftp://{Constants.FTP_RESULTS_USER}:{Constants.FTP_RESULTS_PASSWORD}" +\
+                    f"@{Constants.FTP_RESULTS_URL}/{results_base_folder}/console_log.log"
+                ).read()
+                test_console_log = test_console_log.decode('utf-8')
+            except Exception as e:
+                print("Could not obatin Console Log")
+
             # Get Test Status
             test_state_statuses = [status.as_dict() for status in test_state_statuses]
             for test_state_status in test_state_statuses:
@@ -268,6 +272,7 @@ async def get_tests_performed(test_id: int, access_token: str, db: Session = Dep
             test_stage_data = {
                 "id":  test_stage.id,
                 "testing_agent_id": test_stage.testing_agent_id,
+                "network_qos_profile": test_stage.network_qos_profile,
                 "pipeline": test_stage.jenkins_pipeline,
                 "console_log": test_console_log,
                 "statuses": test_state_statuses,

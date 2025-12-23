@@ -217,9 +217,9 @@ class Jenkins_Wrapper:
         
         return True, ""
 
-    def create_jenkins_pipeline(self, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information, test_instance_id, test_stage_id, testbed_id):
+    def create_jenkins_pipeline(self, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information, test_instance_id, test_stage_id, testbed_id, network_qos_profile):
         jenkins_script_str = copy.copy(
             JenkinsConstants.JENKINS_BASE_PIPELINE_SCRIPT)
-        pipeline_configuration = JenkinsPipelineConfiguration.Jenkins_Pipeline_Configuration(jenkins_script_str, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information, test_instance_id, test_stage_id, testbed_id)
+        pipeline_configuration = JenkinsPipelineConfiguration.Jenkins_Pipeline_Configuration(jenkins_script_str, executed_tests_info, available_tests, descriptor_metrics_collection, metrics_collection_information, test_instance_id, test_stage_id, testbed_id, network_qos_profile)
         return pipeline_configuration.create_jenkins_pipeline()
   

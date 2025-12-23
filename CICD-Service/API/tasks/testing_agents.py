@@ -202,7 +202,7 @@ async def confirm_provisioning_of_testing_agents_for_test_instance(test_instance
 
                         # Find matching agent spec in testbed_itav
                         for spec in testbed_custom_agents.get(placement, {}).get("agents", []):
-                            if spec["monitoring"] == monitoring:
+                            if spec["monitoring"] == monitoring and monitoring:
                                 metrics_collection_info = spec["metrics_collection"]
                                 # Measure monitoring configuration times
                                 start = datetime.now()

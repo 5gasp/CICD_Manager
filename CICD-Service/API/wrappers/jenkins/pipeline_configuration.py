@@ -45,6 +45,7 @@ class Jenkins_Pipeline_Configuration:
         test_instance_id=None,
         test_stage_id=None,
         testbed_id=None,
+        network_qos_profile=None
     ):
         self.jenkins_script_str = jenkins_script_str
         self.executed_tests_info = executed_tests_info
@@ -54,6 +55,7 @@ class Jenkins_Pipeline_Configuration:
         self.test_instance_id = test_instance_id
         self.test_stage_id = test_stage_id
         self.testbed_id = testbed_id
+        self.network_qos_profile = network_qos_profile
 
 
     def create_jenkins_pipeline(self):
@@ -64,6 +66,7 @@ class Jenkins_Pipeline_Configuration:
         #self.add_obtain_metrics_collection_files_to_jenkins_pipeline_script(self.metrics_collection_information)
         #self.add_metrics_collection_mechanism_to_jenkins_pipeline_script(self.descriptor_metrics_collection, self.metrics_collection_information)
         self.add_obtain_and_perform_tests_to_jenkins_pipeline_script(self.executed_tests_info, self.available_tests)
+        self.add_network_qos_change_to_jenkins_pipeline_script()
         self.add_publish_results_to_jenkins_pipeline_script()
         self.add_cleanup_environment_commands_to_jenkins_pipeline_script()
 
@@ -82,6 +85,17 @@ class Jenkins_Pipeline_Configuration:
     def get_jenkins_pipeline_script_from_pipeline_content(self, pipeline_content):
         config = JenkinsConstants.BASE_PIPELINE
         return config.replace("add_pipeline_configuration_here", pipeline_content)
+
+    def add_network_qos_change_to_jenkins_pipeline_script(self):
+        self.jenkins_script_str = self.jenkins_script_str.replace("<camara_username>", Constants.CAMARA_USERNAME)
+        self.jenkins_script_str = self.jenkins_script_str.replace("<camara_password>",  Constants.CAMARA_PASSWORD)
+        self.jenkins_script_str = self.jenkins_script_str.replace("<camara_base_url>", Constants.CAMARA_BASE_URL)
+        self.jenkins_script_str = self.jenkins_script_str.replace("<network_qos_profile>", str(self.network_qos_profile))
+        if not self.network_qos_profile:
+            self.jenkins_script_str = self.jenkins_script_str.replace("<CHANGE_NETWORK_QOS>", 'false')
+        else:
+            self.jenkins_script_str = self.jenkins_script_str.replace("<CHANGE_NETWORK_QOS>", 'true')
+
 
     def add_environment_setup_to_jenkins_pipeline_script(self):
         setup_environment_commands = [

@@ -83,7 +83,45 @@ VALIDATION_SCHEMA = {
             }
         }
     },
-
+    # New top-level network_qos_profiles
+    'network_qos_profiles': {
+        'required': False,
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'name': {
+                    'required': True,
+                    'type': 'string'
+                },
+                'default': {
+                    'required': True,
+                    'type': 'boolean'
+                },
+                'restrictions': {
+                    'required': False,
+                    'type': 'list',
+                    'schema': {
+                        'type': 'dict',
+                        'schema': {
+                            'type': {
+                                'required': True,
+                                'type': 'string'
+                            },
+                            'value': {
+                                'required': True,
+                                'type': ['integer', 'float']
+                            },
+                            'unit': {
+                                'required': True,
+                                'type': 'string'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
     # testcases
     'testcases': {
         'required': True,
@@ -150,6 +188,10 @@ VALIDATION_SCHEMA = {
                     'type': 'string'
                 },
                 'testing_agent': {
+                    'required': False,
+                    'type': 'string'
+                },
+                'network_qos_profile': {
                     'required': False,
                     'type': 'string'
                 },

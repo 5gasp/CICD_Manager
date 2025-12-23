@@ -249,7 +249,57 @@ tests:
         can_be_injected_by_the_nods: True
         type: str
 
-
+    container_vulnerability_test: 
+      id: container_vulnerability_test
+      name: Container Vulnerability Test
+      description: Audits if an App container has critical vulnerabilities
+      ftp_base_location: tests/container_vulnerability_test/
+      test_filename: container_vulnerability_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 6
+      axis: 2
+      def: def19.Sec.10
+      test_conditions: [1]
+      # End of Certification Scope
+      test_variables:
+      - variable_name: harbor_base_url
+        description: N/A
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      - variable_name: harbor_username
+        description: N/A
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: False
+        type: str
+      - variable_name: harbor_password
+        description: N/A
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: harbor_project
+        description: N/A
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: harbor_repository
+        description: N/A
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
+      - variable_name: harbor_reference
+        description: N/A
+        mandatory: true
+        possible_options: []
+        can_be_injected_by_the_nods: True
+        type: str
 
     ############################################################################
     ##                                                                        ##
@@ -561,6 +611,40 @@ tests:
           can_be_injected_by_the_nods: False
           type: str
 
+
+    nef_traffic_influence_subscription_test:
+      id: nef_traffic_influence_subscription_test
+      name: Perform Traffic Influence Test
+      description: This test will validate that a Network Application is able to make a Traffic Influence subscriptions
+      ftp_base_location: tests/nef_traffic_influence_subscription_test/
+      test_filename: nef_traffic_influence_subscription_test.robot
+      test_type: Robot
+      # Certification Scope
+      mandatory: false
+      weight: 7
+      axis: 1
+      def: def11.5G.8
+      test_conditions: [1,4]
+      # End of Certification Scope
+      test_variables:
+        - variable_name: mini_api_endpoint_to_invoke
+          description: NA
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: True
+          type: str
+        - variable_name: reporting_api_ip
+          description: Target IP/Domain of the NEF Reporting API (e.g. 5gasp.eu or 10.10.10.10)
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: str
+        - variable_name: reporting_api_port
+          description: NEF Reporting API Port
+          mandatory: true
+          possible_options: []
+          can_be_injected_by_the_nods: False
+          type: int
 
     ############################################################################
     ##                                                                        ##

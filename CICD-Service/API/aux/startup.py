@@ -65,7 +65,9 @@ def load_config():
         Constants.KIBANA_PASSWORD = config['KIBANA']['Password']
         Constants.KIBANA_IP_OR_DOMAIN = config['KIBANA']['IPorDomain']
         Constants.KIBANA_PORT = config['KIBANA']['Port']
-        
+        Constants.CAMARA_BASE_URL = config['CAMARA']['BaseUrl']
+        Constants.CAMARA_USERNAME = config['CAMARA']['Username']
+        Constants.CAMARA_PASSWORD = config['CAMARA']['Password']
     except Exception as e:
         print(e)
         print("-----")

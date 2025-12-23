@@ -242,7 +242,7 @@ async def create_test_stages(test_instance_id, testbed_id, testing_descriptor):
                 test_instance_id=test_instance_id
             )
         }
-
+    print("testing_descriptor:", testing_descriptor)
     stages = []
     # Get all test stages from testing descriptor
     # Each stage will be performed by a individual testing agent
@@ -265,17 +265,16 @@ async def create_test_stages(test_instance_id, testbed_id, testing_descriptor):
                     batch_test_case["location"] = dev_defined_test_cases[batch_test_case["name"]]
 
                 batch_test_case["full_name"] = batch_test_case["performed_test"]
-
                 batch_test_cases.append(batch_test_case)
                 test_execution_id += 1
-
         stages.append(
             {
                 "testing_agent": batch.get("testing_agent", "testbed_default"),
+                "network_qos_profile": batch.get("network_qos_profile", None),
                 "test_cases": batch_test_cases
             }
         )
-    
+
     # Prepare Jenkins Pipelines
     configured_test_stages = []
     for stage in stages:
@@ -287,8 +286,10 @@ async def create_test_stages(test_instance_id, testbed_id, testing_descriptor):
             testbed_id=testbed_id,
             testing_agent_id=agent.id,
             test_cases=stage["test_cases"],
-            testbed_tests=testbed_tests
+            testbed_tests=testbed_tests,
+            network_qos_profile=stage["network_qos_profile"]
         )
+
         if test_stage:
             configured_test_stages.append(test_stage)
 
@@ -298,7 +299,6 @@ async def create_test_stages(test_instance_id, testbed_id, testing_descriptor):
                 test_stage_id=test_stage.id,
                 test_cases=stage["test_cases"]
             )
-
 
     with get_db() as db: 
         if len(configured_test_stages) == len(stages):
@@ -330,8 +330,9 @@ async def create_test_stages(test_instance_id, testbed_id, testing_descriptor):
             )
 
 
-def create_test_instace_stage(test_instance_id, testbed_id, testing_agent_id, test_cases, testbed_tests):
+def create_test_instace_stage(test_instance_id, testbed_id, testing_agent_id, test_cases, testbed_tests, network_qos_profile):
     jenkins_wrapper = Jenkins_Wrapper()
+    
     try:
         with get_db() as db: 
             # Create Test Stage
@@ -339,7 +340,8 @@ def create_test_instace_stage(test_instance_id, testbed_id, testing_agent_id, te
                 db=db,
                 test_instance_id=test_instance_id,
                 testing_agent_id=testing_agent_id,
-                jenkins_pipeline=None
+                network_qos_profile=network_qos_profile,
+                jenkins_pipeline=None,
             )
 
             # Create jenkins pipeline script
@@ -349,7 +351,8 @@ def create_test_instace_stage(test_instance_id, testbed_id, testing_agent_id, te
                 descriptor_metrics_collection=None, 
                 metrics_collection_information=None,
                 test_instance_id=test_instance_id,
-                test_stage_id = test_stage.id,
+                test_stage_id=test_stage.id,
+                network_qos_profile=network_qos_profile,
                 testbed_id=testbed_id 
             )
 
@@ -361,6 +364,7 @@ def create_test_instace_stage(test_instance_id, testbed_id, testing_agent_id, te
             )
             return test_stage
     except Exception as e:
+        logging.error("Error: " + str(e) )
         return None
 
 

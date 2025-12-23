@@ -130,11 +130,13 @@ def create_test_stage(
         db: Session, 
         test_instance_id: int,
         testing_agent_id: int,
+        network_qos_profile: str,
         jenkins_pipeline: str = None
     ):
     test_stage = models.Test_Instance_Stage(
         test_instance_id=test_instance_id,
         testing_agent_id=testing_agent_id,
+        network_qos_profile=network_qos_profile,
         jenkins_pipeline=jenkins_pipeline
     )
     db.add(test_stage)

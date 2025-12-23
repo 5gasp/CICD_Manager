@@ -41,6 +41,7 @@ class TestStageStatus(Enum):
 	ENVIRONMENT_SETUP_CI_CD_AGENT = "ENVIRONMENT_SETUP_CI_CD_AGENT"
 	OBTAINED_TESTING_ARTIFACTS_FILES = "OBTAINED_TESTING_ARTIFACTS_FILES"
 	OBTAINED_TESTS_ON_CI_CD_AGENT = "OBTAINED_TESTS_ON_CI_CD_AGENT"
+	CONFIGURED_NETWORK_QOS = "CONFIGURED_NETWORK_QOS"
 	PERFORMED_TESTS_ON_CI_CD_AGENT = "PERFORMED_TESTS_ON_CI_CD_AGENT"
 	PUBLISHED_TEST_RESULTS = "PUBLISHED_TEST_RESULTS"
 	CLEANED_TEST_ENVIRONMENT = "CLEANED_TEST_ENVIRONMENT"
@@ -133,6 +134,7 @@ class Test_Instance_Stage(Base):
 	id = Column(Integer, primary_key=True, index=True)
 	test_instance_id = Column(Integer, ForeignKey("test_instances.id"), nullable=False)
 	testing_agent_id = Column(Integer, ForeignKey("ci_cd_nodes.id"), nullable=False)
+	network_qos_profile = Column(Text)
 	jenkins_pipeline = Column(Text)
 	def as_dict(self):
 		return {c.name: getattr(self, c.name) for c in self.__table__.columns}
